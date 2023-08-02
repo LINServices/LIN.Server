@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Configurations>Debug;Release;AZURE;SOMEE</Configurations>
+    <UserSecretsId>fb1c2cc7-f764-4d39-bca3-0ffd42374969</UserSecretsId>
+    <SignAssembly>False</SignAssembly>
+	  <LangVersion>11</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Azure|AnyCPU'">
+    <Optimize>False</Optimize>
+    <WarningLevel>9999</WarningLevel>
+    <DebugType>embedded</DebugType>
+    <NoWarn />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SOMEE|AnyCPU'">
+    <Optimize>False</Optimize>
+    <WarningLevel>9999</WarningLevel>
+    <DebugType>embedded</DebugType>
+    <NoWarn />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>9999</WarningLevel>
+    <DebugType>embedded</DebugType>
+    <NoWarn />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningLevel>9999</WarningLevel>
+    <DebugType>embedded</DebugType>
+    <NoWarn />
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\AccesoAPI\LIN.Access.Developer\LIN.Access.Developer.csproj" />
+    <ProjectReference Include="..\..\..\Tipos\Http\Http.csproj" />
+    <ProjectReference Include="..\..\..\Tipos\LIN.Shared\LIN.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="System.ComponentModel.DataAnnotations.Schema" />
+    <Using Include="System.Text" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\Plantillas\Informes\Salidas\General.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\Plantillas\Informes\Salidas\Row.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
