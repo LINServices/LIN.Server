@@ -143,6 +143,9 @@ try
     // Inicia el servicio de mails
     EmailWorker.StarService();
 
+    // Inicio de Jwt
+    Jwt.Open();
+
 
     // Estado del servidor
     ServerLogger.OpenDate = DateTime.Now;

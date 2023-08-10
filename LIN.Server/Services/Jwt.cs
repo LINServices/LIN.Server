@@ -9,17 +9,32 @@ public class Jwt
 
 
     /// <summary>
+    /// Llave del token
+    /// </summary>
+    private static string JwtKey { get; set; } = string.Empty;
+
+
+
+    /// <summary>
+    /// Inicia el servicio Jwt
+    /// </summary>
+    public static void Open()
+    {
+        JwtKey = Configuration.GetConfiguration("jwt:key");
+    }
+
+
+
+
+    /// <summary>
     /// Genera un JSON Web Token
     /// </summary>
     /// <param name="user">Modelo de usuario</param>
     internal static string Generate(UserDataModel user)
     {
 
-        // Clave del JWT
-        var clave = Configuration.GetConfiguration("jwt:key");
-
         // Configuración
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(clave));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
 
         // Credenciales
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
@@ -53,11 +68,8 @@ public class Jwt
         try
         {
 
-            // Clave del JWT
-            var clave = Configuration.GetConfiguration("jwt:key");
-
             // Configurar la clave secreta
-            var key = Encoding.ASCII.GetBytes(clave);
+            var key = Encoding.ASCII.GetBytes(JwtKey);
 
             // Validar el token
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -98,9 +110,6 @@ public class Jwt
         catch { }
 
         return (false, string.Empty, 0);
-
-
-
 
     }
 
