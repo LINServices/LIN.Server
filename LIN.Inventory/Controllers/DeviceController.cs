@@ -1,4 +1,7 @@
-namespace LIN.Server.Controllers;
+using LIN.Inventory.Hubs;
+using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Controllers;
 
 
 [Route("devices")]

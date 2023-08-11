@@ -14,8 +14,11 @@ global using Microsoft.IdentityModel.Tokens;
 global using Newtonsoft.Json;
 global using System.Diagnostics;
 global using System.Text;
-using LIN.Server.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using LIN.Inventory.Services;
+using LIN.Inventory.Hubs;
+using LIN.Inventory;
+using LIN.Inventory.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

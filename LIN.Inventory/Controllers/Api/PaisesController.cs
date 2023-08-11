@@ -1,4 +1,4 @@
-﻿namespace LIN.Server.Controllers.Api;
+﻿namespace LIN.Inventory.Controllers.Api;
 
 
 [Route("/api/pais")]

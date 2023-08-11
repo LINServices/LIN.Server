@@ -1,4 +1,4 @@
-﻿namespace LIN.Server.DBModels;
+﻿namespace LIN.Inventory.DBModels;
 
 
 public class ProductoDetailTable

@@ -1,4 +1,6 @@
-﻿namespace LIN.Server.Data.Query;
+﻿using LIN.Inventory;
+
+namespace LIN.Inventory.Data.Query;
 
 
 public static class Products

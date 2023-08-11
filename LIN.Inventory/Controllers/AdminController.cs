@@ -1,4 +1,6 @@
-namespace LIN.Server.Controllers;
+using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Controllers;
 
 
 [Route("reload")]
@@ -26,7 +28,7 @@ public class AdminController : ControllerBase
 
         ServerLogger.LogError("1: " + stopwatch.Elapsed.TotalMilliseconds);
 
-        var admin = await Data.Users.Read(user);
+        var admin = await Data.Profiles.Read(user);
 
         var old = EncryptClass.Encrypt(Conexión.SecreteWord + pass);
 

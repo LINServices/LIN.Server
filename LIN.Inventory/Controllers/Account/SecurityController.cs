@@ -1,4 +1,8 @@
-﻿namespace LIN.Server.Controllers.Account;
+﻿using LIN.Inventory;
+using LIN.Inventory.Data;
+using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Controllers.Account;
 
 
 [Route("account/security")]
@@ -23,7 +27,7 @@ public class SecurityController : Controller
         var (context, contextKey) = Conexión.GetOneConnection();
 
         // Obtiene la información de usuario
-        var userResponse = await Data.Users.Read(user, context, false);
+        var userResponse = await Profiles.Read(user, context, false);
 
         // Evalúa la respuesta
         if (userResponse.Response != Responses.Success)
@@ -118,7 +122,7 @@ public class SecurityController : Controller
         modelo.Account = link.Model.User;
 
         // Respuesta
-        var updateResponse = await Data.Users.UpdatePassword(modelo);
+        var updateResponse = await Profiles.UpdatePassword(modelo);
 
         if (updateResponse.Response != Responses.Success)
             return new();
@@ -216,7 +220,7 @@ public class SecurityController : Controller
     {
 
         // Obtener el usuario
-        var userData = await Data.Users.Read(model.UserID);
+        var userData = await Profiles.Read(model.UserID);
 
         // Evaluación de la respuesta
         if (userData.Response != Responses.Success)
@@ -356,7 +360,7 @@ public class SecurityController : Controller
         try
         {
 
-          var add = await  Data.MailLinks.Create(emailLink);
+            var add = await Data.MailLinks.Create(emailLink);
 
 
             if (add.Response != Responses.Success)
@@ -364,7 +368,7 @@ public class SecurityController : Controller
                 return new();
             }
 
-            var user = (await Data.Users.Read(userID)).Model;
+            var user = (await Profiles.Read(userID)).Model;
 
             byte[] bytes = Encoding.UTF8.GetBytes(mailData.Email);
             string mail64 = Convert.ToBase64String(bytes);

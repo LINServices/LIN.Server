@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace LIN.Server.Services;
+namespace LIN.Inventory.Services;
 
 
 public class Jwt

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Mail;
 
-namespace LIN.Server.Services;
+namespace LIN.Inventory.Services;
 
 public class EmailWorker
 {
@@ -112,7 +112,7 @@ public class EmailWorker
             smtpClient.Send(correo);
             return true;
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             ServerLogger.LogError(ex.Message);
         }

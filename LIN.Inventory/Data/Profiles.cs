@@ -1,7 +1,7 @@
 ﻿namespace LIN.Server.Data;
 
 
-public static class Users
+public static class Profiles
 {
 
 

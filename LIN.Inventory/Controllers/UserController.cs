@@ -1,4 +1,8 @@
-namespace LIN.Server.Controllers;
+using LIN.Inventory;
+using LIN.Inventory.Data;
+using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Controllers;
 
 
 [Route("user")]
@@ -18,7 +22,7 @@ public class UserController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene el usuario
-        var response = await Data.Users.Read(id);
+        var response = await Profiles.Read(id);
 
         // Si es erróneo
         if (response.Response != Responses.Success)
@@ -50,7 +54,7 @@ public class UserController : ControllerBase
 
 
         // Obtiene el usuario
-        var response = await Data.Users.Read(user, true);
+        var response = await Profiles.Read(user, true);
 
         if (response.Response != Responses.Success)
             return new(response.Response);
@@ -94,7 +98,7 @@ public class UserController : ControllerBase
 
 
         // Obtiene el usuario
-        var response = await Data.Users.Read(user, true);
+        var response = await Profiles.Read(user, true);
 
         if (response.Response != Responses.Success)
             return new(response.Response);
@@ -128,7 +132,7 @@ public class UserController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene el usuario
-        var response = await Data.Users.Read(user);
+        var response = await Profiles.Read(user);
 
         // Si es erróneo
         if (response.Response != Responses.Success)
@@ -160,7 +164,7 @@ public class UserController : ControllerBase
 
 
         // Obtiene el usuario
-        var response = await Data.Users.SearchByPattern(pattern, id);
+        var response = await Profiles.SearchByPattern(pattern, id);
 
         return response;
     }
@@ -179,20 +183,20 @@ public class UserController : ControllerBase
         var (isValid, _, id) = Jwt.Validate(token);
 
 
-        if(!isValid)
+        if (!isValid)
         {
             return new(Responses.Unauthorized);
         }
 
 
-        var rol = (await Data.Users.Read(id)).Model.Rol;
+        var rol = (await Profiles.Read(id)).Model.Rol;
 
 
         if (rol != UserRol.Admin)
             return new(Responses.InvalidParam);
 
         // Obtiene el usuario
-        var response = await Data.Users.GetAll(pattern);
+        var response = await Profiles.GetAll(pattern);
 
         return response;
 

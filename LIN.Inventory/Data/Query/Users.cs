@@ -1,4 +1,4 @@
-﻿namespace LIN.Server.Data.Query;
+﻿namespace LIN.Inventory.Data.Query;
 
 
 public class Users

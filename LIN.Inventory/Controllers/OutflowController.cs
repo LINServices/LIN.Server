@@ -1,4 +1,6 @@
-namespace LIN.Server.Controllers;
+using LIN.Inventory.Data;
+
+namespace LIN.Inventory.Controllers;
 
 
 [Route("outflow")]
@@ -18,7 +20,7 @@ public class OutflowController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Crea la nueva entrada
-        var response = await Data.Outflows.Create(modelo);
+        var response = await Outflows.Create(modelo);
 
         return response;
 
@@ -40,7 +42,7 @@ public class OutflowController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene el usuario
-        var result = await Data.Outflows.Read(id, mascara);
+        var result = await Outflows.Read(id, mascara);
 
         // Retorna el resultado
         return result ?? new();
@@ -62,7 +64,7 @@ public class OutflowController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene el usuario
-        var result = await Data.Outflows.ReadAll(id);
+        var result = await Outflows.ReadAll(id);
 
         // Retorna el resultado
         return result ?? new();
@@ -92,9 +94,9 @@ public class OutflowController : ControllerBase
         var context = Conexión.GetOneConnection();
 
         // Obtiene el usuario
-        var resultTask = Data.Outflows.Informe(month, year, id, context.context);
-        var userTask = Data.Users.Read(contextUser);
-        var inventoryTask = Data.Inventories.Read(id);
+        var resultTask = Outflows.Informe(month, year, id, context.context);
+        var userTask = Profiles.Read(contextUser);
+        var inventoryTask = Inventories.Read(id);
 
 
         var result = await resultTask;
@@ -120,17 +122,17 @@ public class OutflowController : ControllerBase
 
                 case OutflowsTypes.Consumo:
                     tipo = "Consumo Interno";
-                    ganancia = (Pricing.ToNegative(row.PrecioCompra) * row.Cantidad);
+                    ganancia = Pricing.ToNegative(row.PrecioCompra) * row.Cantidad;
                     break;
 
                 case OutflowsTypes.Perdida:
                     tipo = "Perdida";
-                    ganancia = (Pricing.ToNegative(row.PrecioCompra) * row.Cantidad);
+                    ganancia = Pricing.ToNegative(row.PrecioCompra) * row.Cantidad;
                     break;
 
                 case OutflowsTypes.Caducidad:
                     tipo = "Caducidad";
-                    ganancia = (Pricing.ToNegative(row.PrecioCompra) * row.Cantidad);
+                    ganancia = Pricing.ToNegative(row.PrecioCompra) * row.Cantidad;
                     break;
 
                 case OutflowsTypes.Venta:
@@ -140,12 +142,12 @@ public class OutflowController : ControllerBase
 
                 case OutflowsTypes.Fraude:
                     tipo = "Fraude";
-                    ganancia = (Pricing.ToNegative(row.PrecioCompra) * row.Cantidad);
+                    ganancia = Pricing.ToNegative(row.PrecioCompra) * row.Cantidad;
                     break;
 
                 case OutflowsTypes.Donacion:
                     tipo = "Donación";
-                    ganancia = (Pricing.ToNegative(row.PrecioCompra) * row.Cantidad);
+                    ganancia = Pricing.ToNegative(row.PrecioCompra) * row.Cantidad;
                     break;
 
                 default:

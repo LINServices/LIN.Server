@@ -1,4 +1,6 @@
-﻿namespace LIN.Server.Data;
+﻿using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Data;
 
 
 public class InventoryAccess

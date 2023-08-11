@@ -1,4 +1,4 @@
-﻿namespace LIN.Server.Services;
+﻿namespace LIN.Inventory.Services;
 
 
 public class Configuration

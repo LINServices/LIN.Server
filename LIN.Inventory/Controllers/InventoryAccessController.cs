@@ -1,4 +1,7 @@
-﻿namespace LIN.Server.Controllers;
+﻿using LIN.Inventory.Data;
+using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Controllers;
 
 
 [Route("Inventory/access")]
@@ -18,7 +21,7 @@ public class InventoryAccessController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene la lista de ID's de inventarios
-        var result = await Data.InventoryAccess.ReadAll(id);
+        var result = await InventoryAccess.ReadAll(id);
 
         // Retorna el resultado
         return result;
@@ -41,7 +44,7 @@ public class InventoryAccessController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene la lista de ID's de inventarios
-        var result = await Data.InventoryAccess.UpdateState(id, estado);
+        var result = await InventoryAccess.UpdateState(id, estado);
 
         // Retorna el resultado
         return result;
@@ -63,7 +66,7 @@ public class InventoryAccessController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene la lista de ID's de inventarios
-        var result = await Data.InventoryAccess.ReadIntegrants(inventario);
+        var result = await InventoryAccess.ReadIntegrants(inventario);
 
         return result;
 
@@ -86,7 +89,7 @@ public class InventoryAccessController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene la lista de ID's de inventarios
-        var result = await Data.InventoryAccess.DeleteSomeOne(inventario, usuario, me);
+        var result = await InventoryAccess.DeleteSomeOne(inventario, usuario, me);
 
         return result;
 
@@ -115,7 +118,7 @@ public class InventoryAccessController : ControllerBase
 
 
         // Obtiene la lista de ID's de inventarios
-        var result = await Data.InventoryAccess.GenerateInvitation(modelo);
+        var result = await InventoryAccess.GenerateInvitation(modelo);
 
         // Retorna el resultado
         return result;

@@ -1,4 +1,7 @@
-namespace LIN.Server.Controllers;
+using LIN.Inventory;
+using LIN.Inventory.Data;
+
+namespace LIN.Inventory.Controllers;
 
 
 [Route("inflow")]
@@ -19,7 +22,7 @@ public class InflowController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Crea la nueva entrada
-        var response = await Data.Inflows.Create(modelo);
+        var response = await Inflows.Create(modelo);
 
         return response;
 
@@ -41,7 +44,7 @@ public class InflowController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene el usuario
-        var result = await Data.Inflows.Read(id, mascara);
+        var result = await Inflows.Read(id, mascara);
 
         // Retorna el resultado
         return result ?? new();
@@ -62,7 +65,7 @@ public class InflowController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene el usuario
-        var result = await Data.Inflows.ReadAll(id);
+        var result = await Inflows.ReadAll(id);
 
         // Retorna el resultado
         return result ?? new();
@@ -88,12 +91,12 @@ public class InflowController : ControllerBase
         var context = Conexión.GetOneConnection();
 
         // Obtiene el usuario
-        var resultTask = Data.Inflows.Informe(month, year, id, context.context);
-        var userTask = Data.Users.Read(contextUser);
-        var inventoryTask = Data.Inventories.Read(id);
+        var resultTask = Inflows.Informe(month, year, id, context.context);
+        var userTask = Profiles.Read(contextUser);
+        var inventoryTask = Inventories.Read(id);
 
 
-        var result = await resultTask; 
+        var result = await resultTask;
         var user = await userTask;
         var inventory = await inventoryTask;
 
@@ -119,7 +122,7 @@ public class InflowController : ControllerBase
                 case InflowsTypes.Compra:
                     tipo = "Compra";
                     inversion += row.PrecioCompra * row.Cantidad;
-                    posibleGanancias += ((row.PrecioVenta - row.PrecioCompra) * row.Cantidad);
+                    posibleGanancias += (row.PrecioVenta - row.PrecioCompra) * row.Cantidad;
                     break;
 
                 case InflowsTypes.Devolucion:
@@ -149,7 +152,7 @@ public class InflowController : ControllerBase
             html = html.Replace("@Inversion", $"{inversion}");
             html = html.Replace("@Ganancia", $"{posibleGanancias}");
 
-           
+
             rows += html;
         }
 

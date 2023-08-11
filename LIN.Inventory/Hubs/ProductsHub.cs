@@ -1,4 +1,6 @@
-﻿namespace LIN.Server.Hubs;
+﻿using LIN.Inventory.Data;
+
+namespace LIN.Inventory.Hubs;
 
 
 public class ProductsHub : Hub
@@ -32,7 +34,7 @@ public class ProductsHub : Hub
     {
 
         // Busca el nuevo modelo
-        var modelo = await Data.Products.Read(productID);
+        var modelo = await Products.Read(productID);
 
         if (modelo.Response != Responses.Success)
             return;

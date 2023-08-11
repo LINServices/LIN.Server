@@ -1,6 +1,7 @@
-﻿using LIN.Server.Data;
+﻿using LIN.Inventory.Data;
+using LIN.Inventory.Services;
 
-namespace LIN.Server;
+namespace LIN.Inventory;
 
 
 /// <summary>
@@ -87,7 +88,7 @@ public sealed class Conexión
 
 
 
-    
+
 
 
     /// <summary>
@@ -108,17 +109,17 @@ public sealed class Conexión
         DbContextOptionsBuilder<Context> optionsBuilder = new();
         optionsBuilder.UseSqlServer(_connection);
 
-        DataBase = new Data.Context(optionsBuilder.Options);
+        DataBase = new Context(optionsBuilder.Options);
 
         _counter++;
-        this.ConnectionNumber = _counter;
+        ConnectionNumber = _counter;
 
         ConnectionLogger = new ConnectionLogger()
         {
             Number = ConnectionNumber,
         };
 
-        Services.ServerLogger.LogConnection(ConnectionLogger);
+        ServerLogger.LogConnection(ConnectionLogger);
 
         if (CacheConnections.Count <= _cantidad)
             CacheConnections.Add(this);

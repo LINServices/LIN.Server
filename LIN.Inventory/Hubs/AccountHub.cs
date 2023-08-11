@@ -1,4 +1,7 @@
-﻿namespace LIN.Server.Hubs;
+﻿using LIN.Inventory.Data;
+using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Hubs;
 
 
 public class AccountHub : Hub
@@ -161,7 +164,7 @@ public class AccountHub : Hub
     {
 
         // Busca el nuevo modelo
-        var modelo = await Data.Contacts.Read(contactID);
+        var modelo = await Contacts.Read(contactID);
         if (modelo.Response != Responses.Success)
             return;
 

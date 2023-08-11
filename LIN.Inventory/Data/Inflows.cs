@@ -1,4 +1,7 @@
-﻿namespace LIN.Server.Data;
+﻿using LIN.Inventory;
+using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Data;
 
 public class Inflows
 {
@@ -145,7 +148,7 @@ public class Inflows
     public async static Task<ReadOneResponse<InflowDataModel>> Read(int id, bool mask, Conexión context)
     {
 
-        System.Diagnostics.Stopwatch reloj = new();
+        Stopwatch reloj = new();
         reloj.Start();
 
         // Ejecución
@@ -309,7 +312,7 @@ public class Inflows
     public async static Task<ReadOneResponse<int>> ComprasOf(int id, int days, Conexión context)
     {
 
-        System.Diagnostics.Stopwatch reloj = new();
+        Stopwatch reloj = new();
         reloj.Start();
 
 

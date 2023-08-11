@@ -1,4 +1,4 @@
-﻿namespace LIN.Server.Services;
+﻿namespace LIN.Inventory.Services;
 
 
 public static class ServerLogger
@@ -15,7 +15,7 @@ public static class ServerLogger
     /// <summary>
     /// Lista de conexiones abiertas
     /// </summary>
-    public readonly static List<ConnectionLogger> OpenConnections = new ();
+    public readonly static List<ConnectionLogger> OpenConnections = new();
 
 
 
@@ -56,7 +56,7 @@ public class ConnectionLogger
 
     public ConnectionLogger(int number = -1)
     {
-        this.Number = number;
+        Number = number;
     }
 
 

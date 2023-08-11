@@ -1,4 +1,4 @@
-﻿namespace LIN.Server.Services;
+﻿namespace LIN.Inventory.Services;
 
 
 public static class Developers
@@ -41,7 +41,7 @@ public static class Developers
         {
 
             HttpResponseMessage response = await httpClient.SendAsync(request);
-            
+
             // Leer la respuesta como una cadena
             string responseBody = await response.Content.ReadAsStringAsync();
 

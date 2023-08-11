@@ -1,4 +1,7 @@
-namespace LIN.Server.Controllers;
+using LIN.Inventory.Hubs;
+using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Controllers;
 
 
 [Route("Intents")]
@@ -15,7 +18,7 @@ public class IntentsController : ControllerBase
     {
         try
         {
-           
+
 
             // Cuenta
             var account = (from A in PassKeyHub.PassKeyIntents
@@ -27,9 +30,9 @@ public class IntentsController : ControllerBase
 
             // Intentos
             var intentos = (from I in account
-                           where I.Status == PassKeyStatus.Undefined
-                           where I.Expiracion > timeNow
-                           select I).ToList();
+                            where I.Status == PassKeyStatus.Undefined
+                            where I.Expiracion > timeNow
+                            select I).ToList();
 
             // Retorna
             return new(Responses.Success, intentos);

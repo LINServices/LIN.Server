@@ -1,4 +1,4 @@
-﻿namespace LIN.Server.Data;
+﻿namespace LIN.Inventory.Data;
 
 
 public class ProductTemplate

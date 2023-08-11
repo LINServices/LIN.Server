@@ -1,4 +1,6 @@
-﻿namespace LIN.Server.Hubs;
+﻿using LIN.Inventory.Services;
+
+namespace LIN.Inventory.Hubs;
 
 
 public class PassKeyHub : Hub

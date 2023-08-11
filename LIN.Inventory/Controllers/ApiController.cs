@@ -1,6 +1,7 @@
+using LIN.Inventory.Services;
 using System.Reflection;
 
-namespace LIN.Server.Controllers;
+namespace LIN.Inventory.Controllers;
 
 
 [Route("/")]

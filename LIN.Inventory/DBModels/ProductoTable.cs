@@ -1,10 +1,10 @@
-﻿namespace LIN.Server.DBModels;
+﻿namespace LIN.Inventory.DBModels;
 
 
 public class ProductoTable
 {
     public int ID { get; set; } = 0;
-  
+
     public ProductBaseStatements Estado { get; set; }
 
     [Column("PROVEEDOR_FK")]
