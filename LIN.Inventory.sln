@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Http", "..\..\Tipos\Http\Ht
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIN.Types.Inventory", "..\..\Tipos\LIN.Types.Inventory\LIN.Types.Inventory.csproj", "{0A440E59-7531-4C6B-B199-8928EB796894}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Types.Auth", "..\..\Tipos\LIN.Types.Auth\LIN.Types.Auth.csproj", "{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Azure|Any CPU = Azure|Any CPU
@@ -87,6 +89,22 @@ Global
 		{0A440E59-7531-4C6B-B199-8928EB796894}.SOMEE|Any CPU.Build.0 = Debug|Any CPU
 		{0A440E59-7531-4C6B-B199-8928EB796894}.SOMEE|x64.ActiveCfg = Debug|Any CPU
 		{0A440E59-7531-4C6B-B199-8928EB796894}.SOMEE|x64.Build.0 = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Azure|Any CPU.Build.0 = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Azure|x64.ActiveCfg = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Azure|x64.Build.0 = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Debug|x64.Build.0 = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Release|x64.ActiveCfg = Release|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.Release|x64.Build.0 = Release|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.SOMEE|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.SOMEE|Any CPU.Build.0 = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.SOMEE|x64.ActiveCfg = Debug|Any CPU
+		{ECCCAFEF-CF16-411F-BBB5-FCD62A1DC5A0}.SOMEE|x64.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
