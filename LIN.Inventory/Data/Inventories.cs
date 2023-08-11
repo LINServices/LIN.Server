@@ -1,6 +1,4 @@
-﻿using LIN.Inventory.Services;
-
-namespace LIN.Inventory.Data;
+﻿namespace LIN.Inventory.Data;
 
 
 public class Inventories
@@ -186,7 +184,7 @@ public class Inventories
         {
 
             var res = from AI in context.DataBase.AccesoInventarios
-                      where AI.Usuario == id && AI.State == InventoryAccessState.Accepted
+                      where AI.ProfileID == id && AI.State == InventoryAccessState.Accepted
                       join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
                       select new InventoryDataModel()
                       {
@@ -237,7 +235,7 @@ public class Inventories
 
             // Selecciona la entrada
             var query = from AI in context.DataBase.AccesoInventarios
-                        where AI.Usuario == id && AI.State == InventoryAccessState.Accepted && AI.Rol == InventoryRols.Administrator
+                        where AI.ProfileID == id && AI.State == InventoryAccessState.Accepted && AI.Rol == InventoryRoles.Administrator
                         join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
                         join P in context.DataBase.Productos on I.ID equals P.Inventory
                         join PD in context.DataBase.ProductoDetalles on P.ID equals PD.ProductoFK
