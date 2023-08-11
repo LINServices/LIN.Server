@@ -1,7 +1,5 @@
-﻿using LIN.Inventory;
-using LIN.Inventory.Services;
+﻿namespace LIN.Inventory.Data;
 
-namespace LIN.Inventory.Data;
 
 public class Inflows
 {
@@ -221,7 +219,7 @@ public class Inflows
                           ID = E.ID,
                           Date = E.Date,
                           Inventario = E.Inventario,
-                          Usuario = E.Usuario,
+                          ProfileID = E.ProfileID,
                           Type = E.Type,
                           CountDetails = context.DataBase.DetallesEntradas.Count(t => t.Movimiento == E.ID)
                       };
@@ -325,10 +323,10 @@ public class Inflows
 
             // Selecciona la entrada
             var query = from AI in context.DataBase.AccesoInventarios
-                        where AI.Usuario == id && AI.State == InventoryAccessState.Accepted
+                        where AI.ProfileID == id && AI.State == InventoryAccessState.Accepted
                         join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
                         join E in context.DataBase.Entradas on I.ID equals E.Inventario
-                        where E.Usuario == id && E.Type == InflowsTypes.Compra && E.Date >= lastDate
+                        where E.ProfileID == id && E.Type == InflowsTypes.Compra && E.Date >= lastDate
                         join SD in context.DataBase.DetallesSalidas on E.ID equals SD.Movimiento
                         select SD;
 
