@@ -88,7 +88,7 @@ public class InventoryController : ControllerBase
         var (isValid, _, userId) = Jwt.Validate(token);
 
         if (!isValid)
-            return new(Responses.DontHavePermissions);
+            return new(Responses.Unauthorized);
 
 
 

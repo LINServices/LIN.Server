@@ -4,11 +4,11 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 
-./LIN.Server/appsettings.json
-LIN.Server/appsettings.json
+./LIN.Inventory/appsettings.json
+LIN.Inventory/appsettings.json
 
-./LIN.Server/appsettings.Development.json
-LIN.Server/appsettings.Development.json
+./LIN.Inventory/appsettings.Development.json
+LIN.Inventory/appsettings.Development.json
 
 # User-specific files
 *.rsuser

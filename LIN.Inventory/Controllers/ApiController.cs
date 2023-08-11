@@ -52,7 +52,7 @@ public class APIVersion : ControllerBase
     {
         return StatusCode(200, new
         {
-            Status = "Runnig"
+            Status = "Open"
         });
     }
 

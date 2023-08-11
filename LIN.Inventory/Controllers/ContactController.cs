@@ -112,7 +112,7 @@ public class ContactController : ControllerBase
         var (isValid, _, id) = Jwt.Validate(token);
 
         if (!isValid)
-            return new(Responses.DontHavePermissions);
+            return new(Responses.Unauthorized);
 
 
         // Obtiene el usuario
