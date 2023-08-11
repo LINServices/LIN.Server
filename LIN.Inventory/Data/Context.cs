@@ -12,27 +12,6 @@ public class Context : DbContext
     public DbSet<ProfileModel> Profiles { get; set; }
 
 
-    /// <summary>
-    /// Tabla de Links
-    /// </summary>
-    public DbSet<ChangeLink> Links { get; set; }
-
-
-
-
-    /// <summary>
-    /// Tabla de Links
-    /// </summary>
-    public DbSet<EmailLink> EmailLinks { get; set; }
-
-
-
-    /// <summary>
-    /// Logins
-    /// </summary>
-    public DbSet<UserAccessLogDataModel> Logins { get; set; }
-
-
 
     /// <summary>
     /// Contactos
@@ -97,15 +76,6 @@ public class Context : DbContext
 
 
 
-
-    /// <summary>
-    /// Plantillas de productos
-    /// </summary>
-    public DbSet<EmailDataModel> Emails { get; set; }
-
-
-
-
     /// <summary>
     /// Acceso a los Inventarios
     /// </summary>
@@ -125,25 +95,11 @@ public class Context : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
-        // Indices y indentidad
-        modelBuilder.Entity<UserDataModel>()
-           .HasIndex(e => e.Usuario)
+        // Indices y identidad
+        modelBuilder.Entity<ProfileModel>()
+           .HasIndex(e => e.AccountID)
            .IsUnique();
 
-        // Indices y indentidad
-        modelBuilder.Entity<ChangeLink>()
-           .HasIndex(e => e.Key)
-           .IsUnique();
-
-        // Indices y indentidad
-        modelBuilder.Entity<EmailDataModel>()
-           .HasIndex(e => e.Email)
-           .IsUnique();
-
-        // Indices y indentidad
-        modelBuilder.Entity<EmailLink>()
-           .HasIndex(e => e.Key)
-           .IsUnique();
 
         modelBuilder.Entity<ContactDataModel>().HasIndex(e => e.ID);
         modelBuilder.Entity<InventoryDataModel>().HasIndex(e => e.ID);
@@ -152,15 +108,13 @@ public class Context : DbContext
         modelBuilder.Entity<ProductTemplateTable>().HasIndex(e => e.ID);
 
         // Nombre de la tablas
-        modelBuilder.Entity<UserDataModel>().ToTable("USUARIOS");
-        modelBuilder.Entity<EmailDataModel>().ToTable("EMAILS");
+        modelBuilder.Entity<ProfileModel>().ToTable("PROFILES");
         modelBuilder.Entity<ContactDataModel>().ToTable("CONTACTOS");
         modelBuilder.Entity<InventoryDataModel>().ToTable("INVENTARIOS");
         modelBuilder.Entity<InventoryAcessDataModel>().ToTable("ACCESOS_INVENTARIO");
         modelBuilder.Entity<ProductoTable>().ToTable("PRODUCTOS");
         modelBuilder.Entity<ProductoDetailTable>().ToTable("PRODUCTOS_DETALLES");
         modelBuilder.Entity<ProductTemplateTable>().ToTable("PLANTILLA_PRODUCTOS");
-        modelBuilder.Entity<UserAccessLogDataModel>().ToTable("LOGINS");
         modelBuilder.Entity<InflowDataModel>().ToTable("ENTRADAS");
         modelBuilder.Entity<InflowDetailsDataModel>().ToTable("ENTRADA_DETALLES");
         modelBuilder.Entity<OutflowDataModel>().ToTable("SALIDAS");
