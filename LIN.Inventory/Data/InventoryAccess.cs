@@ -1,6 +1,4 @@
-﻿using LIN.Inventory.Services;
-
-namespace LIN.Inventory.Data;
+﻿namespace LIN.Inventory.Data;
 
 
 public class InventoryAccess
@@ -50,7 +48,7 @@ public class InventoryAccess
     /// </summary>
     /// <param name="id">ID de la invitación</param>
     /// <param name="rol">Nuevo rol</param>
-    public async static Task<ResponseBase> UpdateRol(int id, int adminID, InventoryRols rol)
+    public async static Task<ResponseBase> UpdateRol(int id, int adminID, InventoryRoles rol)
     {
 
         // Obtiene la conexión
@@ -130,7 +128,7 @@ public class InventoryAccess
 
             // Consulta
             var res = from AI in context.DataBase.AccesoInventarios
-                      where AI.Usuario == id && AI.State == InventoryAccessState.OnWait
+                      where AI.ProfileID == id && AI.State == InventoryAccessState.OnWait
                       join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
                       join U in context.DataBase.Profiles on I.Creador equals U.ID
                       select new Notificacion()
@@ -138,7 +136,7 @@ public class InventoryAccess
                           ID = AI.ID,
                           Fecha = AI.Fecha,
                           Inventario = I.Nombre,
-                          UsuarioInvitador = U.Usuario,
+                          //UsuarioInvitador = U.ID,
                           InventarioID = I.ID
                       };
 
@@ -210,14 +208,14 @@ public class InventoryAccess
             // Consulta
             var res = from AI in context.DataBase.AccesoInventarios
                       where AI.Inventario == inventario && AI.State == InventoryAccessState.Accepted
-                      join U in context.DataBase.Profiles on AI.Usuario equals U.ID
+                      join U in context.DataBase.Profiles on AI.ProfileID equals U.ID
                       select new IntegrantDataModel
                       {
                           ID = U.ID,
                           InventoryAccessID = AI.ID,
-                          Nombre = U.Nombre,
-                          Perfil = U.Perfil,
-                          Usuario = U.Usuario,
+                          //Nombre = U.Nombre,
+                          //Perfil = U.Perfil,
+                          //Usuario = U.Usuario,
                           Rol = AI.Rol,
                           AccessID = AI.ID
                       };
@@ -255,7 +253,7 @@ public class InventoryAccess
 
             // Obtiene cual es el rol del usuario que inicio la operación
             var meRol = (from AI in context.DataBase.AccesoInventarios
-                         where AI.Usuario == me && AI.Inventario == inventario
+                         where AI.ProfileID == me && AI.Inventario == inventario
                          select new
                          {
                              AI.Rol
@@ -269,15 +267,15 @@ public class InventoryAccess
 
 
             // Si no tiene permisos
-            if (meRol.Rol != InventoryRols.Administrator)
+            if (meRol.Rol != InventoryRoles.Administrator)
             {
-                return new(Responses.DontHavePermissions);
+                return new(Responses.Unauthorized);
             }
 
 
             // Obtiene el ID del acceso inventario, al cual intentan eliminar
             var userID = (from AI in context.DataBase.AccesoInventarios
-                          where AI.Usuario == usuario && AI.Inventario == inventario && AI.State != InventoryAccessState.Deleted
+                          where AI.ProfileID == usuario && AI.Inventario == inventario && AI.State != InventoryAccessState.Deleted
                           select AI.ID).FirstOrDefault();
 
             // Evalúa
@@ -294,7 +292,7 @@ public class InventoryAccess
                 return new(Responses.Undefined);
 
             // Cambia el rol
-            user.Rol = InventoryRols.Banned;
+            user.Rol = InventoryRoles.Banned;
             user.State = InventoryAccessState.Deleted;
 
 
@@ -346,7 +344,7 @@ public class InventoryAccess
                 Parallel.ForEach(inventario.UsersAccess, options, (@new, token) =>
                 {
                     // Si ya existe un usuario con este (Username)
-                    var have = actualIntegrants.Where(T => T.Usuario == @new.Usuario).Any();
+                    var have = actualIntegrants.Where(T => T.ProfileID == @new.ProfileID).Any();
 
                     if (have)
                         return;
@@ -359,7 +357,7 @@ public class InventoryAccess
                         ID = 0,
                         Inventario = inventario.ID,
                         Rol = @new.Rol,
-                        Usuario = @new.Usuario
+                        ProfileID = @new.ProfileID
                     };
                     context.DataBase.Add(acceso);
 
@@ -391,7 +389,7 @@ public class InventoryAccess
     /// <param name="id">ID de la invitación</param>
     /// <param name="rol">Nuevo rol</param>
     /// <param name="context">Contexto de conexión</param>
-    public async static Task<ResponseBase> UpdateRol(int id, int adminID, InventoryRols rol, Conexión context)
+    public async static Task<ResponseBase> UpdateRol(int id, int adminID, InventoryRoles rol, Conexión context)
     {
 
         // Ejecución
@@ -405,13 +403,13 @@ public class InventoryAccess
 
                 var acceso = await (from AI in context.DataBase.AccesoInventarios
                                     where AI.Inventario == model.Inventario
-                                    where AI.Usuario == adminID
+                                    where AI.ProfileID == adminID
                                     where AI.State == InventoryAccessState.Accepted
                                     select AI).FirstOrDefaultAsync();
 
-                if (acceso == null || acceso.Rol != InventoryRols.Administrator)
+                if (acceso == null || acceso.Rol != InventoryRoles.Administrator)
                 {
-                    return new(Responses.DontHavePermissions);
+                    return new(Responses.Unauthorized);
                 }
 
                 model.Rol = rol;
