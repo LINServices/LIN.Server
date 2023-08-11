@@ -209,7 +209,7 @@ public class Contacts
         try
         {
             var res = await context.DataBase.Contactos
-                .Where(T => T.UserID == id && T.State != ContactStatus.Deleted).ToListAsync();
+                .Where(T => T.ProfileID == id && T.State != ContactStatus.Deleted).ToListAsync();
 
             // Si no existe el modelo
             res ??= new();
@@ -313,7 +313,7 @@ public class Contacts
         {
 
             var count = await (from C in context.DataBase.Contactos
-                               where C.UserID == account
+                               where C.ProfileID == account
                                where C.State == ContactStatus.Normal
                                select C).CountAsync();
 

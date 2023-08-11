@@ -1,6 +1,4 @@
-﻿using LIN.Inventory.DBModels;
-
-namespace LIN.Inventory.Data;
+﻿namespace LIN.Inventory.Data;
 
 
 public class Context : DbContext
