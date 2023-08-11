@@ -1,6 +1,4 @@
-﻿using LIN.Inventory.Services;
-
-namespace LIN.Inventory.Data;
+﻿namespace LIN.Inventory.Data;
 
 
 public static class Products

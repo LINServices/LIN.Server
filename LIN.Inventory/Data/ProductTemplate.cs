@@ -73,7 +73,7 @@ public class ProductTemplate
     /// </summary>
     /// <param name="data">Modelo del producto</param>
     /// <param name="context">Contexto de conexión</param>
-    public async static Task<CreateResponse> Create(DBModels.ProductTemplateTable data, Conexión context)
+    public async static Task<CreateResponse> Create(ProductTemplateTable data, Conexión context)
     {
         data.ID = 0;
         try
