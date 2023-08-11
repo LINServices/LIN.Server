@@ -13,7 +13,7 @@ public class Users
     public static IQueryable<UserDataModel> Read(int id, Conexión context)
     {
         // Consulta
-        var query = (from U in context.DataBase.Usuarios
+        var query = (from U in context.DataBase.Profiles
                      where U.ID == id
                      select U).Take(1);
 
@@ -31,7 +31,7 @@ public class Users
     public static IQueryable<UserDataModel> Read(string usuario, Conexión context)
     {
         // Consulta
-        var query = (from U in context.DataBase.Usuarios
+        var query = (from U in context.DataBase.Profiles
                      where U.Usuario == usuario
                      select U).Take(1);
 

@@ -130,7 +130,7 @@ public class InventoryAccess
             var res = from AI in context.DataBase.AccesoInventarios
                       where AI.Usuario == id && AI.State == InventoryAccessState.OnWait
                       join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
-                      join U in context.DataBase.Usuarios on I.Creador equals U.ID
+                      join U in context.DataBase.Profiles on I.Creador equals U.ID
                       select new Notificacion()
                       {
                           ID = AI.ID,
@@ -208,7 +208,7 @@ public class InventoryAccess
             // Consulta
             var res = from AI in context.DataBase.AccesoInventarios
                       where AI.Inventario == inventario && AI.State == InventoryAccessState.Accepted
-                      join U in context.DataBase.Usuarios on AI.Usuario equals U.ID
+                      join U in context.DataBase.Profiles on AI.Usuario equals U.ID
                       select new IntegrantDataModel
                       {
                           ID = U.ID,

@@ -1,6 +1,4 @@
-﻿using LIN.Server.DBModels;
-
-namespace LIN.Server.Data;
+﻿namespace LIN.Server.Data;
 
 
 public class Context : DbContext
@@ -11,7 +9,7 @@ public class Context : DbContext
     /// <summary>
     /// Tabla de usuarios
     /// </summary>
-    public DbSet<UserDataModel> Usuarios { get; set; }
+    public DbSet<ProfileModel> Profiles { get; set; }
 
 
     /// <summary>

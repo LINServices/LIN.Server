@@ -202,7 +202,7 @@ public static class Users
         try
         {
 
-            var res = await context.DataBase.Usuarios.AddAsync(data);
+            var res = await context.DataBase.Profiles.AddAsync(data);
             context.DataBase.SaveChanges();
 
             return new(Responses.Success, data);
@@ -235,7 +235,7 @@ public static class Users
         {
             try
             {
-                context.DataBase.Usuarios.Add(data);
+                context.DataBase.Profiles.Add(data);
                 context.DataBase.SaveChanges();
 
                 // Creación del modelo Contacto
@@ -377,7 +377,7 @@ public static class Users
         // Ejecución
         try
         {
-            var res = await context.DataBase.Usuarios
+            var res = await context.DataBase.Profiles
                 .Where(T => T.Usuario.ToLower().Contains(pattern.ToLower()) && T.ID != id && T.Visibilidad != UserVisibility.Unvisible)
                 .Take(10)
                 .Select(u => new UserDataModel()
@@ -417,7 +417,7 @@ public static class Users
         // Ejecución
         try
         {
-            var res = await context.DataBase.Usuarios
+            var res = await context.DataBase.Profiles
                 .Where(T => T.Usuario.ToLower().Contains(pattern.ToLower()))
                 .Take(5)
                 .ToListAsync();
@@ -449,7 +449,7 @@ public static class Users
         // Ejecución
         try
         {
-            var user = await context.DataBase.Usuarios.FindAsync(id);
+            var user = await context.DataBase.Profiles.FindAsync(id);
 
             if (user != null)
             {
@@ -481,7 +481,7 @@ public static class Users
         // Ejecución
         try
         {
-            var user = await context.DataBase.Usuarios.FindAsync(modelo.ID);
+            var user = await context.DataBase.Profiles.FindAsync(modelo.ID);
 
             // Si el usuario no se encontró
             if (user == null || user.Estado != AccountStatus.Normal)
@@ -516,7 +516,7 @@ public static class Users
     {
 
         // Encontrar el usuario
-        var usuario = await (from U in context.DataBase.Usuarios
+        var usuario = await (from U in context.DataBase.Profiles
                              where U.ID == newData.Account
                              select U).FirstOrDefaultAsync();
 
@@ -549,7 +549,7 @@ public static class Users
     {
 
         // Encontrar el usuario
-        var usuario = await (from U in context.DataBase.Usuarios
+        var usuario = await (from U in context.DataBase.Profiles
                              where U.ID == user
                              select U).FirstOrDefaultAsync();
 
@@ -579,7 +579,7 @@ public static class Users
     {
 
         // Encontrar el usuario
-        var usuario = await (from U in context.DataBase.Usuarios
+        var usuario = await (from U in context.DataBase.Profiles
                              where U.ID == user
                              select U).FirstOrDefaultAsync();
 
