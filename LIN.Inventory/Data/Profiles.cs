@@ -44,6 +44,25 @@ public static class Profiles
     }
 
 
+
+    /// <summary>
+    /// Obtiene un perfil por medio de una cuen
+    /// </summary>
+    /// <param name="id">ID del usuario</param>
+    public async static Task<ReadOneResponse<ProfileModel>> ReadByAccount(int id)
+    {
+
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var res = await ReadByAccount(id, context);
+        context.CloseActions(connectionKey);
+        return res;
+
+    }
+
+
+
     #endregion
 
 
@@ -136,6 +155,36 @@ public static class Profiles
         {
 
             var res = await Query.Profiles.Read(id, context).FirstOrDefaultAsync();
+
+            // Si no existe el modelo
+            if (res == null)
+                return new(Responses.NotExistAccount);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+
+        return new();
+    }
+
+
+
+    /// <summary>
+    /// Obtiene un perfil
+    /// </summary>
+    /// <param name="id">ID del perfil</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async static Task<ReadOneResponse<ProfileModel>> ReadByAccount(int id, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            var res = await Query.Profiles.ReadByAccount(id, context).FirstOrDefaultAsync();
 
             // Si no existe el modelo
             if (res == null)

@@ -30,7 +30,7 @@ public class Jwt
     /// Genera un JSON Web Token
     /// </summary>
     /// <param name="user">Modelo de usuario</param>
-    internal static string Generate(UserDataModel user)
+    internal static string Generate(ProfileModel user)
     {
 
         // Configuración
@@ -43,8 +43,7 @@ public class Jwt
         var claims = new[]
         {
             new Claim(ClaimTypes.PrimarySid, user.ID.ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Usuario),
-            new Claim(ClaimTypes.Role, ((int)user.Rol).ToString())
+            new Claim(ClaimTypes.UserData, user.AccountID.ToString())
         };
 
         // Expiración del token
@@ -63,7 +62,7 @@ public class Jwt
     /// Valida un JSON Web token
     /// </summary>
     /// <param name="token">Token a validar</param>
-    internal static (bool isValid, string user, int userID) Validate(string token)
+    internal static (bool isValid, int profileID, int userID) Validate(string token)
     {
         try
         {
@@ -91,14 +90,14 @@ public class Jwt
 
 
                 // Si el token es válido, puedes acceder a los claims (datos) del usuario
-                var user = jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+                _ = int.TryParse(jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.PrimarySid)?.Value, out int id);
 
                 // 
-                _ = int.TryParse(jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.PrimarySid)?.Value, out int id);
+                _ = int.TryParse(jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.UserData)?.Value, out int account);
 
 
                 // Devuelve una respuesta exitosa
-                return (true, user ?? string.Empty, id);
+                return (true, id, account);
             }
             catch (SecurityTokenException)
             {
@@ -109,7 +108,7 @@ public class Jwt
         }
         catch { }
 
-        return (false, string.Empty, 0);
+        return (false, 0, 0);
 
     }
 
