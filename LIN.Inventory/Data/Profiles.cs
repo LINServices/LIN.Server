@@ -158,7 +158,7 @@ public static class Profiles
 
             // Si no existe el modelo
             if (res == null)
-                return new(Responses.NotExistAccount);
+                return new(Responses.NotExistProfile);
 
             return new(Responses.Success, res);
         }
@@ -188,7 +188,7 @@ public static class Profiles
 
             // Si no existe el modelo
             if (res == null)
-                return new(Responses.NotExistAccount);
+                return new(Responses.NotExistProfile);
 
             return new(Responses.Success, res);
         }
