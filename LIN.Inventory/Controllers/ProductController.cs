@@ -1,5 +1,3 @@
-using LIN.Inventory.Data;
-
 namespace LIN.Inventory.Controllers;
 
 
@@ -31,7 +29,7 @@ public class ProductController : ControllerBase
 
 
         // Producto base
-        var response = await Products.Create(modelo);
+        var response = await Data.Products.Create(modelo);
 
         return response;
 
@@ -51,7 +49,7 @@ public class ProductController : ControllerBase
         if (id <= 0)
             return new(Responses.InvalidParam);
 
-        var result = await Products.ReadAll(id);
+        var result = await Data.Products.ReadAll(id);
         return result;
 
     }
@@ -70,7 +68,7 @@ public class ProductController : ControllerBase
         if (id <= 0)
             return new(Responses.InvalidParam);
 
-        var result = await Products.Read(id);
+        var result = await Data.Products.Read(id);
         return result;
 
     }
@@ -88,7 +86,7 @@ public class ProductController : ControllerBase
         if (id <= 0)
             return new(Responses.InvalidParam);
 
-        var result = await Products.ReadByDetail(id);
+        var result = await Data.Products.ReadByDetail(id);
         return result;
 
     }
@@ -106,7 +104,7 @@ public class ProductController : ControllerBase
         if (string.IsNullOrEmpty(template))
             return new(Responses.InvalidParam);
 
-        var result = await ProductTemplate.ReadAllBy(template);
+        var result = await Data.ProductTemplate.ReadAllBy(template);
         return result;
 
     }
@@ -133,9 +131,9 @@ public class ProductController : ControllerBase
         ResponseBase response;
 
         if (isBase)
-            response = await Products.UpdateBase(modelo);
+            response = await Data.Products.UpdateBase(modelo);
         else
-            response = await Products.UpdateDetail(modelo.ProductID, new()
+            response = await Data.Products.UpdateDetail(modelo.ProductID, new()
             {
                 ID = modelo.IDDetail,
                 PrecioCompra = modelo.PrecioCompra,
@@ -164,7 +162,7 @@ public class ProductController : ControllerBase
 
 
         // Respuesta
-        ResponseBase response = await Products.Update(modelo);
+        ResponseBase response = await Data.Products.Update(modelo);
 
         return response;
 
@@ -183,7 +181,7 @@ public class ProductController : ControllerBase
         if (id < 0) return new(Responses.InvalidParam);
 
         // Respuesta
-        ResponseBase response = await Products.Delete(id);
+        ResponseBase response = await Data.Products.Delete(id);
 
         return response;
 
