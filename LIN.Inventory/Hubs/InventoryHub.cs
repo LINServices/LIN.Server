@@ -3,7 +3,7 @@
 namespace LIN.Inventory.Hubs;
 
 
-public class ProductsHub : Hub
+public class InventoryHub : Hub
 {
 
 

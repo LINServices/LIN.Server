@@ -131,9 +131,7 @@ try
     app.MapControllers();
 
     // Rutas de servicios de tiempo real
-    app.MapHub<ProductsHub>("/Realtime/productos");
-    app.MapHub<AccountHub>("/Realtime/account");
-    app.MapHub<PassKeyHub>("/Realtime/passkey");
+    app.MapHub<InventoryHub>("/Realtime/inventory");
 
     app.UseRouting();
 
