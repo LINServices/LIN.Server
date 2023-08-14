@@ -1,4 +1,3 @@
-using LIN.Inventory.Services;
 using System.Reflection;
 
 namespace LIN.Inventory.Controllers;

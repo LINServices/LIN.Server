@@ -1,6 +1,7 @@
 global using LIN.Inventory;
 global using LIN.Inventory.Controllers;
 global using LIN.Inventory.DBModels;
+global using LIN.Modules;
 global using LIN.Inventory.Hubs;
 global using LIN.Inventory.Services;
 global using LIN.Types.Enumerations;

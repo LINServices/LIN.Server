@@ -178,23 +178,23 @@ public class OutflowController : ControllerBase
         HTML = HTML.Replace("@Rows", rows);
         HTML = HTML.Replace("@Ganancia", $"{gananciaTotal}");
         HTML = HTML.Replace("@Date", $"{DateTime.Now:yyy.MM.dd}");
-        HTML = HTML.Replace("@Mes", $"{Utilities.IntToMonth(month)}");
+        //HTML = HTML.Replace("@Mes", $"{Utilities.IntToMonth(month)}");
         HTML = HTML.Replace("@Año", $"{year}");
-        HTML = HTML.Replace("@Name", $"{user.Model.Nombre}");
+        //HTML = HTML.Replace("@Name", $"{user.Model.Nombre}");
         HTML = HTML.Replace("@Direccion", $"{inventory.Model.Direccion}");
         HTML = HTML.Replace("@Inventario", $"{inventory.Model.Nombre}");
 
 
 
-        var response = await LIN.Access.Developer.Controllers.PDF.ConvertHTML(HTML);
+        //var response = await LIN.Access.Developer.Controllers.PDF.ConvertHTML(HTML);
 
 
-        if (response.File.Length <= 0)
+        //if (response.File.Length <= 0)
             return new(Responses.UnavailableService);
 
 
         // Retorna el resultado
-        return new(Responses.Success, response.File.ToList());
+        //return new(Responses.Success, response.File.ToList());
 
     }
 

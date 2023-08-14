@@ -89,7 +89,7 @@ public class InventoryHub : Hub
         if (modelo.Response != Responses.Success)
             return;
 
-        var res = modelo.Object as ReadOneResponse<LIN.Shared.Models.InflowDataModel>;
+        var res = modelo.Object as ReadOneResponse<InflowDataModel>;
 
         if (res != null)
             await Clients.Group(groupName).SendAsync("SendInflow", res.Model);
@@ -110,7 +110,7 @@ public class InventoryHub : Hub
         if (modelo.Response != Responses.Success)
             return;
 
-        var res = modelo.Object as ReadOneResponse<LIN.Shared.Models.OutflowDataModel>;
+        var res = modelo.Object as ReadOneResponse<OutflowDataModel>;
 
         if (res != null)
             await Clients.Group(groupName).SendAsync("SendOutflow", res.Model);
