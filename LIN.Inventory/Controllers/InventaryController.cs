@@ -27,9 +27,9 @@ public class InventoryController : ControllerBase
         foreach (var access in modelo.UsersAccess)
         {
             access.Fecha = DateTime.Now;
-            if (modelo.Creador == access.Usuario)
+            if (modelo.Creador == access.ProfileID)
             {
-                access.Rol = InventoryRols.Administrator;
+                access.Rol = InventoryRoles.Administrator;
                 access.State = InventoryAccessState.Accepted;
             }
             else
@@ -81,7 +81,7 @@ public class InventoryController : ControllerBase
     /// <param name="newRol">Nuevo rol</param>
     /// <param name="token">Token de acceso</param>
     [HttpPatch("update/rol")]
-    public async Task<HttpResponseBase> UpdateRol([FromHeader] int accessID, [FromHeader] InventoryRols newRol, [FromHeader] string token)
+    public async Task<HttpResponseBase> UpdateRol([FromHeader] int accessID, [FromHeader] InventoryRoles newRol, [FromHeader] string token)
     {
 
         // Comprobaciones

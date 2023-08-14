@@ -17,7 +17,7 @@ public class ContactController : ControllerBase
     {
 
         // Comprobación de campos
-        if (modelo.Name.Length <= 0 || modelo.UserID <= 0)
+        if (modelo.Name.Length <= 0 || modelo.ProfileID <= 0)
             return new(Responses.InvalidParam);
 
         string @default = "Sin definir";

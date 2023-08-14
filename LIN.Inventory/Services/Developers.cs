@@ -21,7 +21,7 @@ public static class Developers
     /// <summary>
     /// IA De nombres
     /// </summary>
-    public static async Task<ReadOneResponse<Sexos>> IAName(string name)
+    public static async Task<ReadOneResponse<Genders>> IAName(string name)
     {
 
         // Crear HttpClient
@@ -46,7 +46,7 @@ public static class Developers
             string responseBody = await response.Content.ReadAsStringAsync();
 
             // Convierte la respuesta
-            var obj = JsonConvert.DeserializeObject<ReadOneResponse<Sexos>>(responseBody);
+            var obj = JsonConvert.DeserializeObject<ReadOneResponse<Genders>>(responseBody);
 
             ServerLogger.LogError(obj?.Message ?? "NULL");
             return obj ?? new();
