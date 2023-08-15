@@ -37,6 +37,7 @@ public class ProductController : ControllerBase
 
 
 
+
     /// <summary>
     /// Obtiene todos los productos asociados a un inventario
     /// </summary>
@@ -53,6 +54,7 @@ public class ProductController : ControllerBase
         return result;
 
     }
+
 
 
 
@@ -75,6 +77,7 @@ public class ProductController : ControllerBase
 
 
 
+
     /// <summary>
     /// Obtiene un producto por medio de un detalle asociado
     /// </summary>
@@ -93,6 +96,7 @@ public class ProductController : ControllerBase
 
 
 
+
     /// <summary>
     /// Obtiene la lista de plantillas
     /// </summary>
@@ -108,6 +112,7 @@ public class ProductController : ControllerBase
         return result;
 
     }
+
 
 
 
@@ -148,6 +153,7 @@ public class ProductController : ControllerBase
 
 
 
+
     /// <summary>
     /// Actualiza la información de un producto
     /// </summary>
@@ -167,6 +173,7 @@ public class ProductController : ControllerBase
         return response;
 
     }
+
 
 
 

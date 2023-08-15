@@ -1,7 +1,3 @@
-using LIN.Inventory;
-using LIN.Inventory.Data;
-using LIN.Inventory.Services;
-
 namespace LIN.Inventory.Controllers;
 
 
@@ -40,7 +36,7 @@ public class InventoryController : ControllerBase
 
 
         // Crea el inventario
-        var response = await Inventories.Create(modelo);
+        var response = await Data.Inventories.Create(modelo);
 
         // Si no se creo el inventario
         if (response.Response != Responses.Success)
@@ -55,18 +51,20 @@ public class InventoryController : ControllerBase
 
 
     /// <summary>
-    /// Obtiene los inventarios asociados a una cuenta
+    /// Obtiene los inventarios asociados a un perfil
     /// </summary>
     /// <param name="id">ID de la cuenta</param>
     [HttpGet("read/all")]
-    public async Task<HttpReadAllResponse<InventoryDataModel>> ReadAll([FromHeader] int id)
+    public async Task<HttpReadAllResponse<InventoryDataModel>> ReadAll([FromHeader] string token)
     {
 
-        if (id <= 0)
-            return new(Responses.InvalidParam);
+        var (isValid, profileID, _) = Jwt.Validate(token);
+
+        if (isValid)
+            return new(Responses.Unauthorized);
 
         // Obtiene la lista de ID's de inventarios
-        var result = await Inventories.ReadAll(id);
+        var result = await Data.Inventories.ReadAll(profileID);
 
         return result;
 
@@ -97,7 +95,7 @@ public class InventoryController : ControllerBase
 
 
 
-        var response = await InventoryAccess.UpdateRol(accessID, userId, newRol);
+        var response = await Data. InventoryAccess.UpdateRol(accessID, userId, newRol);
 
         // Retorna
         return response;
@@ -122,11 +120,11 @@ public class InventoryController : ControllerBase
 
         var (context, contextKey) = Conexión.GetOneConnection();
 
-        var ventas30 = await Outflows.VentasOf(id, 30, context);
-        var ventas7 = await Outflows.VentasOf(id, 7, context);
+        var ventas30 = await Data.Outflows.VentasOf(id, 30, context);
+        var ventas7 = await Data.Outflows.VentasOf(id, 7, context);
 
-        var compras30 = await Inflows.ComprasOf(id, 30, context);
-        var compras7 = await Inflows.ComprasOf(id, 7, context);
+        var compras30 = await Data.Inflows.ComprasOf(id, 30, context);
+        var compras7 = await Data.Inflows.ComprasOf(id, 7, context);
 
         context.CloseActions(contextKey);
 
@@ -155,7 +153,7 @@ public class InventoryController : ControllerBase
         if (id <= 0)
             return new(Responses.InvalidParam);
 
-        return await Inventories.ValueOf(id);
+        return await Data.Inventories.ValueOf(id);
     }
 
 

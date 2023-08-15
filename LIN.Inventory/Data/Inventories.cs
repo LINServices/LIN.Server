@@ -26,6 +26,24 @@ public class Inventories
 
 
     /// <summary>
+    /// Obtiene si un usuario tiene autorización para ver un inventario y su contenido
+    /// </summary>
+    /// <param name="id">ID</param>
+    /// <param name="profile">ID del perfil</param>
+    public async static Task<ReadOneResponse<bool>> HaveAuthorization(int id, int profile)
+    {
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var response = await HaveAuthorization(id, profile, context);
+        context.CloseActions(connectionKey);
+        return response;
+    }
+
+
+
+
+    /// <summary>
     /// Obtiene un inventario por medio del ID
     /// </summary>
     /// <param name="id">ID del inventario</param>
@@ -253,6 +271,41 @@ public class Inventories
         {
             ServerLogger.LogError(ex.Message);
         }
+
+        return new();
+    }
+
+
+
+
+    /// <summary>
+    /// Obtiene si un usuario tiene autorización para ver un inventario y su contenido
+    /// </summary>
+    /// <param name="inventoryID">ID del inventario</param>
+    /// <param name="profileID">ID del perfil</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async static Task<ReadOneResponse<bool>> HaveAuthorization(int inventoryID, int profileID, Conexión context)
+    {
+        // Ejecución
+        try
+        {
+
+            var access = await (from P in context.DataBase.AccesoInventarios
+                                where P.Inventario == inventoryID && P.ProfileID == profileID
+                                where P.State == InventoryAccessState.Accepted
+                                select P.ID).FirstOrDefaultAsync();
+
+
+            return (access <= 0) ? new(Responses.Unauthorized, false)
+                                 : new(Responses.Success, true);
+
+
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+
 
         return new();
     }
