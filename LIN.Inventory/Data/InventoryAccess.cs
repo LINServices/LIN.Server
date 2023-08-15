@@ -212,7 +212,8 @@ public class InventoryAccess
                       select new IntegrantDataModel
                       {
                           ID = U.ID,
-                          InventoryAccessID = AI.ID,
+                          InventoryID = AI.Inventario,
+                          ProfileID = AI.ProfileID,
                           //Nombre = U.Nombre,
                           //Perfil = U.Perfil,
                           //Usuario = U.Usuario,
@@ -220,13 +221,48 @@ public class InventoryAccess
                           AccessID = AI.ID
                       };
 
-
             var modelos = await res.ToListAsync();
 
-            if (modelos != null)
-                return new(Responses.Success, modelos);
+            if (modelos == null)
+                return new(Responses.NotRows);
 
-            return new(Responses.NotRows);
+
+            var profilesID = new List<int>();
+            foreach (var item in modelos)
+            {
+                profilesID.Add(item.ProfileID);
+            }
+
+            var profiles = await Data.Profiles.Read(profilesID);
+
+            var accountIds = new List<int>();
+
+            foreach (var id in profiles.Models)
+            {
+                accountIds.Add(id.AccountID);
+            }
+
+
+            var repsonse = await LIN.Access.Auth.Controllers.Account.Read(accountIds);
+
+
+            foreach (var item in modelos)
+            {
+
+                var profile = profiles.Models.Where(T => T.ID == item.ProfileID).FirstOrDefault();
+                var account = repsonse.Models.Where(T => T.ID == profile?.AccountID).FirstOrDefault();
+
+                if (account != null)
+                {
+                    item.Perfil = account.Perfil;
+                    item.Nombre = account.Nombre;
+                    item.Usuario = account.Usuario;
+                }
+
+            }
+
+
+            return new(Responses.Success, modelos);
 
 
         }

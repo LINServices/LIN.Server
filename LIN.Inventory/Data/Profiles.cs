@@ -46,6 +46,24 @@ public static class Profiles
 
 
     /// <summary>
+    /// Obtiene usuario
+    /// </summary>
+    /// <param name="id">ID del usuario</param>
+    public async static Task<ReadAllResponse<ProfileModel>> Read(List<int> ids)
+    {
+
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var res = await Read(ids, context);
+        context.CloseActions(connectionKey);
+        return res;
+
+    }
+
+
+
+    /// <summary>
     /// Obtiene un perfil por medio de una cuen
     /// </summary>
     /// <param name="id">ID del usuario</param>
@@ -155,6 +173,37 @@ public static class Profiles
         {
 
             var res = await Query.Profiles.Read(id, context).FirstOrDefaultAsync();
+
+            // Si no existe el modelo
+            if (res == null)
+                return new(Responses.NotExistProfile);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+
+        return new();
+    }
+
+
+
+
+    /// <summary>
+    /// Obtiene un perfil
+    /// </summary>
+    /// <param name="id">ID del perfil</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async static Task<ReadAllResponse<ProfileModel>> Read(List<int> ids, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            var res = await Query.Profiles.Read(ids, context).ToListAsync();
 
             // Si no existe el modelo
             if (res == null)

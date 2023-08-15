@@ -22,6 +22,23 @@ public class Profiles
     }
 
 
+    /// <summary>
+    /// Obtener usuarios
+    /// </summary>
+    /// <param name="id">ID del usuario</param>
+    /// <param name="context">Contexto</param>
+    public static IQueryable<ProfileModel> Read(List<int> id, Conexión context)
+    {
+        // Consulta
+        var query = (from U in context.DataBase.Profiles
+                     where id.Contains(U.ID)
+                     select U);
+
+        return query;
+
+    }
+
+
 
 
     /// <summary>
