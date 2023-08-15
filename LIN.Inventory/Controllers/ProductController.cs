@@ -11,7 +11,7 @@ public class ProductController : ControllerBase
     /// </summary>
     /// <param name="modelo">Modelo del producto</param>
     [HttpPost("create")]
-    public async Task<HttpCreateResponse> Create([FromBody] ProductDataTransfer modelo)
+    public async Task<HttpCreateResponse> Create([FromBody] ProductDataTransfer modelo, [FromHeader] string token)
     {
 
 
@@ -26,7 +26,17 @@ public class ProductController : ControllerBase
             return new(Responses.InvalidParam);
         }
 
+        // Verifica el acceso
+        var haveAccess = await Private.Inventories.HaveAccess(modelo.Inventory, token);
 
+        // Si no tiene acceso
+        if (haveAccess.Response != Responses.Success)
+            return new CreateResponse
+            {
+                Message = haveAccess.Message,
+                Response = haveAccess.Response,
+                LastID = 0
+            };
 
         // Producto base
         var response = await Data.Products.Create(modelo);
@@ -43,12 +53,23 @@ public class ProductController : ControllerBase
     /// </summary>
     /// <param name="id">ID del inventario</param>
     [HttpGet("read/all")]
-    public async Task<HttpReadAllResponse<ProductDataTransfer>> ReadAll([FromHeader] int id)
+    public async Task<HttpReadAllResponse<ProductDataTransfer>> ReadAll([FromHeader] int id, [FromHeader] string token)
     {
 
         // Comprobaciones
         if (id <= 0)
             return new(Responses.InvalidParam);
+
+        // Verifica el acceso al inventario
+        var haveAccess = await Private.Inventories.HaveAccess(id, token);
+
+        // Si no tiene acceso
+        if (haveAccess.Response != Responses.Success)
+            return new ReadAllResponse<ProductDataTransfer>
+            {
+                Message = haveAccess.Message,
+                Response = haveAccess.Response
+            };
 
         var result = await Data.Products.ReadAll(id);
         return result;
