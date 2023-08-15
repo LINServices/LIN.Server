@@ -60,7 +60,7 @@ public class InventoryController : ControllerBase
 
         var (isValid, profileID, _) = Jwt.Validate(token);
 
-        if (isValid)
+        if (!isValid)
             return new(Responses.Unauthorized);
 
         // Obtiene la lista de ID's de inventarios
