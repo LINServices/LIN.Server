@@ -14,7 +14,6 @@ public class ProductController : ControllerBase
     public async Task<HttpCreateResponse> Create([FromBody] ProductDataTransfer modelo, [FromHeader] string token)
     {
 
-
         // Comprobaciones
         if (modelo.Provider <= 0 || modelo.Inventory <= 0 || modelo.Estado == ProductBaseStatements.Undefined || modelo.Quantity < 0 || modelo.PrecioCompra < 0 || modelo.PrecioVenta < 0)
             return new(Responses.InvalidParam);
@@ -22,9 +21,8 @@ public class ProductController : ControllerBase
 
         // Comprobaciones con plantilla
         if (modelo.Plantilla < 0 && (!modelo.Name.Any() || !modelo.Description.Any()))
-        {
             return new(Responses.InvalidParam);
-        }
+        
 
         // Verifica el acceso
         var haveAccess = await Private.Inventories.HaveAccess(modelo.Inventory, token);
