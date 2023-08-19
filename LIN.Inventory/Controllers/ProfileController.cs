@@ -64,8 +64,6 @@ public class ProfileController : ControllerBase
         // Obtiene el perfil
         var profile = await Data.Profiles.ReadByAccount(authResponse.Model.ID);
 
-
-
         switch (profile.Response)
         {
             case Responses.Success:
@@ -101,6 +99,7 @@ public class ProfileController : ControllerBase
                     Message = "Un error grave ocurrió"
                 };
         }
+
 
         // Genera el token
         var token = Jwt.Generate(profile.Model);
