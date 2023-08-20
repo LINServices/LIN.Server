@@ -74,6 +74,8 @@ try
     Developers.SetUrl(devServiceUrl);
 
 
+    LIN.Access.Auth.Build.SetAuth(builder.Configuration["lin:app"] ?? string.Empty);
+
     builder.Services.AddControllers();
 
 
