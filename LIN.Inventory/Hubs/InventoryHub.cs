@@ -48,15 +48,14 @@ public class InventoryHub : Hub
     public async Task UpdateProduct(string groupName, int productID)
     {
 
-        // Busca el nuevo modelo
-        var modelo = await new ProductController().ReadOne(productID);
-
+        var modelo = await Data.Products.Read(productID);
+       
         if (modelo.Response != Responses.Success)
             return;
 
         string[] ignored = { Context.ConnectionId };
 
-        await Clients.GroupExcept(groupName, ignored).SendAsync("UpdateProduct", modelo.Object);
+        await Clients.GroupExcept(groupName, ignored).SendAsync("UpdateProduct", modelo.Model);
 
     }
 
