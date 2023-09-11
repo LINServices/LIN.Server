@@ -8,6 +8,8 @@ LIN Inventory Server es un servidor diseñado para brindar una administración e
 
 El servidor LIN Inventory permite la creación, modificación y eliminación de inventarios, lo que facilita la personalización y adaptación a diferentes tipos de inventarios y necesidades.
 
+- Gestion de roles de inventario.
+
 ### Administración de Inventarios
 
 Administra y supervisa tus inventarios de manera efectiva. Agrega, modifica y realiza un seguimiento detallado de tus productos o activos almacenados.
