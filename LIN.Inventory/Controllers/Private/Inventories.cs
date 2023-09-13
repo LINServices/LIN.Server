@@ -14,7 +14,7 @@ internal class Inventories
     {
 
         // Validación del JWT
-        var (isValid, _, profile) = Jwt.Validate(token);
+        var (isValid, profile, _) = Jwt.Validate(token);
 
         if (!isValid)
             return new ResponseBase()
