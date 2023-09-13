@@ -68,7 +68,29 @@ public class InventoryAccessController : ControllerBase
         // Obtiene la lista de ID's de inventarios
         var result = await InventoryAccess.ReadIntegrants(inventario);
 
-        return result;
+
+        var map = result.Models.Select(T => T.Item2.AccountID).ToList();
+
+        var users = await LIN.Access.Auth.Controllers.Account.Read(map);
+
+
+        var i = (from I in result.Models
+                join A in users.Models
+                on I.Item2.AccountID equals A.ID
+                select new IntegrantDataModel
+                {
+                    AccessID = I.Item1.ID,
+                    InventoryID = I.Item1.Inventario,
+                    Nombre = A.Nombre,
+                    Perfil = A.Perfil,
+                    ProfileID = I.Item2.ID,
+                    Rol = I.Item1.Rol,
+                    Usuario = A.Usuario
+                }).ToList();
+
+
+
+        return new(Responses.Success, i);
 
     }
 

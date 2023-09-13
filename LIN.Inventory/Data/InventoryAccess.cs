@@ -64,7 +64,7 @@ public class InventoryAccess
     /// <summary>
     /// Obtiene la lista de invitaciones a un inventario
     /// </summary>
-    public async static Task<ReadAllResponse<IntegrantDataModel>> ReadIntegrants(int inventario)
+    public async static Task<ReadAllResponse<Tuple<InventoryAcessDataModel, ProfileModel>>> ReadIntegrants(int inventario)
     {
 
         // Obtiene la conexión
@@ -198,7 +198,7 @@ public class InventoryAccess
     /// </summary>
     /// <param name="inventario">ID del inventario</param>
     /// <param name="context">Contexto de conexión</param>
-    public async static Task<ReadAllResponse<IntegrantDataModel>> ReadIntegrants(int inventario, Conexión context)
+    public async static Task<ReadAllResponse<Tuple<InventoryAcessDataModel, ProfileModel>>> ReadIntegrants(int inventario, Conexión context)
     {
 
         // Ejecución
@@ -209,58 +209,13 @@ public class InventoryAccess
             var res = from AI in context.DataBase.AccesoInventarios
                       where AI.Inventario == inventario && AI.State == InventoryAccessState.Accepted
                       join U in context.DataBase.Profiles on AI.ProfileID equals U.ID
-                      select new IntegrantDataModel
-                      {
-                          ID = U.ID,
-                          InventoryID = AI.Inventario,
-                          ProfileID = AI.ProfileID,
-                          //Nombre = U.Nombre,
-                          //Perfil = U.Perfil,
-                          //Usuario = U.Usuario,
-                          Rol = AI.Rol,
-                          AccessID = AI.ID
-                      };
+                      select new Tuple<InventoryAcessDataModel, ProfileModel>(AI, U);
 
-            var modelos = await res.ToListAsync();
+
+           var modelos = await res.ToListAsync();
 
             if (modelos == null)
                 return new(Responses.NotRows);
-
-
-            var profilesID = new List<int>();
-            foreach (var item in modelos)
-            {
-                profilesID.Add(item.ProfileID);
-            }
-
-            var profiles = await Data.Profiles.Read(profilesID);
-
-            var accountIds = new List<int>();
-
-            foreach (var id in profiles.Models)
-            {
-                accountIds.Add(id.AccountID);
-            }
-
-
-            var repsonse = await LIN.Access.Auth.Controllers.Account.Read(accountIds);
-
-
-            foreach (var item in modelos)
-            {
-
-                var profile = profiles.Models.Where(T => T.ID == item.ProfileID).FirstOrDefault();
-                var account = repsonse.Models.Where(T => T.ID == profile?.AccountID).FirstOrDefault();
-
-                if (account != null)
-                {
-                    item.Perfil = account.Perfil;
-                    item.Nombre = account.Nombre;
-                    item.Usuario = account.Usuario;
-                }
-
-            }
-
 
             return new(Responses.Success, modelos);
 
