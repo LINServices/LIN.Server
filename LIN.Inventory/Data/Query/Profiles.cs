@@ -40,6 +40,24 @@ public class Profiles
 
 
 
+    /// <summary>
+    /// Obtener usuarios
+    /// </summary>
+    /// <param name="id">ID del usuario</param>
+    /// <param name="context">Contexto</param>
+    public static IQueryable<ProfileModel> ReadByAccounts(List<int> id, Conexión context)
+    {
+        // Consulta
+        var query = (from U in context.DataBase.Profiles
+                     where id.Contains(U.AccountID)
+                     select U);
+
+        return query;
+
+    }
+
+
+
 
     /// <summary>
     /// Obtener usuarios
