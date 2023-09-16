@@ -59,7 +59,7 @@ public class InventoryAccessController : ControllerBase
     /// <param name="inventario">ID del inventario</param>
     /// <param name="usuario">ID del usuario</param>
     [HttpGet("members")]
-    public async Task<HttpReadAllResponse<IntegrantDataModel>> ReadAll([FromHeader] int inventario, [FromHeader] int usuario)
+    public async Task<HttpReadAllResponse<IntegrantDataModel>> ReadAll([FromHeader] int inventario, [FromHeader] int usuario, [FromHeader] string token)
     {
         // Comprobaciones
         if (inventario <= 0 || usuario <= 0)
@@ -71,7 +71,7 @@ public class InventoryAccessController : ControllerBase
 
         var map = result.Models.Select(T => T.Item2.AccountID).ToList();
 
-        var users = await LIN.Access.Auth.Controllers.Account.Read(map);
+        var users = await LIN.Access.Auth.Controllers.Account.Read(map, token);
 
 
         var i = (from I in result.Models
