@@ -61,6 +61,9 @@ public class ProfileController : ControllerBase
             };
         }
 
+        // Login en contactos
+        var contactsLogin = LIN.Access.Contacts.Controllers.Profiles.Login(authResponse.Token);
+
         // Obtiene el perfil
         var profile = await Data.Profiles.ReadByAccount(authResponse.Model.ID);
 
@@ -104,6 +107,7 @@ public class ProfileController : ControllerBase
         // Genera el token
         var token = Jwt.Generate(profile.Model);
 
+        await contactsLogin;
         return new ReadOneResponse<AuthModel<ProfileModel>>
         {
             Response = Responses.Success,
@@ -111,7 +115,11 @@ public class ProfileController : ControllerBase
             Model = new()
             {
                 Account = authResponse.Model,
-                LINAuthToken = authResponse.Token,
+                TokenCollection = new()
+                {
+                    {"identity", authResponse.Token },
+                    {"contacts", contactsLogin.Result.Token }
+                },
                 Profile = profile.Model
             },
             Token = token
@@ -129,6 +137,10 @@ public class ProfileController : ControllerBase
     public async Task<HttpReadOneResponse<AuthModel<ProfileModel>>> LoginWithToken([FromHeader] string token)
     {
 
+
+        // Login en contactos
+        var contactsLogin = LIN.Access.Contacts.Controllers.Profiles.Login(token);
+
         // Respuesta de autenticación
         var authResponse = await LIN.Access.Auth.Controllers.Authentication.Login(token);
 
@@ -145,8 +157,7 @@ public class ProfileController : ControllerBase
         // Obtiene el perfil
         var profile = await Data.Profiles.ReadByAccount(authResponse.Model.ID);
 
-
-
+        await contactsLogin;
         switch (profile.Response)
         {
             case Responses.Success:
@@ -193,7 +204,11 @@ public class ProfileController : ControllerBase
             Model = new()
             {
                 Account = authResponse.Model,
-                LINAuthToken = authResponse.Token,
+                TokenCollection = new()
+                {
+                    {"identity", authResponse.Token },
+                    {"contacts", contactsLogin.Result.Token }
+                },
                 Profile = profile.Model
             },
             Token = tokenGen
