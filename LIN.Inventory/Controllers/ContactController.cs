@@ -1,3 +1,5 @@
+
+ using LIN.Types.Contacts.Models;
 namespace LIN.Inventory.Controllers;
 
 
@@ -11,22 +13,15 @@ public class ContactController : ControllerBase
     /// </summary>
     /// <param name="modelo">Modelo del contacto</param>
     [HttpPost("create")]
-    public async Task<HttpCreateResponse> Create([FromBody] ContactDataModel modelo)
+    public async Task<HttpCreateResponse> Create([FromBody] ContactModel modelo, [FromHeader] string token)
     {
 
         // Comprobación de campos
-        if (modelo.Name.Length <= 0 || modelo.ProfileID <= 0)
+        if (modelo.Nombre.Length <= 0)
             return new(Responses.InvalidParam);
 
-        string @default = "Sin definir";
-
-        modelo.Direction ??= @default;
-        modelo.Phone ??= @default;
-        modelo.Mail ??= @default;
-        modelo.State = ContactStatus.Normal;
-
         // Obtiene el resultado
-        var response = await Data.Contacts.Create(modelo);
+        var response = await LIN.Access.Contacts.Controllers.Contacts.Create(token, modelo);
 
         // Retorna el resultado
         return response ?? new();
@@ -40,18 +35,20 @@ public class ContactController : ControllerBase
     /// </summary>
     /// <param name="id">ID del contacto</param>
     [HttpGet("read")]
-    public async Task<HttpReadOneResponse<ContactDataModel>> Read([FromHeader] int id)
+    public async Task<HttpReadOneResponse<ContactModel>> Read([FromHeader] int id)
     {
 
-        // Comprobaciones
-        if (id <= 0)
-            return new(Responses.InvalidParam);
+        //// Comprobaciones
+        //if (id <= 0)
+        //    return new(Responses.InvalidParam);
 
-        // Obtiene el usuario
-        var result = await Data.Contacts.Read(id);
+        //// Obtiene el usuario
+        //var result = await Data.Contacts.Read(id);
 
-        // Retorna el resultado
-        return result ?? new();
+        //// Retorna el resultado
+        //return result ?? new();
+
+        return new();
 
     }
 
@@ -62,15 +59,11 @@ public class ContactController : ControllerBase
     /// </summary>
     /// <param name="id">ID de la cuenta</param>
     [HttpGet("read/all")]
-    public async Task<HttpReadAllResponse<ContactDataModel>> ReadAll([FromHeader] int id)
+    public async Task<HttpReadAllResponse<ContactModel>> ReadAll([FromHeader] string token)
     {
 
-        // Comprobaciones
-        if (id <= 0)
-            return new(Responses.InvalidParam);
-
         // Obtiene el usuario
-        var result = await Data.Contacts.ReadAll(id);
+        var result = await LIN.Access.Contacts.Controllers.Contacts.ReadAll(token);
 
         // Retorna el resultado
         return result ?? new();
@@ -84,19 +77,20 @@ public class ContactController : ControllerBase
     /// </summary>
     /// <param name="modelo">Modelo del contacto</param>
     [HttpPatch("update")]
-    public async Task<HttpResponseBase> Update([FromBody] ContactDataModel modelo)
+    public async Task<HttpResponseBase> Update([FromBody] ContactModel modelo)
     {
 
-        // Comprobación de campos
-        if (modelo.Name.Length <= 0)
-            return new(Responses.InvalidParam);
+        //// Comprobación de campos
+        //if (modelo.Name.Length <= 0)
+        //    return new(Responses.InvalidParam);
 
-        // Obtiene el usuario
-        var result = await Data.Contacts.Update(modelo);
+        //// Obtiene el usuario
+        //var result = await Data.Contacts.Update(modelo);
 
-        // Retorna el resultado
-        return result ?? new();
+        //// Retorna el resultado
+        //return result ?? new();
 
+        return new();
     }
 
 
@@ -109,17 +103,18 @@ public class ContactController : ControllerBase
     public async Task<HttpReadOneResponse<int>> Count([FromHeader] string token)
     {
 
-        var (isValid, _, id) = Jwt.Validate(token);
+        //var (isValid, _, id) = Jwt.Validate(token);
 
-        if (!isValid)
-            return new(Responses.Unauthorized);
+        //if (!isValid)
+        //    return new(Responses.Unauthorized);
 
 
-        // Obtiene el usuario
-        var result = await Data.Contacts.Count(id);
+        //// Obtiene el usuario
+        //var result = await Data.Contacts.Count(id);
 
-        // Retorna el resultado
-        return result ?? new();
+        //// Retorna el resultado
+        //return result ?? new();
+        return new();
 
     }
 
@@ -134,20 +129,22 @@ public class ContactController : ControllerBase
     public async Task<HttpResponseBase> Delete([FromHeader] int id, [FromHeader] string token)
     {
 
-        var (isValid, _, _) = Jwt.Validate(token);
+        //var (isValid, _, _) = Jwt.Validate(token);
 
-        if (!isValid)
-            return new(Responses.InvalidParam);
+        //if (!isValid)
+        //    return new(Responses.InvalidParam);
 
-        // Comprobación de campos
-        if (id <= 0)
-            return new(Responses.InvalidParam);
+        //// Comprobación de campos
+        //if (id <= 0)
+        //    return new(Responses.InvalidParam);
 
-        // Obtiene el usuario
-        var result = await Data.Contacts.UpdateStatus(id, ContactStatus.Deleted);
+        //// Obtiene el usuario
+        //var result = await Data.Contacts.UpdateStatus(id, ContactStatus.Deleted);
 
-        // Retorna el resultado
-        return result ?? new();
+        //// Retorna el resultado
+        //return result ?? new();
+
+        return new();
 
     }
 
@@ -162,21 +159,21 @@ public class ContactController : ControllerBase
     public async Task<HttpResponseBase> ToTrash([FromHeader] int id, [FromHeader] string token)
     {
 
-        var (isValid, _, _) = Jwt.Validate(token);
+        //var (isValid, _, _) = Jwt.Validate(token);
 
-        if (!isValid)
-            return new(Responses.InvalidParam);
+        //if (!isValid)
+        //    return new(Responses.InvalidParam);
 
-        // Comprobación de campos
-        if (id <= 0)
-            return new(Responses.InvalidParam);
+        //// Comprobación de campos
+        //if (id <= 0)
+        //    return new(Responses.InvalidParam);
 
-        // Obtiene el usuario
-        var result = await Data.Contacts.UpdateStatus(id, ContactStatus.OnTrash);
+        //// Obtiene el usuario
+        //var result = await Data.Contacts.UpdateStatus(id, ContactStatus.OnTrash);
 
-        // Retorna el resultado
-        return result ?? new();
-
+        //// Retorna el resultado
+        //return result ?? new();
+        return new();
     }
 
 

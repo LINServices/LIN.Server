@@ -14,13 +14,6 @@ public class Context : DbContext
 
 
     /// <summary>
-    /// Contactos
-    /// </summary>
-    public DbSet<ContactDataModel> Contactos { get; set; }
-
-
-
-    /// <summary>
     /// Inventarios
     /// </summary>
     public DbSet<InventoryDataModel> Inventarios { get; set; }
@@ -101,7 +94,6 @@ public class Context : DbContext
            .IsUnique();
 
 
-        modelBuilder.Entity<ContactDataModel>().HasIndex(e => e.ID);
         modelBuilder.Entity<InventoryDataModel>().HasIndex(e => e.ID);
         modelBuilder.Entity<ProductoTable>().HasIndex(e => e.ID);
         modelBuilder.Entity<ProductoDetailTable>().HasIndex(e => e.ID);
@@ -109,7 +101,6 @@ public class Context : DbContext
 
         // Nombre de la tablas
         modelBuilder.Entity<ProfileModel>().ToTable("PROFILES");
-        modelBuilder.Entity<ContactDataModel>().ToTable("CONTACTOS");
         modelBuilder.Entity<InventoryDataModel>().ToTable("INVENTARIOS");
         modelBuilder.Entity<InventoryAcessDataModel>().ToTable("ACCESOS_INVENTARIO");
         modelBuilder.Entity<ProductoTable>().ToTable("PRODUCTOS");

@@ -122,18 +122,7 @@ public static class Profiles
                 context.DataBase.Profiles.Add(data.Profile);
                 context.DataBase.SaveChanges();
 
-                // Creación del modelo Contacto
-                ContactDataModel contacto = new()
-                {
-                    Name = data.Account.Nombre,
-                    Picture = data.Account.Perfil,
-                    Mail = "Sin definir",
-                    Direction = "Sin definir",
-                    Phone = "Sin definir",
-                    ProfileID = data.Profile.ID
-                };
-
-                context.DataBase.Contactos.Add(contacto);
+               
 
 
                 // Creación del inventario
