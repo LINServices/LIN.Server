@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using LIN.Inventory.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,23 +55,6 @@ try
     LIN.Access.Auth.Build.SetAuth(builder.Configuration["lin:app"] ?? string.Empty);
 
     builder.Services.AddControllers();
-
-
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-    {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
-        options.TokenValidationParameters = new()
-        {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidAudience = null,
-            ValidIssuer = null,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwt:key"] ?? string.Empty))
-        };
-    });
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
