@@ -72,14 +72,14 @@ public class ProfileController : ControllerBase
             case Responses.Success:
                 break;
             case Responses.NotExistProfile:
-            {
+                {
                     var res = await Data.Profiles.Create(new()
                     {
                         Account = authResponse.Model,
                         Profile = new()
                         {
                             AccountID = authResponse.Model.ID,
-                            Creación = DateTime.Now
+                            Creation = DateTime.Now
                         }
                     });
 
@@ -94,7 +94,7 @@ public class ProfileController : ControllerBase
 
                     profile = res;
                     break;
-            }
+                }
             default:
                 return new ReadOneResponse<AuthModel<ProfileModel>>
                 {
@@ -170,7 +170,7 @@ public class ProfileController : ControllerBase
                         Profile = new()
                         {
                             AccountID = authResponse.Model.ID,
-                            Creación = DateTime.Now
+                            Creation = DateTime.Now
                         }
                     });
 
