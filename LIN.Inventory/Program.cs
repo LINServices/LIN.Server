@@ -28,7 +28,7 @@ try
 #if AZURE
     sqlConnection = builder.Configuration["ConnectionStrings:Azure"] ?? string.Empty;
     devServiceUrl = builder.Configuration["lin:developer:Azure"] ?? string.Empty;
-#elif SOMEE
+#elif RELEASE 
     sqlConnection = builder.Configuration["ConnectionStrings:Somee"] ?? string.Empty;
     devServiceUrl = builder.Configuration["lin:developer:Somee"] ?? string.Empty;
 #endif
