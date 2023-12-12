@@ -85,7 +85,7 @@ public class InventoryAccessController : ControllerBase
                     Perfil = A.Perfil,
                     ProfileID = I.Item2.ID,
                     Rol = I.Item1.Rol,
-                    Usuario = A.Usuario
+                    Usuario = A.Identity.Unique
                 }).ToList();
 
 

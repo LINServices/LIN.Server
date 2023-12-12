@@ -11,7 +11,7 @@ public class BridgetController : ControllerBase
     {
 
         // Usuarios
-        var users = await LIN.Access.Auth.Controllers.Account.Search(userName, token, false);
+        var users = await LIN.Access.Auth.Controllers.Account.Search(userName, token);
 
         // Si hubo un error
         if (users.Response != Responses.Success)

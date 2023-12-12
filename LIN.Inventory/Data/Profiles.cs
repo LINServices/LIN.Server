@@ -130,7 +130,7 @@ public static class Profiles
                 {
                     Creador = data.Profile.ID,
                     Nombre = "Mi Inventario",
-                    Direccion = $"Inventario personal de {data.Account.Usuario}",
+                    Direccion = $"Inventario personal de {data.Account.Identity.Unique}",
                     UltimaModificacion = DateTime.Now
                 };
 
