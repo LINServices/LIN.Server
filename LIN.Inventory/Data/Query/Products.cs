@@ -1,6 +1,4 @@
-﻿using LIN.Inventory;
-
-namespace LIN.Inventory.Data.Query;
+﻿namespace LIN.Inventory.Data.Query;
 
 
 public static class Products
@@ -8,38 +6,28 @@ public static class Products
 
 
     /// <summary>
-    /// Obtiene un producto por medio del ID
+    /// Obtiene un producto por medio del Id
     /// </summary>
-    /// <param name="id">ID del producto</param>
+    /// <param name="id">Id del producto</param>
     /// <param name="context">Contexto de conexión</param>
     /// <param name="connectionKey">Llave para cerrar la conexión</param>
-    public static IQueryable<ProductDataTransfer> Read(int id, Conexión context)
+    public static IQueryable<ProductModel> Read(int id, Conexión context)
     {
 
         // Consulta
         var query = from P in context.DataBase.Productos
-                    join PP in context.DataBase.PlantillaProductos on P.Plantilla equals PP.ID
-                    where P.ID == id
-                    join D in context.DataBase.ProductoDetalles
-                    on P.ID equals D.ProductoFK
-                    where D.Estado == ProductStatements.Normal
-                    select new ProductDataTransfer
+                    where P.Id == id
+                    select new ProductModel
                     {
-                        ProductID = P.ID,
-                        Category = PP.Category,
-                        Code = PP.Code,
-                        Description = PP.Description,
-                        Estado = P.Estado,
-                        Image = PP.Image,
-                        Name = PP.Name,
-                        Inventory = P.Inventory,
-                        Plantilla = PP.ID,
-                        PrecioCompra = D.PrecioCompra,
-                        PrecioVenta = D.PrecioVenta,
-                        EstadoDetail = D.Estado,
-                        Quantity = D.Quantity,
-                        IDDetail = D.ID,
-                        Provider = P.Provider
+                        Id = id,
+                        Statement = P.Statement,
+                        Category = P.Category,
+                        Code = P.Code,
+                        Description = P.Description,
+                        Image = P.Image,
+                        Name = P.Name,
+                        InventoryId = P.InventoryId,
+                        Details = P.Details.Where(t => t.Estado == ProductStatements.Normal).Take(1).ToList(),
                     };
 
         return query;
@@ -51,35 +39,26 @@ public static class Products
     /// <summary>
     /// Obtiene un producto por medio del detalle
     /// </summary>
-    /// <param name="id">ID de el detalle</param>
+    /// <param name="id">Id de el detalle</param>
     /// <param name="context">Contexto de conexión</param>
     /// <param name="connectionKey">Llave para cerrar la conexión</param>
-    public static IQueryable<ProductDataTransfer> ReadByDetail(int id, Conexión context)
+    public static IQueryable<ProductModel> ReadByDetail(int id, Conexión context)
     {
 
         // Consulta
-        var query = from P in context.DataBase.Productos
-                    join PP in context.DataBase.PlantillaProductos on P.Plantilla equals PP.ID
-                    join D in context.DataBase.ProductoDetalles
-                    on P.ID equals D.ProductoFK
-                    where D.ID == id
-                    select new ProductDataTransfer
+        var query = from P in context.DataBase.ProductoDetalles
+                    where P.Id == id
+                    select new ProductModel
                     {
-                        ProductID = P.ID,
-                        Category = PP.Category,
-                        Code = PP.Code,
-                        Description = PP.Description,
-                        Estado = P.Estado,
-                        Image = PP.Image,
-                        Name = PP.Name,
-                        Inventory = P.Inventory,
-                        Plantilla = PP.ID,
-                        PrecioCompra = D.PrecioCompra,
-                        PrecioVenta = D.PrecioVenta,
-                        EstadoDetail = D.Estado,
-                        Quantity = D.Quantity,
-                        IDDetail = D.ID,
-                        Provider = P.Provider
+                        Id = id,
+                        Statement = P.Product.Statement,
+                        Category = P.Product.Category,
+                        Code = P.Product.Code,
+                        Description = P.Product.Description,
+                        Image = P.Product.Image,
+                        Name = P.Product.Name,
+                        InventoryId = P.Product.InventoryId,
+                        Details = new() { P }
                     };
 
         return query;
@@ -91,36 +70,27 @@ public static class Products
     /// <summary>
     /// Obtiene la lista de productos asociados a un inventario
     /// </summary>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="id">Id del inventario</param>
     /// <param name="context">Contexto de conexión</param>
     /// <param name="connectionKey">Llave para cerrar la conexión</param>
-    public static IQueryable<ProductDataTransfer> ReadAll(int id, Conexión context)
+    public static IQueryable<ProductModel> ReadAll(int id, Conexión context)
     {
 
         var query = from P in context.DataBase.Productos
-                    where P.Estado == ProductBaseStatements.Normal
-                    join PP in context.DataBase.PlantillaProductos on P.Plantilla equals PP.ID
-                    where P.Inventory == id
-                    join D in context.DataBase.ProductoDetalles
-                    on P.ID equals D.ProductoFK
-                    where D.Estado == ProductStatements.Normal
-                    select new ProductDataTransfer
+                    where P.Statement == ProductBaseStatements.Normal
+                    where P.InventoryId == id
+
+                    select new ProductModel
                     {
-                        ProductID = P.ID,
-                        Category = PP.Category,
-                        Code = PP.Code,
-                        Description = PP.Description,
-                        Estado = P.Estado,
-                        Image = PP.Image,
-                        Name = PP.Name,
-                        Inventory = P.Inventory,
-                        Plantilla = PP.ID,
-                        PrecioCompra = D.PrecioCompra,
-                        PrecioVenta = D.PrecioVenta,
-                        EstadoDetail = D.Estado,
-                        Quantity = D.Quantity,
-                        IDDetail = D.ID,
-                        Provider = P.Provider
+                        Id = id,
+                        Statement = P.Statement,
+                        Category = P.Category,
+                        Code = P.Code,
+                        Description = P.Description,
+                        Image = P.Image,
+                        Name = P.Name,
+                        InventoryId = P.InventoryId,
+                        Details = P.Details.Where(t => t.Estado == ProductStatements.Normal).Take(1).ToList()
                     };
 
         return query;

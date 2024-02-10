@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Types.Contacts", "..\..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Types.Emma", "..\..\Tipos\LIN.Types.Emma\LIN.Types.Emma.csproj", "{F101364A-6668-432B-AF74-71B99F1645C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Types.Identity", "..\..\Tipos\LIN.Types.Identity\LIN.Types.Identity\LIN.Types.Identity.csproj", "{21282C5A-3E50-415F-9F29-CEE18DB7957F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Types.Cloud.Identity", "..\..\Tipos\LIN.Types.Cloud.Identity\LIN.Types.Cloud.Identity.csproj", "{AE58099B-DCBC-490F-9B23-94063B8AE22E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,12 +71,15 @@ Global
 		{F101364A-6668-432B-AF74-71B99F1645C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F101364A-6668-432B-AF74-71B99F1645C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F101364A-6668-432B-AF74-71B99F1645C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{21282C5A-3E50-415F-9F29-CEE18DB7957F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21282C5A-3E50-415F-9F29-CEE18DB7957F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{21282C5A-3E50-415F-9F29-CEE18DB7957F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{21282C5A-3E50-415F-9F29-CEE18DB7957F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE58099B-DCBC-490F-9B23-94063B8AE22E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE58099B-DCBC-490F-9B23-94063B8AE22E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE58099B-DCBC-490F-9B23-94063B8AE22E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE58099B-DCBC-490F-9B23-94063B8AE22E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F1C21486-0F75-4E25-A555-92297FB915DD}
 	EndGlobalSection
 EndGlobal

@@ -30,7 +30,7 @@ public static class Profiles
     /// <summary>
     /// Obtiene un usuario
     /// </summary>
-    /// <param name="id">ID del usuario</param>
+    /// <param name="id">Id del usuario</param>
     public async static Task<ReadOneResponse<ProfileModel>> Read(int id)
     {
 
@@ -48,7 +48,7 @@ public static class Profiles
     /// <summary>
     /// Obtiene usuario
     /// </summary>
-    /// <param name="id">ID del usuario</param>
+    /// <param name="id">Id del usuario</param>
     public async static Task<ReadAllResponse<ProfileModel>> Read(List<int> ids)
     {
 
@@ -67,7 +67,7 @@ public static class Profiles
     /// <summary>
     /// Obtiene usuario
     /// </summary>
-    /// <param name="id">ID del usuario</param>
+    /// <param name="id">Id del usuario</param>
     public async static Task<ReadAllResponse<ProfileModel>> ReadByAccounts(List<int> ids)
     {
 
@@ -85,7 +85,7 @@ public static class Profiles
     /// <summary>
     /// Obtiene un perfil por medio de una cuen
     /// </summary>
-    /// <param name="id">ID del usuario</param>
+    /// <param name="id">Id del usuario</param>
     public async static Task<ReadOneResponse<ProfileModel>> ReadByAccount(int id)
     {
 
@@ -122,16 +122,12 @@ public static class Profiles
                 context.DataBase.Profiles.Add(data.Profile);
                 context.DataBase.SaveChanges();
 
-               
-
-
                 // Creación del inventario
                 InventoryDataModel inventario = new()
                 {
                     Creador = data.Profile.ID,
                     Nombre = "Mi Inventario",
-                    Direccion = $"Inventario personal de {data.Account.Identity.Unique}",
-                    UltimaModificacion = DateTime.Now
+                    Direction = $"Inventario personal de {data.Account.Identity.Unique}"
                 };
 
                 await context.DataBase.Inventarios.AddAsync(inventario);
@@ -171,7 +167,7 @@ public static class Profiles
     /// <summary>
     /// Obtiene un perfil
     /// </summary>
-    /// <param name="id">ID del perfil</param>
+    /// <param name="id">Id del perfil</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadOneResponse<ProfileModel>> Read(int id, Conexión context)
     {
@@ -202,7 +198,7 @@ public static class Profiles
     /// <summary>
     /// Obtiene un perfil
     /// </summary>
-    /// <param name="id">ID del perfil</param>
+    /// <param name="id">Id del perfil</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadAllResponse<ProfileModel>> Read(List<int> ids, Conexión context)
     {
@@ -233,7 +229,7 @@ public static class Profiles
     /// <summary>
     /// Obtiene un perfil
     /// </summary>
-    /// <param name="id">ID del perfil</param>
+    /// <param name="id">Id del perfil</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadAllResponse<ProfileModel>> ReadByAccounts(List<int> ids, Conexión context)
     {
@@ -263,7 +259,7 @@ public static class Profiles
     /// <summary>
     /// Obtiene un perfil
     /// </summary>
-    /// <param name="id">ID del perfil</param>
+    /// <param name="id">Id del perfil</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadOneResponse<ProfileModel>> ReadByAccount(int id, Conexión context)
     {

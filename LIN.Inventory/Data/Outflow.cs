@@ -1,4 +1,6 @@
-﻿namespace LIN.Inventory.Data;
+﻿using LIN.Types.Inventory.Transient;
+
+namespace LIN.Inventory.Data;
 
 
 public class Outflows
@@ -28,7 +30,7 @@ public class Outflows
     /// <summary>
     /// Obtiene una salida
     /// </summary>
-    /// <param name="id">ID de la salida</param>
+    /// <param name="id">Id de la salida</param>
     public async static Task<ReadOneResponse<OutflowDataModel>> Read(int id, bool mask = false)
     {
 
@@ -45,7 +47,7 @@ public class Outflows
     /// <summary>
     /// Obtiene la lista de salidas asociadas a un inventario
     /// </summary>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="id">Id del inventario</param>
     public async static Task<ReadAllResponse<OutflowDataModel>> ReadAll(int id)
     {
 
@@ -73,6 +75,19 @@ public class Outflows
 
 
 
+
+    public async static Task<ReadAllResponse<SalesModel>> Ventas(int id, int days)
+    {
+
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        var res = await Ventas(id, days, context);
+        context.CloseActions(connectionKey);
+        return res;
+
+    }
+
+
+
     #endregion
 
 
@@ -92,26 +107,31 @@ public class Outflows
         {
             try
             {
-                // Producto base
-                context.DataBase.Salidas.Add(data);
+                // Detalles.
+                var details = data.Details;
+                data.Details = [];
+
+                // Entrada base
+                await context.DataBase.Salidas.AddAsync(data);
 
                 // Guarda cambios
-                await context.DataBase.SaveChangesAsync();
-
-
+                context.DataBase.SaveChanges();
+            
                 // Detalles
-                foreach (var detail in data.Details)
+                foreach (var detail in details)
                 {
                     // Modelo
                     detail.ID = 0;
-                    detail.Movimiento = data.ID;
+                    detail.Movement = data;
+
+                    // Agregar los detalles.
                     context.DataBase.DetallesSalidas.Add(detail);
 
                     if (detail.Cantidad <= 0)
                         throw new Exception("Invalid detail quantity");
 
                     // Detalle de un producto
-                    var productoDetail = context.DataBase.ProductoDetalles.Where(T => T.ID == detail.ProductoDetail && T.Estado == ProductStatements.Normal).FirstOrDefault();
+                    var productoDetail = context.DataBase.ProductoDetalles.Where(T => T.Id == detail.ProductDetailId && T.Estado == ProductStatements.Normal).FirstOrDefault();
 
                     // Si no existe el detalle
                     if (productoDetail == null)
@@ -129,7 +149,7 @@ public class Outflows
                     if (newStock < 0)
                     {
                         // Obtiene el producto
-                        var producto = context.DataBase.Productos.Where(T => T.ID == productoDetail.ProductoFK).FirstOrDefault();
+                        var producto = context.DataBase.Productos.Where(T => T.Id == productoDetail.ProductId).FirstOrDefault();
 
                         // Si no existe un producto
                         if (producto == null)
@@ -169,7 +189,7 @@ public class Outflows
     /// <summary>
     /// Obtiene una salida
     /// </summary>
-    /// <param name="id">ID de la salida</param>
+    /// <param name="id">Id de la salida</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadOneResponse<OutflowDataModel>> Read(int id, bool mask, Conexión context)
     {
@@ -187,11 +207,11 @@ public class Outflows
 
             // Si es una mascara
             if (mask)
-                salida.CountDetails = context.DataBase.DetallesSalidas.Count(t => t.Movimiento == id);
+                salida.CountDetails = context.DataBase.DetallesSalidas.Count(t => t.MovementId == id);
 
             // Si se necesitan los detales
             else
-                salida.Details = await context.DataBase.DetallesSalidas.Where(T => T.Movimiento == id).ToListAsync();
+                salida.Details = await context.DataBase.DetallesSalidas.Where(T => T.MovementId == id).ToListAsync();
 
             // Retorna
             return new(Responses.Success, salida);
@@ -209,7 +229,7 @@ public class Outflows
     /// <summary>
     /// Obtiene la lista de salidas asociadas a un inventario
     /// </summary>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="id">Id del inventario</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadAllResponse<OutflowDataModel>> ReadAll(int id, Conexión context)
     {
@@ -219,16 +239,16 @@ public class Outflows
         {
 
             var res = from S in context.DataBase.Salidas
-                      where S.Inventario == id
+                      where S.InventoryId == id
                       orderby S.Date ascending
                       select new OutflowDataModel()
                       {
                           ID = S.ID,
                           Date = S.Date,
-                          Inventario = S.Inventario,
+                          InventoryId = S.InventoryId,
                           ProfileID = S.ProfileID,
                           Type = S.Type,
-                          CountDetails = context.DataBase.DetallesSalidas.Count(t => t.Movimiento == S.ID)
+                          CountDetails = context.DataBase.DetallesSalidas.Count(t => t.MovementId == S.ID)
                       };
 
             var lista = await res.ToListAsync();
@@ -270,9 +290,9 @@ public class Outflows
             var query = from AI in context.DataBase.AccesoInventarios
                         where AI.ProfileID == id && AI.State == InventoryAccessState.Accepted
                         join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
-                        join S in context.DataBase.Salidas on I.ID equals S.Inventario
+                        join S in context.DataBase.Salidas on I.ID equals S.InventoryId
                         where S.ProfileID == id && S.Type == OutflowsTypes.Venta && S.Date >= lastDate
-                        join SD in context.DataBase.DetallesSalidas on S.ID equals SD.Movimiento
+                        join SD in context.DataBase.DetallesSalidas on S.ID equals SD.MovementId
                         select SD;
 
 
@@ -297,8 +317,6 @@ public class Outflows
 
 
 
-
-
     public async static Task<ReadAllResponse<OutflowRow>> Informe(int month, int year, int inventory, Conexión context)
     {
 
@@ -308,21 +326,19 @@ public class Outflows
 
             // Selecciona
             var query = from E in context.DataBase.Salidas
-                        where E.Inventario == inventory
+                        where E.InventoryId == inventory
                         && E.Date.Year == year && E.Date.Month == month
                         join ED in context.DataBase.DetallesSalidas
-                        on E.ID equals ED.Movimiento
+                        on E.ID equals ED.MovementId
                         join P in context.DataBase.ProductoDetalles
-                        on ED.ProductoDetail equals P.ID
-                        join PR in context.DataBase.PlantillaProductos
-                        on P.ProductoFK equals PR.ID
+                        on ED.ProductDetailId equals P.Id
                         select new OutflowRow
                         {
                             PrecioCompra = P.PrecioCompra,
                             PrecioVenta = P.PrecioVenta,
                             Fecha = E.Date,
-                            ProductCode = PR.Code,
-                            ProductName = PR.Name,
+                            ProductCode = P.Product.Code,
+                            ProductName = P.Product.Name,
                             Cantidad = ED.Cantidad,
                             Type = E.Type
                         };
@@ -345,6 +361,57 @@ public class Outflows
 
 
 
+
+
+
+
+
+    /// <summary>
+    /// Obtiene las ventas realizadas por un usuario en todos los inventarios
+    /// </summary>
+    /// <param name="context">Contexto de conexión</param>
+    public async static Task<ReadAllResponse<SalesModel>> Ventas(int profile, int days, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            var actualDate = DateTime.Now;
+            var lastDate = actualDate.AddDays(-days);
+
+
+
+
+            // Selecciona la entrada
+            var query = from AI in context.DataBase.AccesoInventarios
+                        where AI.ProfileID == profile && AI.State == InventoryAccessState.Accepted
+                        join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
+                        join S in context.DataBase.Salidas on I.ID equals S.InventoryId
+                        where S.ProfileID == profile && S.Type == OutflowsTypes.Venta && S.Date >= lastDate
+                        join SD in context.DataBase.DetallesSalidas on S.ID equals SD.MovementId
+                        join P in context.DataBase.ProductoDetalles on SD.ProductDetailId equals P.Id
+                        orderby S.Date
+                        select new SalesModel{
+                            Money = P.PrecioVenta * SD.Cantidad,
+                            Date = S.Date
+                                };
+
+
+          
+            // Retorna
+            return new(Responses.Success, query.ToList());
+
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+
+
+        }
+
+        return new();
+    }
 
 
 }

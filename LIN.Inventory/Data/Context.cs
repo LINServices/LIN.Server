@@ -51,22 +51,14 @@ public class Context : DbContext
     /// <summary>
     /// Productos
     /// </summary>
-    public DbSet<ProductoTable> Productos { get; set; }
+    public DbSet<ProductModel> Productos { get; set; }
 
 
 
     /// <summary>
     /// Detalles de productos
     /// </summary>
-    public DbSet<ProductoDetailTable> ProductoDetalles { get; set; }
-
-
-
-    /// <summary>
-    /// Plantillas de productos
-    /// </summary>
-    public DbSet<ProductTemplateTable> PlantillaProductos { get; set; }
-
+    public DbSet<ProductDetailModel> ProductoDetalles { get; set; }
 
 
     /// <summary>
@@ -94,22 +86,66 @@ public class Context : DbContext
            .IsUnique();
 
 
-        modelBuilder.Entity<InventoryDataModel>().HasIndex(e => e.ID);
-        modelBuilder.Entity<ProductoTable>().HasIndex(e => e.ID);
-        modelBuilder.Entity<ProductoDetailTable>().HasIndex(e => e.ID);
-        modelBuilder.Entity<ProductTemplateTable>().HasIndex(e => e.ID);
 
-        // Nombre de la tablas
-        modelBuilder.Entity<ProfileModel>().ToTable("PROFILES");
-        modelBuilder.Entity<InventoryDataModel>().ToTable("INVENTARIOS");
-        modelBuilder.Entity<InventoryAcessDataModel>().ToTable("ACCESOS_INVENTARIO");
-        modelBuilder.Entity<ProductoTable>().ToTable("PRODUCTOS");
-        modelBuilder.Entity<ProductoDetailTable>().ToTable("PRODUCTOS_DETALLES");
-        modelBuilder.Entity<ProductTemplateTable>().ToTable("PLANTILLA_PRODUCTOS");
-        modelBuilder.Entity<InflowDataModel>().ToTable("ENTRADAS");
-        modelBuilder.Entity<InflowDetailsDataModel>().ToTable("ENTRADA_DETALLES");
-        modelBuilder.Entity<OutflowDataModel>().ToTable("SALIDAS");
-        modelBuilder.Entity<OutflowDetailsDataModel>().ToTable("SALIDA_DETALLES");
+        modelBuilder.Entity<ProductModel>()
+            .HasMany(t => t.Details)
+            .WithOne(t=>t.Product)
+            .HasForeignKey(t => t.ProductId);
+
+
+        modelBuilder.Entity<InventoryDataModel>()
+         .HasMany(t => t.Products)
+         .WithOne(t => t.Inventory)
+         .HasForeignKey(t => t.InventoryId);
+
+        modelBuilder.Entity<InventoryDataModel>()
+      .HasMany(t => t.Inflows)
+      .WithOne(t => t.Inventory)
+      .HasForeignKey(t => t.InventoryId);
+
+
+        modelBuilder.Entity<InventoryDataModel>()
+     .HasMany(t => t.Outflows)
+     .WithOne(t => t.Inventory)
+     .HasForeignKey(t => t.InventoryId);
+
+
+
+
+
+        modelBuilder.Entity<InflowDataModel>()
+     .HasMany(t => t.Details)
+     .WithOne(t => t.Movement)
+     .HasForeignKey(t => t.MovementId);
+
+
+
+        modelBuilder.Entity<InflowDetailsDataModel>()
+  .HasOne(t => t.ProductDetail)
+  .WithMany()
+  .HasForeignKey(t => t.ProductDetailId)
+  .OnDelete(DeleteBehavior.NoAction)
+  ;
+
+
+
+
+        modelBuilder.Entity<OutflowDataModel>()
+     .HasMany(t => t.Details)
+     .WithOne(t => t.Movement)
+     .HasForeignKey(t => t.MovementId);
+
+
+
+        modelBuilder.Entity<OutflowDetailsDataModel>()
+  .HasOne(t => t.ProductDetail)
+  .WithMany()
+  .HasForeignKey(t => t.ProductDetailId)
+  .OnDelete(DeleteBehavior.NoAction);
+
+
+
+
 
     }
 

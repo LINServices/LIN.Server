@@ -11,14 +11,11 @@ public class IAController : ControllerBase
     /// </summary>
     /// <param name="name">Nombre</param>
     [HttpGet("names")]
+    [InventoryToken]
     public async Task<ActionResult<dynamic>> PredictName([FromQuery] string name, [FromHeader] string token)
     {
 
-        // Validación del token
-        var (isValid, _, _) = Jwt.Validate(token);
-
-        if (!isValid)
-            return Unauthorized(new { Message = "Token invalido" });
+     
 
         // Validación del nombre
         if (name == null || name.Length <= 0)

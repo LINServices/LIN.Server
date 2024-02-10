@@ -8,7 +8,7 @@ public class Profiles
     /// <summary>
     /// Obtener usuarios
     /// </summary>
-    /// <param name="id">ID del usuario</param>
+    /// <param name="id">Id del usuario</param>
     /// <param name="context">Contexto</param>
     public static IQueryable<ProfileModel> Read(int id, Conexión context)
     {
@@ -25,7 +25,7 @@ public class Profiles
     /// <summary>
     /// Obtener usuarios
     /// </summary>
-    /// <param name="id">ID del usuario</param>
+    /// <param name="id">Id del usuario</param>
     /// <param name="context">Contexto</param>
     public static IQueryable<ProfileModel> Read(List<int> id, Conexión context)
     {
@@ -43,7 +43,7 @@ public class Profiles
     /// <summary>
     /// Obtener usuarios
     /// </summary>
-    /// <param name="id">ID del usuario</param>
+    /// <param name="id">Id del usuario</param>
     /// <param name="context">Contexto</param>
     public static IQueryable<ProfileModel> ReadByAccounts(List<int> id, Conexión context)
     {
@@ -62,7 +62,7 @@ public class Profiles
     /// <summary>
     /// Obtener usuarios
     /// </summary>
-    /// <param name="id">ID del usuario</param>
+    /// <param name="id">Id del usuario</param>
     /// <param name="context">Contexto</param>
     public static IQueryable<ProfileModel> ReadByAccount(int id, Conexión context)
     {

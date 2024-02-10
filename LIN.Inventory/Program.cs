@@ -31,6 +31,9 @@ try
 #elif RELEASE 
     sqlConnection = builder.Configuration["ConnectionStrings:Somee"] ?? string.Empty;
     devServiceUrl = builder.Configuration["lin:developer:Somee"] ?? string.Empty;
+#elif DEBUG
+    sqlConnection = builder.Configuration["ConnectionStrings:Somee"] ?? string.Empty;
+    devServiceUrl = builder.Configuration["lin:developer:Somee"] ?? string.Empty;
 #endif
 
     Conexión.SetStringConnection(sqlConnection);

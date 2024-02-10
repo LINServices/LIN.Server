@@ -1,5 +1,3 @@
-using LIN.Inventory.Data;
-
 namespace LIN.Inventory.Controllers;
 
 
@@ -9,20 +7,49 @@ public class InflowController : ControllerBase
 
 
     /// <summary>
-    /// Crea una nueva entrada
+    /// Crear nueva movimiento de entrada.
     /// </summary>
-    /// <param name="modelo">modelo de la entrada</param>
+    /// <param name="modelo">Modelo.</param>
+    /// <param name="token">Token de acceso.</param>
     [HttpPost("create")]
-    public async Task<HttpCreateResponse> Create([FromBody] InflowDataModel modelo)
+    [InventoryToken]
+    public async Task<HttpCreateResponse> Create([FromBody] InflowDataModel modelo, [FromHeader] string token)
     {
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Establecer el perfil.
+        modelo.ProfileID = tokenInfo.ProfileId;
 
         // Comprobaciones
         if (!modelo.Details.Any() || modelo.Type == InflowsTypes.Undefined)
             return new(Responses.InvalidParam);
 
-        // Crea la nueva entrada
-        var response = await Inflows.Create(modelo);
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(modelo.InventoryId, tokenInfo.ProfileId);
 
+        // Roles que pueden crear.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator];
+
+        // Si no tiene ese rol.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Generar el modelo.
+        modelo.Inventory = new()
+        {
+            ID = modelo.InventoryId
+        };
+
+        // Crea la nueva entrada.
+        var response = await Data.Inflows.Create(modelo);
+
+        // Respuesta.
         return response;
 
     }
@@ -30,20 +57,51 @@ public class InflowController : ControllerBase
 
 
     /// <summary>
-    /// Obtiene una entrada
+    /// Obtener el movimiento (entrada).
     /// </summary>
-    /// <param name="id">ID de la entrada</param>
-    /// <param name="mascara">TRUE si NO necesita los detalles, y FALSE si necesita los detalles</param>
+    /// <param name="id">Id de la entrada.</param>
+    /// <param name="mascara">TRUE si NO necesita los detalles, y FALSE si necesita los detalles.</param>
+    /// <param name="token">Token de acceso.</param>
     [HttpGet("read")]
-    public async Task<HttpReadOneResponse<InflowDataModel>> ReadOne([FromHeader] int id, [FromHeader] bool mascara = false)
+    [InventoryToken]
+    public async Task<HttpReadOneResponse<InflowDataModel>> ReadOne([FromHeader] int id, [FromHeader] string token, [FromHeader] bool mascara = false)
     {
 
-        // Comprobación
+        // Validar parámetros.
         if (id <= 0)
             return new(Responses.InvalidParam);
 
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Obtener el inventario.
+        var inventory = await Data.Inventories.FindByInflow(id);
+
+        // Si hubo un error.
+        if (inventory.Response != Responses.Success)
+            return new()
+            {
+                Message = "Hubo un error al obtener el movimiento.",
+                Response = Responses.Unauthorized
+            };
+
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+
+        // Si no cumple con los roles.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
         // Obtiene el usuario
-        var result = await Inflows.Read(id, mascara);
+        var result = await Data.Inflows.Read(id, mascara);
 
         // Retorna el resultado
         return result ?? new();
@@ -53,18 +111,38 @@ public class InflowController : ControllerBase
 
 
     /// <summary>
-    /// Obtiene las entradas asociadas a un inventario
+    /// Obtiene las entradas asociadas a un inventario.
     /// </summary>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="id">Id del inventario.</param>
+    /// <param name="token">Token de acceso.</param>
     [HttpGet("read/all")]
-    public async Task<HttpReadAllResponse<InflowDataModel>> ReadAll([FromHeader] int id)
+    [InventoryToken]
+    public async Task<HttpReadAllResponse<InflowDataModel>> ReadAll([FromHeader] int id, [FromHeader] string token)
     {
 
+        // Validar parámetros.
         if (id <= 0)
             return new(Responses.InvalidParam);
 
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(id, tokenInfo.ProfileId);
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+
+        // Si no cumple con los roles.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
         // Obtiene el usuario
-        var result = await Inflows.ReadAll(id);
+        var result = await Data.Inflows.ReadAll(id);
 
         // Retorna el resultado
         return result ?? new();
@@ -76,11 +154,12 @@ public class InflowController : ControllerBase
     /// <summary>
     /// Informe mensual de entradas
     /// </summary>
-    /// <param name="contextUser">ID del usuario que hace la peticion</param>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="contextUser">Id del usuario que hace la petición</param>
+    /// <param name="id">Id del inventario</param>
     /// <param name="month">Mes</param>
     /// <param name="year">Año</param>
     [HttpGet("info")]
+    [Obsolete("Este método esta en desuso")]
     public async Task<ReadOneResponse<List<byte>>> Informe([FromHeader] int contextUser, [FromHeader] int id, [FromHeader] int month, [FromHeader] int year)
     {
 
@@ -90,9 +169,9 @@ public class InflowController : ControllerBase
         var context = Conexión.GetOneConnection();
 
         // Obtiene el usuario
-        var resultTask = Inflows.Informe(month, year, id, context.context);
-        var userTask = Profiles.Read(contextUser);
-        var inventoryTask = Inventories.Read(id);
+        var resultTask = Data.Inflows.Informe(month, year, id, context.context);
+        var userTask = Data.Profiles.Read(contextUser);
+        var inventoryTask = Data.Inventories.Read(id);
 
 
         var result = await resultTask;
@@ -162,17 +241,17 @@ public class InflowController : ControllerBase
         HTML = HTML.Replace("@Date", $"{DateTime.Now:yyy.MM.dd}");
         //HTML = HTML.Replace("@Mes", $"{Utilities.IntToMonth(month)}");
         HTML = HTML.Replace("@Año", $"{year}");
-      //  HTML = HTML.Replace("@Name", $"{user.Model.Nombre}");
-        HTML = HTML.Replace("@Direccion", $"{inventory.Model.Direccion}");
+        //  HTML = HTML.Replace("@Name", $"{user.Model.Nombre}");
+        HTML = HTML.Replace("@Direccion", $"{inventory.Model.Direction}");
         HTML = HTML.Replace("@Inventario", $"{inventory.Model.Nombre}");
 
 
 
-       // var response = await LIN.Access.Developer.Controllers.PDF.ConvertHTML(HTML);
+        // var response = await LIN.Access.Developer.Controllers.PDF.ConvertHTML(HTML);
 
 
-       // if (response.File.Length <= 0)
-            return new(Responses.UnavailableService);
+        // if (response.File.Length <= 0)
+        return new(Responses.UnavailableService);
 
 
         // Retorna el resultado

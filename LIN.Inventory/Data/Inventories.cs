@@ -26,27 +26,9 @@ public class Inventories
 
 
     /// <summary>
-    /// Obtiene si un usuario tiene autorización para ver un inventario y su contenido
+    /// Obtiene un inventario por medio del Id
     /// </summary>
-    /// <param name="id">ID</param>
-    /// <param name="profile">ID del perfil</param>
-    public async static Task<ReadOneResponse<bool>> HaveAuthorization(int id, int profile)
-    {
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
-
-        var response = await HaveAuthorization(id, profile, context);
-        context.CloseActions(connectionKey);
-        return response;
-    }
-
-
-
-
-    /// <summary>
-    /// Obtiene un inventario por medio del ID
-    /// </summary>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="id">Id del inventario</param>
     public async static Task<ReadOneResponse<InventoryDataModel>> Read(int id)
     {
 
@@ -65,7 +47,7 @@ public class Inventories
     /// <summary>
     /// Obtiene la lista de inventarios asociados a una cuenta
     /// </summary>
-    /// <param name="id">ID de la cuenta</param>
+    /// <param name="id">Id de la cuenta</param>
     public async static Task<ReadAllResponse<InventoryDataModel>> ReadAll(int id)
     {
 
@@ -83,7 +65,7 @@ public class Inventories
     /// <summary>
     /// Obtiene la valuación de los inventarios donde un usuario es admin
     /// </summary>
-    /// <param name="id">ID de la cuenta</param>
+    /// <param name="id">Id de la cuenta</param>
     public async static Task<ReadOneResponse<decimal>> ValueOf(int id)
     {
 
@@ -95,6 +77,62 @@ public class Inventories
         return response;
     }
 
+
+
+
+
+
+
+
+
+    public async static Task<ReadOneResponse<int>> FindByProduct(int id)
+    {
+
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var response = await FindByProduct(id, context);
+        context.CloseActions(connectionKey);
+        return response;
+    }
+
+    public async static Task<ReadOneResponse<int>> FindByProductDetail(int id)
+    {
+
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var response = await FindByProductDetail(id, context);
+        context.CloseActions(connectionKey);
+        return response;
+    }
+
+
+
+
+    public async static Task<ReadOneResponse<int>> FindByInflow(int id)
+    {
+
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var response = await FindByInflow(id, context);
+        context.CloseActions(connectionKey);
+        return response;
+    }
+
+
+
+    public async static Task<ReadOneResponse<int>> FindByOutflow(int id)
+    {
+
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var response = await FindByOutflow(id, context);
+        context.CloseActions(connectionKey);
+        return response;
+    }
 
 
     #endregion
@@ -118,7 +156,7 @@ public class Inventories
             try
             {
 
-                // Inventario
+                // InventoryId
                 context.DataBase.Inventarios.Add(data);
 
                 // Guarda el inventario
@@ -163,7 +201,7 @@ public class Inventories
     /// <summary>
     /// Obtiene un inventario
     /// </summary>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="id">Id del inventario</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadOneResponse<InventoryDataModel>> Read(int id, Conexión context)
     {
@@ -192,7 +230,7 @@ public class Inventories
     /// <summary>
     /// Obtiene la lista de inventarios asociados a una cuenta
     /// </summary>
-    /// <param name="id">ID de la cuenta</param>
+    /// <param name="id">Id de la cuenta</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadAllResponse<InventoryDataModel>> ReadAll(int id, Conexión context)
     {
@@ -208,10 +246,9 @@ public class Inventories
                       {
                           MyRol = AI.Rol,
                           Creador = I.Creador,
-                          Direccion = I.Direccion,
+                          Direction = I.Direction,
                           ID = I.ID,
                           Nombre = I.Nombre,
-                          UltimaModificacion = I.UltimaModificacion,
                           UsersAccess = I.UsersAccess
                       };
 
@@ -242,7 +279,7 @@ public class Inventories
     /// <summary>
     /// Obtiene la valuación de los inventarios donde un usuario es admin
     /// </summary>
-    /// <param name="id">ID de la cuenta</param>
+    /// <param name="id">Id de la cuenta</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadOneResponse<decimal>> ValueOf(int id, Conexión context)
     {
@@ -251,14 +288,18 @@ public class Inventories
         try
         {
 
-            // Selecciona la entrada
-            var query = from AI in context.DataBase.AccesoInventarios
-                        where AI.ProfileID == id && AI.State == InventoryAccessState.Accepted && AI.Rol == InventoryRoles.Administrator
-                        join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
-                        join P in context.DataBase.Productos on I.ID equals P.Inventory
-                        join PD in context.DataBase.ProductoDetalles on P.ID equals PD.ProductoFK
-                        where PD.Estado == ProductStatements.Normal
-                        select PD.PrecioVenta * PD.Quantity;
+            var query = from acceso in context.DataBase.AccesoInventarios
+                        where acceso.ProfileID == id
+                        && acceso.State == InventoryAccessState.Accepted
+                        && acceso.Rol == InventoryRoles.Administrator
+
+                        join inventory in context.DataBase.Inventarios
+                        on acceso.Inventario equals inventory.ID
+
+                        join product in context.DataBase.Productos on inventory.ID equals product.InventoryId
+                        join productDetails in context.DataBase.ProductoDetalles on product.Id equals productDetails.ProductId
+                        where productDetails.Estado == ProductStatements.Normal
+                        select productDetails.PrecioVenta * productDetails.Quantity;
 
 
             var valor = await query.SumAsync();
@@ -279,37 +320,132 @@ public class Inventories
 
 
     /// <summary>
-    /// Obtiene si un usuario tiene autorización para ver un inventario y su contenido
+    /// Obtiene un inventario según el producto,
     /// </summary>
-    /// <param name="inventoryID">ID del inventario</param>
-    /// <param name="profileID">ID del perfil</param>
+    /// <param name="id">Id del producto</param>
     /// <param name="context">Contexto de conexión</param>
-    public async static Task<ReadOneResponse<bool>> HaveAuthorization(int inventoryID, int profileID, Conexión context)
+    public async static Task<ReadOneResponse<int>> FindByProduct(int id, Conexión context)
     {
+
         // Ejecución
         try
         {
 
-            var access = await (from P in context.DataBase.AccesoInventarios
-                                where P.Inventario == inventoryID && P.ProfileID == profileID
-                                where P.State == InventoryAccessState.Accepted
-                                select P.ID).FirstOrDefaultAsync();
+            var res = await (from p in context.DataBase.Productos
+                      where p.Id == id
+                      select p.InventoryId).FirstOrDefaultAsync();
 
+            // Si no existe el modelo
+            if (res == 0)
+                return new(Responses.NotExistAccount);
 
-            return (access <= 0) ? new(Responses.Unauthorized, false)
-                                 : new(Responses.Success, true);
-
-
+            return new(Responses.Success, res);
         }
         catch (Exception ex)
         {
             ServerLogger.LogError(ex.Message);
         }
 
+        return new();
+    }
+
+
+
+
+    /// <summary>
+    /// Obtiene un inventario según el producto,
+    /// </summary>
+    /// <param name="id">Id del producto detalle</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async static Task<ReadOneResponse<int>> FindByProductDetail(int id, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            var res = await (from p in context.DataBase.ProductoDetalles
+                             where p.Id == id
+                             select p.Product.InventoryId).FirstOrDefaultAsync();
+
+            // Si no existe el modelo
+            if (res == 0)
+                return new(Responses.NotExistAccount);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
 
         return new();
     }
 
 
+
+
+
+    /// <summary>
+    /// Obtiene un inventario según una entrada,
+    /// </summary>
+    /// <param name="id">Id del entrada</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async static Task<ReadOneResponse<int>> FindByInflow(int id, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            var res = await (from p in context.DataBase.Entradas
+                             where p.ID == id
+                             select p.InventoryId).FirstOrDefaultAsync();
+
+            // Si no existe el modelo
+            if (res == 0)
+                return new(Responses.NotExistAccount);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+
+        return new();
+    }
+
+
+
+    /// <summary>
+    /// Obtiene un inventario según una salida,
+    /// </summary>
+    /// <param name="id">Id del salida</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async static Task<ReadOneResponse<int>> FindByOutflow(int id, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            var res = await (from p in context.DataBase.Salidas
+                             where p.ID == id
+                             select p.InventoryId).FirstOrDefaultAsync();
+
+            // Si no existe el modelo
+            if (res == 0)
+                return new(Responses.NotExistAccount);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+
+        return new();
+    }
 
 }

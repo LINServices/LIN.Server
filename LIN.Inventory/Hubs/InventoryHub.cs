@@ -1,120 +1,106 @@
-﻿namespace LIN.Inventory.Hubs;
+﻿using LIN.Types.Inventory.Transient;
+
+namespace LIN.Inventory.Hubs;
 
 
 public class InventoryHub : Hub
 {
 
 
-    /// <summary>
-    /// Agrega a el grupo
-    /// </summary>
-    public async Task JoinGroup(string groupName)
-    {
-        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-    }
+    public static Dictionary<int, List<DeviceModel>> List { get; set; } = [];
 
 
 
     /// <summary>
-    /// Elimina un usuario de un grupo
+    /// Agregar una conexión a su grupo de cuenta.
     /// </summary>
-    public async Task LeaveGroup(string groupName)
-    {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
-    }
-
-
-
-    /// <summary>
-    /// Agrega un nuevo producto
-    /// </summary>
-    public async Task AddProduct(string groupName, int productID)
+    /// <param name="token">Token de acceso.</param>
+    public async Task Join(string token, DeviceModel model)
     {
 
-        // Busca el nuevo modelo
-        var modelo = await Data.Products.Read(productID);
+        // Información del token.
+        var tokenInfo = Jwt.Validate(token);
 
-        if (modelo.Response != Responses.Success)
+        // Si el token es invalido.
+        if (!tokenInfo.IsAuthenticated)
             return;
 
-        await Clients.Group(groupName).SendAsync("SendProduct", modelo.Model);
 
-    }
+        var exist = List.ContainsKey(tokenInfo.ProfileId);
 
+        if (!exist)
+        {
+            List.Add(tokenInfo.ProfileId, [new DeviceModel()
+            {
+                Id = Context.ConnectionId,
+                Name = model.Name,
+                Platform = model.Platform,
+            }]);
+        }
 
+        model.Id = Context.ConnectionId;
+        List[tokenInfo.ProfileId].Add(model);
 
-
-
-    public async Task UpdateProduct(string groupName, int productID)
-    {
-
-        var modelo = await Data.Products.Read(productID);
-       
-        if (modelo.Response != Responses.Success)
-            return;
-
-        string[] ignored = { Context.ConnectionId };
-
-        await Clients.GroupExcept(groupName, ignored).SendAsync("UpdateProduct", modelo.Model);
-
-    }
-
-
-
-
-    /// <summary>
-    /// Agrega un nuevo producto
-    /// </summary>
-    public async Task RemoveProducto(string groupName, int productID)
-    {
-        await Clients.Group(groupName).SendAsync("DeleteProducto", productID);
-    }
-
-
-
-
-
-    /// <summary>
-    /// Agrega una nueva entrada
-    /// </summary>
-    public async Task AddEntrada(string groupName, int entradaID)
-    {
-
-        // Busca el nuevo modelo
-        var modelo = await new InflowController().ReadOne(entradaID, true);
-
-        if (modelo.Response != Responses.Success)
-            return;
-
-        var res = modelo.Object as ReadOneResponse<InflowDataModel>;
-
-        if (res != null)
-            await Clients.Group(groupName).SendAsync("SendInflow", res.Model);
+        // Agregar el grupo.
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"group.{tokenInfo.ProfileId}");
 
     }
 
 
 
     /// <summary>
-    /// Agrega una nueva salida
+    /// Enviar un comando a los demás dispositivos.
     /// </summary>
-    public async Task AddSalida(string groupName, int salidaID)
+    /// <param name="token">Token de acceso.</param>
+    /// <param name="command">Comando.</param>
+    public async Task SendCommand(string token, CommandModel comando)
     {
 
-        // Busca el nuevo modelo
-        var modelo = await new OutflowController().ReadOne(salidaID, true);
+        // Información del token.
+        var tokenInfo = Jwt.Validate(token);
 
-        if (modelo.Response != Responses.Success)
+        // Si el token es invalido.
+        if (!tokenInfo.IsAuthenticated)
             return;
 
-        var res = modelo.Object as ReadOneResponse<OutflowDataModel>;
-
-        if (res != null)
-            await Clients.Group(groupName).SendAsync("SendOutflow", res.Model);
+        // Envía el comando.
+        await Clients.GroupExcept($"group.{tokenInfo.ProfileId}", [Context.ConnectionId]).SendAsync("#command", comando);
 
     }
 
 
+
+    public async Task SendToDevice(string device, CommandModel command)
+    {
+
+        // Envía el comando.
+        await Clients.Client(device).SendAsync("#command", command);
+
+    }
+
+
+
+
+
+    /// <summary>
+    /// Evento: Cuando un dispositivo se desconecta
+    /// </summary>
+    /// <param name="exception">Excepción</param>
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        try
+        {
+
+            // Obtiene la sesión por el dispositivo
+            var x = List.Values.FirstOrDefault(t => t.Any(t => t.Id == Context.ConnectionId));
+
+            x?.RemoveAll(t => t.Id == Context.ConnectionId);
+
+        }
+        catch
+        {
+        }
+    }
 
 
 }

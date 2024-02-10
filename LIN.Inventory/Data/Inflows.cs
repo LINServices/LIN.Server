@@ -31,7 +31,7 @@ public class Inflows
     /// <summary>
     /// Obtiene una entrada
     /// </summary>
-    /// <param name="id">ID de la entrada</param>
+    /// <param name="id">Id de la entrada</param>
     /// <param name="mask">Si es una mascara</param>
     public async static Task<ReadOneResponse<InflowDataModel>> Read(int id, bool mask = false)
     {
@@ -49,7 +49,7 @@ public class Inflows
     /// <summary>
     /// Obtiene la lista de entradas asociadas a un inventario
     /// </summary>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="id">Id del inventario</param>
     public async static Task<ReadAllResponse<InflowDataModel>> ReadAll(int id)
     {
 
@@ -83,6 +83,11 @@ public class Inflows
         {
             try
             {
+
+                // Detalles.
+                var details = data.Details;
+                data.Details = [];
+
                 // Entrada base
                 await context.DataBase.Entradas.AddAsync(data);
 
@@ -90,11 +95,13 @@ public class Inflows
                 context.DataBase.SaveChanges();
 
                 // Detalles
-                foreach (var detail in data.Details)
+                foreach (var detail in details)
                 {
                     // Modelo details
                     detail.ID = 0;
-                    detail.Movimiento = data.ID;
+                    detail.Movement = data;
+
+                    // Agregar los detalles.
                     context.DataBase.DetallesEntradas.Add(detail);
 
                     // Si la cantidad es invalida
@@ -102,17 +109,16 @@ public class Inflows
                         throw new Exception("Invalid detail quantity");
 
                     // Producto
-                    var productodetail = context.DataBase.ProductoDetalles.Where(T => T.ID == detail.ProductoDetail && T.Estado == ProductStatements.Normal).FirstOrDefault();
+                    var productoDetail = context.DataBase.ProductoDetalles.Where(T => T.Id == detail.ProductDetailId && T.Estado == ProductStatements.Normal).FirstOrDefault();
 
                     // Si el producto no existe
-                    if (productodetail == null || productodetail.Estado == ProductStatements.Undefined)
+                    if (productoDetail == null || productoDetail.Estado == ProductStatements.Undefined)
                         throw new Exception("No existe el producto");
 
-
                     if (data.Type == InflowsTypes.Ajuste)
-                        productodetail.Quantity = detail.Cantidad;
+                        productoDetail.Quantity = detail.Cantidad;
                     else
-                        productodetail.Quantity += detail.Cantidad;
+                        productoDetail.Quantity += detail.Cantidad;
 
 
                 }
@@ -139,15 +145,12 @@ public class Inflows
 
 
     /// <summary>
-    /// Obtiene una entrada
+    /// Obtiene una entrada.
     /// </summary>
-    /// <param name="id">ID de la entrada</param>
+    /// <param name="id">Id de la entrada</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadOneResponse<InflowDataModel>> Read(int id, bool mask, Conexión context)
     {
-
-        Stopwatch reloj = new();
-        reloj.Start();
 
         // Ejecución
         try
@@ -162,18 +165,18 @@ public class Inflows
 
             // Si es una mascara
             if (mask)
-                entrada.CountDetails = context.DataBase.DetallesEntradas.Count(t => t.Movimiento == id);
+                entrada.CountDetails = context.DataBase.DetallesEntradas.Count(t => t.MovementId == id);
 
             // Si se necesitan los detales
             else
             {
-                entrada.Details = await context.DataBase.DetallesEntradas.Where(T => T.Movimiento == id).ToListAsync();
+                entrada.Details = await context.DataBase.DetallesEntradas.Where(T => T.MovementId == id).ToListAsync();
 
                 // Calcula la inversión
                 var allInversions = from DE in context.DataBase.DetallesEntradas
-                                    where DE.Movimiento == id
+                                    where DE.MovementId == id
                                     join PD in context.DataBase.ProductoDetalles
-                                    on DE.ProductoDetail equals PD.ID
+                                    on DE.ProductDetailId equals PD.Id
                                     select PD.PrecioCompra * DE.Cantidad;
 
                 var inversion = allInversions.Sum();
@@ -181,9 +184,6 @@ public class Inflows
 
             }
 
-
-            reloj.Stop();
-            ServerLogger.LogError("Time ReadOne: " + reloj.ElapsedMilliseconds);
 
             // Retorna
             return new(Responses.Success, entrada);
@@ -202,7 +202,7 @@ public class Inflows
     /// <summary>
     /// Obtiene la lista de entradas asociadas a un inventario
     /// </summary>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="id">Id del inventario</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadAllResponse<InflowDataModel>> ReadAll(int id, Conexión context)
     {
@@ -212,16 +212,16 @@ public class Inflows
         {
 
             var res = from E in context.DataBase.Entradas
-                      where E.Inventario == id
+                      where E.InventoryId == id
                       orderby E.Date ascending
                       select new InflowDataModel()
                       {
                           ID = E.ID,
                           Date = E.Date,
-                          Inventario = E.Inventario,
+                          InventoryId = E.InventoryId,
                           ProfileID = E.ProfileID,
                           Type = E.Type,
-                          CountDetails = context.DataBase.DetallesEntradas.Count(t => t.Movimiento == E.ID)
+                          CountDetails = context.DataBase.DetallesEntradas.Count(t => t.MovementId == E.ID)
                       };
 
             var lista = await res.ToListAsync();
@@ -253,21 +253,19 @@ public class Inflows
 
             // Selecciona
             var query = from E in context.DataBase.Entradas
-                        where E.Inventario == inventory
+                        where E.InventoryId == inventory
                         && E.Date.Year == year && E.Date.Month == month
                         join ED in context.DataBase.DetallesEntradas
-                        on E.ID equals ED.Movimiento
+                        on E.ID equals ED.MovementId
                         join P in context.DataBase.ProductoDetalles
-                        on ED.ProductoDetail equals P.ID
-                        join PR in context.DataBase.PlantillaProductos
-                        on P.ProductoFK equals PR.ID
+                        on ED.ProductDetailId equals P.Id
                         select new InflowRow
                         {
                             PrecioCompra = P.PrecioCompra,
                             PrecioVenta = P.PrecioVenta,
                             Fecha = E.Date,
-                            ProductCode = PR.Code,
-                            ProductName = PR.Name,
+                            ProductCode = P.Product.Code,
+                            ProductName = P.Product.Name,
                             Cantidad = ED.Cantidad,
                             Type = E.Type
                         };
@@ -304,7 +302,7 @@ public class Inflows
     /// <summary>
     /// Obtiene la lista de compras asociadas a un usuario
     /// </summary>
-    /// <param name="id">ID del usuario</param>
+    /// <param name="id">Id del usuario</param>
     /// <param name="days">Dias hacia atrás</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadOneResponse<int>> ComprasOf(int id, int days, Conexión context)
@@ -325,9 +323,9 @@ public class Inflows
             var query = from AI in context.DataBase.AccesoInventarios
                         where AI.ProfileID == id && AI.State == InventoryAccessState.Accepted
                         join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
-                        join E in context.DataBase.Entradas on I.ID equals E.Inventario
+                        join E in context.DataBase.Entradas on I.ID equals E.InventoryId
                         where E.ProfileID == id && E.Type == InflowsTypes.Compra && E.Date >= lastDate
-                        join SD in context.DataBase.DetallesSalidas on E.ID equals SD.Movimiento
+                        join SD in context.DataBase.DetallesSalidas on E.ID equals SD.MovementId
                         select SD;
 
 

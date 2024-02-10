@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using LIN.Inventory.Services.Model;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace LIN.Inventory.Services;
@@ -62,7 +63,7 @@ public class Jwt
     /// Valida un JSON Web token
     /// </summary>
     /// <param name="token">Token a validar</param>
-    internal static (bool isValid, int profileID, int userID) Validate(string token)
+    internal static JwtInformation Validate(string token)
     {
         try
         {
@@ -97,7 +98,12 @@ public class Jwt
 
 
                 // Devuelve una respuesta exitosa
-                return (true, id, account);
+                return new()
+                {
+                    IsAuthenticated = true,
+                    ProfileId = id,
+                    AccountId = account,
+                };
             }
             catch (SecurityTokenException)
             {
@@ -108,7 +114,12 @@ public class Jwt
         }
         catch { }
 
-        return (false, 0, 0);
+        return new()
+        {
+            IsAuthenticated = false,
+            ProfileId = 0,
+            AccountId = 0,
+        };
 
     }
 

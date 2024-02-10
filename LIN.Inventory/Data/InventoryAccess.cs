@@ -1,4 +1,6 @@
-﻿namespace LIN.Inventory.Data;
+﻿using LIN.Types.Inventory.Transient;
+
+namespace LIN.Inventory.Data;
 
 
 public class InventoryAccess
@@ -12,7 +14,7 @@ public class InventoryAccess
     /// <summary>
     /// Obtiene la lista de invitaciones a un inventario
     /// </summary>
-    /// <param name="id">ID de la cuenta</param>
+    /// <param name="id">Id de la cuenta</param>
     public async static Task<ReadAllResponse<Notificacion>> ReadAll(int id)
     {
 
@@ -29,7 +31,7 @@ public class InventoryAccess
     /// <summary>
     /// Cambia el estado de una invitación
     /// </summary>
-    /// <param name="id">ID de la invitación</param>
+    /// <param name="id">Id de la invitación</param>
     /// <param name="estado">Nuevo estado</param>
     public async static Task<ResponseBase> UpdateState(int id, InventoryAccessState estado)
     {
@@ -46,7 +48,7 @@ public class InventoryAccess
     /// <summary>
     /// Cambia el estado de una invitación
     /// </summary>
-    /// <param name="id">ID de la invitación</param>
+    /// <param name="id">Id de la invitación</param>
     /// <param name="rol">Nuevo rol</param>
     public async static Task<ResponseBase> UpdateRol(int id, int adminID, InventoryRoles rol)
     {
@@ -117,7 +119,7 @@ public class InventoryAccess
     /// <summary>
     /// Obtiene la lista de invitaciones a un inventario que aun no han sido aceptadas
     /// </summary>
-    /// <param name="id">ID de la cuenta</param>
+    /// <param name="id">Id de la cuenta</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadAllResponse<Notificacion>> ReadAll(int id, Conexión context)
     {
@@ -136,7 +138,7 @@ public class InventoryAccess
                           ID = AI.ID,
                           Fecha = AI.Fecha,
                           Inventario = I.Nombre,
-                          //UsuarioInvitador = U.ID,
+                          //UsuarioInvitador = U.Id,
                           InventarioID = I.ID
                       };
 
@@ -162,7 +164,7 @@ public class InventoryAccess
     /// <summary>
     /// Cambia el estado de una invitación
     /// </summary>
-    /// <param name="id">ID de la invitación</param>
+    /// <param name="id">Id de la invitación</param>
     /// <param name="estado">Nuevo estado</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ResponseBase> UpdateState(int id, InventoryAccessState estado, Conexión context)
@@ -196,7 +198,7 @@ public class InventoryAccess
     /// <summary>
     /// Obtiene la lista de integrantes de un inventario
     /// </summary>
-    /// <param name="inventario">ID del inventario</param>
+    /// <param name="inventario">Id del inventario</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ReadAllResponse<Tuple<InventoryAcessDataModel, ProfileModel>>> ReadIntegrants(int inventario, Conexión context)
     {
@@ -264,7 +266,7 @@ public class InventoryAccess
             }
 
 
-            // Obtiene el ID del acceso inventario, al cual intentan eliminar
+            // Obtiene el Id del acceso inventario, al cual intentan eliminar
             var userID = (from AI in context.DataBase.AccesoInventarios
                           where AI.ProfileID == usuario && AI.Inventario == inventario && AI.State != InventoryAccessState.Deleted
                           select AI.ID).FirstOrDefault();
@@ -306,7 +308,7 @@ public class InventoryAccess
     /// <summary>
     /// Genera nuevas invitaciones para un inventario
     /// </summary>
-    /// <param name="inventario">Modelo del inventario (ID y nuevos integrantes)</param>
+    /// <param name="inventario">Modelo del inventario (Id y nuevos integrantes)</param>
     /// <param name="context">Contexto de conexión</param>
     [Obsolete("Esta función se esta probando (URGENTE)")]
     public async static Task<ResponseBase> GenerateInvitation(InventoryDataModel inventario, Conexión context)
@@ -377,7 +379,7 @@ public class InventoryAccess
     /// <summary>
     /// Cambia el rol
     /// </summary>
-    /// <param name="id">ID de la invitación</param>
+    /// <param name="id">Id de la invitación</param>
     /// <param name="rol">Nuevo rol</param>
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ResponseBase> UpdateRol(int id, int adminID, InventoryRoles rol, Conexión context)

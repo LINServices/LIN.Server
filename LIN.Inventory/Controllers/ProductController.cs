@@ -11,32 +11,66 @@ public class ProductController : ControllerBase
     /// </summary>
     /// <param name="modelo">Modelo del producto</param>
     [HttpPost("create")]
-    public async Task<HttpCreateResponse> Create([FromBody] ProductDataTransfer modelo, [FromHeader] string token)
+    [InventoryToken]
+    public async Task<HttpCreateResponse> Create([FromBody] ProductModel modelo, [FromHeader] string token)
     {
 
-        // Comprobaciones
-        if (modelo.Provider <= 0 || modelo.Inventory <= 0 || modelo.Estado == ProductBaseStatements.Undefined || modelo.Quantity < 0 || modelo.PrecioCompra < 0 || modelo.PrecioVenta < 0)
-            return new(Responses.InvalidParam);
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-
-        // Comprobaciones con plantilla
-        if (modelo.Plantilla < 0 && (!modelo.Name.Any() || !modelo.Description.Any()))
-            return new(Responses.InvalidParam);
-        
-
-        // Verifica el acceso
-        var haveAccess = await Private.Inventories.HaveAccess(modelo.Inventory, token);
-
-        // Si no tiene acceso
-        if (haveAccess.Response != Responses.Success)
-            return new CreateResponse
+        // Validar parámetro.
+        if (modelo == null)
+            return new()
             {
-                Message = haveAccess.Message,
-                Response = haveAccess.Response,
-                LastID = 0
+                Response = Responses.InvalidParam,
+                Message = "El contenido enviado no tiene el formato JSON correcto."
             };
 
-        // Producto base
+        // Validar datos del modelo.
+        if (modelo.Details == null || modelo.Details.Count <= 0)
+            return new()
+            {
+                Response = Responses.InvalidParam,
+                Message = "El producto debe de tener información del detalle."
+            };
+
+        // Validar datos del modelo.
+        if (modelo.Details.Count > 1)
+            return new()
+            {
+                Response = Responses.InvalidParam,
+                Message = "El producto debe de tener solo (1) detalle de información."
+            };
+
+        // Comprobaciones
+        if (modelo.InventoryId <= 0 || modelo.DetailModel!.Quantity < 0 || modelo.DetailModel.PrecioCompra < 0 || modelo.DetailModel.PrecioVenta < 0)
+            return new(Responses.InvalidParam)
+            {
+                Message ="Uno o varios parámetros son inválidos."
+            };
+
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(modelo.InventoryId, tokenInfo.ProfileId);
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator];
+
+        // Si no tiene permisos.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Establecer el modelo.
+        modelo.Inventory = new()
+        {
+            ID = modelo.InventoryId
+        };
+
+        // Crear.
         var response = await Data.Products.Create(modelo);
 
         return response;
@@ -45,30 +79,38 @@ public class ProductController : ControllerBase
 
 
 
-
     /// <summary>
-    /// Obtiene todos los productos asociados a un inventario
+    /// Obtiene todos los productos asociados a un inventario.
     /// </summary>
-    /// <param name="id">ID del inventario</param>
+    /// <param name="id">Id del inventario</param>
     [HttpGet("read/all")]
-    public async Task<HttpReadAllResponse<ProductDataTransfer>> ReadAll([FromHeader] int id, [FromHeader] string token)
+    [InventoryToken]
+    public async Task<HttpReadAllResponse<ProductModel>> ReadAll([FromHeader] int id, [FromHeader] string token)
     {
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Comprobaciones
         if (id <= 0)
             return new(Responses.InvalidParam);
 
-        // Verifica el acceso al inventario
-        var haveAccess = await Private.Inventories.HaveAccess(id, token);
 
-        // Si no tiene acceso
-        if (haveAccess.Response != Responses.Success)
-            return new ReadAllResponse<ProductDataTransfer>
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(id, tokenInfo.ProfileId);
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+
+        // Si no tiene permisos.
+        if (!acceptedRoles.Contains(iam))
+            return new()
             {
-                Message = haveAccess.Message,
-                Response = haveAccess.Response
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
             };
 
+        // Resultado.
         var result = await Data.Products.ReadAll(id);
         return result;
 
@@ -76,19 +118,49 @@ public class ProductController : ControllerBase
 
 
 
-
     /// <summary>
-    /// Obtiene un producto por medio de su ID
+    /// Obtiene un producto por medio de su Id
     /// </summary>
-    /// <param name="id">ID del producto</param>
+    /// <param name="id">Id del producto</param>
     [HttpGet("read")]
-    public async Task<HttpReadOneResponse<ProductDataTransfer>> ReadOne([FromHeader] int id)
+    [InventoryToken]
+    public async Task<HttpReadOneResponse<ProductModel>> ReadOne([FromHeader] int id, [FromHeader] string token)
     {
 
         // Comprobación
         if (id <= 0)
             return new(Responses.InvalidParam);
 
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Obtener el inventario.
+        var inventory = await Data.Inventories.FindByProduct(id);
+
+        // Si hubo un error.
+        if (inventory.Response != Responses.Success)
+            return new()
+            {
+                Message = "Hubo un error al obtener el producto.",
+                Response = Responses.Unauthorized
+            };
+
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+
+        // Si no tiene permisos.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Resultado.
         var result = await Data.Products.Read(id);
         return result;
 
@@ -96,18 +168,49 @@ public class ProductController : ControllerBase
 
 
 
-
     /// <summary>
     /// Obtiene un producto por medio de un detalle asociado
     /// </summary>
-    /// <param name="id">ID del detalle de producto</param>
+    /// <param name="id">Id del detalle de producto</param>
     [HttpGet("readByDetail")]
-    public async Task<HttpReadOneResponse<ProductDataTransfer>> ReadByDetail([FromHeader] int id)
+    [InventoryToken]
+    public async Task<HttpReadOneResponse<ProductModel>> ReadByDetail([FromHeader] int id, [FromHeader] string token)
     {
+
         // Comprobaciones
         if (id <= 0)
             return new(Responses.InvalidParam);
 
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Obtener el inventario.
+        var inventory = await Data.Inventories.FindByProductDetail(id);
+
+        // Si hubo un problema.
+        if (inventory.Response != Responses.Success)
+            return new()
+            {
+                Message = "Hubo un error al obtener el producto.",
+                Response = Responses.Unauthorized
+            };
+
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+
+        // Si no tiene permisos.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Resultado.
         var result = await Data.Products.ReadByDetail(id);
         return result;
 
@@ -115,23 +218,7 @@ public class ProductController : ControllerBase
 
 
 
-
-    /// <summary>
-    /// Obtiene la lista de plantillas
-    /// </summary>
-    [HttpGet("read/all/templates")]
-    public async Task<HttpReadAllResponse<ProductDataTransfer>> ReadAllBy([FromQuery] string template)
-    {
-
-        // Comprobaciones
-        if (string.IsNullOrEmpty(template))
-            return new(Responses.InvalidParam);
-
-        var result = await Data.ProductTemplate.ReadAllBy(template);
-        return result;
-
-    }
-
+    
 
 
 
@@ -141,35 +228,34 @@ public class ProductController : ControllerBase
     /// <param name="modelo">Modelo del producto</param>
     /// <param name="isBase">TRUE si solo se actualiza la base, FALSE si se actualiza el detalle</param>
     [HttpPatch("update")]
-    public async Task<HttpResponseBase> Update([FromBody] ProductDataTransfer modelo, [FromHeader] bool isBase)
+    public async Task<HttpResponseBase> Update([FromBody] ProductModel modelo, [FromHeader] bool isBase)
     {
 
         // Comprobaciones
-        if (isBase && !modelo.Name.Any() || modelo.Estado == ProductBaseStatements.Undefined)
+        if (isBase && !modelo.Name.Any() || modelo.Statement == ProductBaseStatements.Undefined)
             return new(Responses.InvalidParam);
 
-        if (!isBase && (modelo.PrecioCompra < 0 || modelo.PrecioVenta < 0))
+        if (!isBase && (modelo.DetailModel.PrecioVenta < 0 || modelo.DetailModel.PrecioCompra < 0))
             return new(Responses.InvalidParam);
 
         // Respuesta
-        ResponseBase response;
+        ResponseBase response = new();
 
-        if (isBase)
-            response = await Data.Products.UpdateBase(modelo);
-        else
-            response = await Data.Products.UpdateDetail(modelo.ProductID, new()
-            {
-                ID = modelo.IDDetail,
-                PrecioCompra = modelo.PrecioCompra,
-                PrecioVenta = modelo.PrecioVenta,
-                ProductoFK = modelo.ProductID,
-                Quantity = modelo.Quantity
-            });
+        //if (isBase)
+        //    response = await Data.Products.UpdateBase(modelo);
+        //else
+        //    response = await Data.Products.UpdateDetail(modelo.ProductID, new()
+        //    {
+        //        Id = modelo.IDDetail,
+        //        PrecioCompra = modelo.PrecioCompra,
+        //        PrecioVenta = modelo.PrecioVenta,
+        //        ProductoFK = modelo.ProductID,
+        //        Quantity = modelo.Quantity
+        //    });
 
         return response ?? new();
 
     }
-
 
 
 
@@ -178,12 +264,12 @@ public class ProductController : ControllerBase
     /// </summary>
     /// <param name="modelo">Nuevo modelo del producto</param>
     [HttpPut("update")]
-    public async Task<HttpResponseBase> UpdateAll([FromBody] ProductDataTransfer modelo)
+    public async Task<HttpResponseBase> UpdateAll([FromBody] ProductModel modelo)
     {
 
-        // Comprobaciones
-        if (!modelo.Name.Any() || modelo.PrecioCompra < 0 || modelo.PrecioVenta < 0 || modelo.Estado == ProductBaseStatements.Undefined)
-            return new(Responses.InvalidParam);
+        //// Comprobaciones
+        //if (!modelo.Name.Any() || modelo.PrecioCompra < 0 || modelo.PrecioVenta < 0 || modelo.Estado == ProductBaseStatements.Undefined)
+        //    return new(Responses.InvalidParam);
 
 
         // Respuesta
@@ -195,16 +281,46 @@ public class ProductController : ControllerBase
 
 
 
-
     /// <summary>
     /// Elimina un producto
     /// </summary>
-    /// <param name="id">ID del producto</param>
+    /// <param name="id">Id del producto</param>
     [HttpDelete("delete")]
-    public async Task<HttpResponseBase> Delete([FromHeader] int id)
+    [InventoryToken]
+    public async Task<HttpResponseBase> Delete([FromHeader] int id, [FromHeader]string token)
     {
 
-        if (id < 0) return new(Responses.InvalidParam);
+        // Parámetros.
+        if (id < 0) 
+            return new(Responses.InvalidParam);
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Obtener el inventario.
+        var inventory = await Data.Inventories.FindByProduct(id);
+
+        // Hubo un error.
+        if (inventory.Response != Responses.Success)
+            return new()
+            {
+                Message = "Hubo un error al obtener el producto.",
+                Response = Responses.Unauthorized
+            };
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+
+        // Si no tiene permisos.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
 
         // Respuesta
         ResponseBase response = await Data.Products.Delete(id);

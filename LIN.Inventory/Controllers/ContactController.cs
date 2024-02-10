@@ -1,5 +1,5 @@
+using LIN.Types.Contacts.Models;
 
- using LIN.Types.Contacts.Models;
 namespace LIN.Inventory.Controllers;
 
 
@@ -33,7 +33,7 @@ public class ContactController : ControllerBase
     /// <summary>
     /// Obtiene un contacto
     /// </summary>
-    /// <param name="id">ID del contacto</param>
+    /// <param name="id">Id del contacto</param>
     [HttpGet("read")]
     public async Task<HttpReadOneResponse<ContactModel>> Read([FromHeader] int id)
     {
@@ -57,7 +57,7 @@ public class ContactController : ControllerBase
     /// <summary>
     /// Obtiene los contactos asociados a una cuenta
     /// </summary>
-    /// <param name="id">ID de la cuenta</param>
+    /// <param name="id">Id de la cuenta</param>
     [HttpGet("read/all")]
     public async Task<HttpReadAllResponse<ContactModel>> ReadAll([FromHeader] string token)
     {
@@ -123,7 +123,7 @@ public class ContactController : ControllerBase
     /// <summary>
     /// Elimina un contacto
     /// </summary>
-    /// <param name="id">ID del contacto</param>
+    /// <param name="id">Id del contacto</param>
     /// <param name="token">Token de acceso</param>
     [HttpDelete("delete")]
     public async Task<HttpResponseBase> Delete([FromHeader] int id, [FromHeader] string token)
@@ -153,7 +153,7 @@ public class ContactController : ControllerBase
     /// <summary>
     /// Envía a la papelera un contacto
     /// </summary>
-    /// <param name="id">ID del contacto</param>
+    /// <param name="id">Id del contacto</param>
     /// <param name="token">Token de acceso</param>
     [HttpDelete("trash")]
     public async Task<HttpResponseBase> ToTrash([FromHeader] int id, [FromHeader] string token)
