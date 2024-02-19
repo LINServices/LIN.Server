@@ -19,7 +19,7 @@ public static class Products
                     where P.Id == id
                     select new ProductModel
                     {
-                        Id = id,
+                        Id = P.Id,
                         Statement = P.Statement,
                         Category = P.Category,
                         Code = P.Code,
@@ -50,7 +50,7 @@ public static class Products
                     where P.Id == id
                     select new ProductModel
                     {
-                        Id = id,
+                        Id = P.Id,
                         Statement = P.Product.Statement,
                         Category = P.Product.Category,
                         Code = P.Product.Code,
@@ -79,10 +79,9 @@ public static class Products
         var query = from P in context.DataBase.Productos
                     where P.Statement == ProductBaseStatements.Normal
                     where P.InventoryId == id
-
                     select new ProductModel
                     {
-                        Id = id,
+                        Id = P.Id,
                         Statement = P.Statement,
                         Category = P.Category,
                         Code = P.Code,

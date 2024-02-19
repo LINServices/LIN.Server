@@ -88,6 +88,8 @@ public class Inflows
                 var details = data.Details;
                 data.Details = [];
 
+                context.DataBase.Attach(data.Inventory);
+
                 // Entrada base
                 await context.DataBase.Entradas.AddAsync(data);
 
@@ -104,22 +106,27 @@ public class Inflows
                     // Agregar los detalles.
                     context.DataBase.DetallesEntradas.Add(detail);
 
+                    context.DataBase.Attach(detail.ProductDetail);
+
                     // Si la cantidad es invalida
                     if (detail.Cantidad <= 0 && data.Type != InflowsTypes.Ajuste || detail.Cantidad < 0 && data.Type == InflowsTypes.Ajuste)
                         throw new Exception("Invalid detail quantity");
 
                     // Producto
-                    var productoDetail = context.DataBase.ProductoDetalles.Where(T => T.Id == detail.ProductDetailId && T.Estado == ProductStatements.Normal).FirstOrDefault();
+                    var productDetail = (from dt in context.DataBase.ProductoDetalles
+                                         where dt.Id == detail.ProductDetailId
+                                         && dt.Estado == ProductStatements.Normal
+                                         select dt);
 
-                    // Si el producto no existe
-                    if (productoDetail == null || productoDetail.Estado == ProductStatements.Undefined)
-                        throw new Exception("No existe el producto");
 
+                    // Ajustar.
                     if (data.Type == InflowsTypes.Ajuste)
-                        productoDetail.Quantity = detail.Cantidad;
+                        await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => detail.Cantidad));
+                    
+                    // Sumar.
                     else
-                        productoDetail.Quantity += detail.Cantidad;
-
+                        await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity + detail.Cantidad));
+          
 
                 }
 

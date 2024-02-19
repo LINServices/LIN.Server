@@ -111,8 +111,12 @@ public class Outflows
                 var details = data.Details;
                 data.Details = [];
 
+                context.DataBase.Attach(data.Inventory);
+
                 // Entrada base
                 await context.DataBase.Salidas.AddAsync(data);
+
+
 
                 // Guarda cambios
                 context.DataBase.SaveChanges();
@@ -127,11 +131,14 @@ public class Outflows
                     // Agregar los detalles.
                     context.DataBase.DetallesSalidas.Add(detail);
 
+                    context.DataBase.Attach(detail.ProductDetail);
+
                     if (detail.Cantidad <= 0)
                         throw new Exception("Invalid detail quantity");
 
+
                     // Detalle de un producto
-                    var productoDetail = context.DataBase.ProductoDetalles.Where(T => T.Id == detail.ProductDetailId && T.Estado == ProductStatements.Normal).FirstOrDefault();
+                    var productoDetail = context.DataBase.ProductoDetalles.Where(T => T.Id == detail.ProductDetailId && T.Estado == ProductStatements.Normal).Select(t=> new { t.Quantity }).FirstOrDefault();
 
                     // Si no existe el detalle
                     if (productoDetail == null)
@@ -148,20 +155,12 @@ public class Outflows
                     // Si el producto no tiene suficiente stock
                     if (newStock < 0)
                     {
-                        // Obtiene el producto
-                        var producto = context.DataBase.Productos.Where(T => T.Id == productoDetail.ProductId).FirstOrDefault();
-
-                        // Si no existe un producto
-                        if (producto == null)
-                            return new(Responses.NotRows, -1, "No existe un producto");
-
                         return new(Responses.InvalidParam, -1, $"El producto no tiene stock suficiente");
-
                     }
 
 
-                    // Disminuye la cantidad
-                    productoDetail.Quantity -= detail.Cantidad;
+                   await context.DataBase.ProductoDetalles.Where(t=>t.Id == detail.ProductDetailId).ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity - detail.Cantidad));
+
 
                 }
 
