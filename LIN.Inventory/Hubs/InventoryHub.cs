@@ -42,7 +42,8 @@ public class InventoryHub : Hub
         List[tokenInfo.ProfileId].Add(model);
 
         // Agregar el grupo.
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"group.{tokenInfo.ProfileId}");
+        string groupName = $"group.{tokenInfo.ProfileId}";
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
     }
 
@@ -64,9 +65,12 @@ public class InventoryHub : Hub
             return;
 
         // Envía el comando.
-        await Clients.GroupExcept($"group.{tokenInfo.ProfileId}", [Context.ConnectionId]).SendAsync("#command", comando);
+        string groupName = $"group.{tokenInfo.ProfileId}";
+        await Clients.Group(groupName).SendAsync("#command", comando);
 
     }
+
+
 
 
 
@@ -83,7 +87,7 @@ public class InventoryHub : Hub
 
 
     /// <summary>
-    /// Evento: Cuando un dispositivo se desconecta
+    /// Evento: Cuando un dispositivo se desconecta.
     /// </summary>
     /// <param name="exception">Excepción</param>
     public override async Task OnDisconnectedAsync(Exception? exception)

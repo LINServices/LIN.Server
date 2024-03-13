@@ -210,7 +210,30 @@ public class Outflows
 
             // Si se necesitan los detales
             else
-                salida.Details = await context.DataBase.DetallesSalidas.Where(T => T.MovementId == id).ToListAsync();
+            {
+
+                salida.Details = await (from de in context.DataBase.DetallesSalidas
+                                         where de.MovementId == id
+                                         select new OutflowDetailsDataModel
+                                         {
+                                             ID = de.ID,
+                                             Cantidad = de.Cantidad,
+                                             MovementId = de.MovementId,
+                                             ProductDetailId = de.ProductDetailId,
+                                              ProductDetail = new()
+                                              {
+                                                  Product = new()
+                                                  {
+                                                      Name = de.ProductDetail.Product.Name,
+                                                      Category = de.ProductDetail.Product.Category,
+                                                      Code = de.ProductDetail.Product.Code,
+                                                  }
+                                              }
+                                         }).ToListAsync();
+
+
+
+            }
 
             // Retorna
             return new(Responses.Success, salida);
@@ -379,15 +402,15 @@ public class Outflows
             var actualDate = DateTime.Now;
             var lastDate = actualDate.AddDays(-days);
 
-
-
-
             // Selecciona la entrada
             var query = from AI in context.DataBase.AccesoInventarios
-                        where AI.ProfileID == profile && AI.State == InventoryAccessState.Accepted
+                        where AI.ProfileID == profile 
+                        && AI.State == InventoryAccessState.Accepted
                         join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
                         join S in context.DataBase.Salidas on I.ID equals S.InventoryId
-                        where S.ProfileID == profile && S.Type == OutflowsTypes.Venta && S.Date >= lastDate
+                        where S.ProfileID == profile 
+                        && S.Type == OutflowsTypes.Venta 
+                        && S.Date >= lastDate
                         join SD in context.DataBase.DetallesSalidas on S.ID equals SD.MovementId
                         join P in context.DataBase.ProductoDetalles on SD.ProductDetailId equals P.Id
                         orderby S.Date

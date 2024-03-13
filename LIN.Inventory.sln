@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Inventory", "LIN.Inventory\LIN.Inventory.csproj", "{71DADCA5-4F3E-4B0C-9E88-786F966FD4EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Shared", "..\..\Tipos\LIN.Shared\LIN.Shared.csproj", "{5ABEF977-355A-4531-A2F4-BC77B4BE649D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Http", "..\..\Tipos\Http\Http.csproj", "{9F6D48CB-6459-4F1D-9B58-EF82E6EFACEB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Types.Inventory", "..\..\Tipos\LIN.Types.Inventory\LIN.Types.Inventory.csproj", "{0A440E59-7531-4C6B-B199-8928EB796894}"
@@ -35,10 +33,6 @@ Global
 		{71DADCA5-4F3E-4B0C-9E88-786F966FD4EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71DADCA5-4F3E-4B0C-9E88-786F966FD4EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71DADCA5-4F3E-4B0C-9E88-786F966FD4EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5ABEF977-355A-4531-A2F4-BC77B4BE649D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5ABEF977-355A-4531-A2F4-BC77B4BE649D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5ABEF977-355A-4531-A2F4-BC77B4BE649D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5ABEF977-355A-4531-A2F4-BC77B4BE649D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9F6D48CB-6459-4F1D-9B58-EF82E6EFACEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9F6D48CB-6459-4F1D-9B58-EF82E6EFACEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F6D48CB-6459-4F1D-9B58-EF82E6EFACEB}.Release|Any CPU.ActiveCfg = Release|Any CPU

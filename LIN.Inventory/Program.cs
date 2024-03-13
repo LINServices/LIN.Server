@@ -114,6 +114,9 @@ try
     // Inicio de Jwt
     Jwt.Open();
 
+    LIN.Access.Auth.Build.Init();
+
+
 
     // Estado del servidor
     ServerLogger.OpenDate = DateTime.Now;

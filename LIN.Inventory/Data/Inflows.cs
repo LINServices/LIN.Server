@@ -122,11 +122,11 @@ public class Inflows
                     // Ajustar.
                     if (data.Type == InflowsTypes.Ajuste)
                         await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => detail.Cantidad));
-                    
+
                     // Sumar.
                     else
                         await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity + detail.Cantidad));
-          
+
 
                 }
 
@@ -177,7 +177,29 @@ public class Inflows
             // Si se necesitan los detales
             else
             {
-                entrada.Details = await context.DataBase.DetallesEntradas.Where(T => T.MovementId == id).ToListAsync();
+
+                entrada.Details = await (from de in context.DataBase.DetallesEntradas
+                                         where de.MovementId == id
+                                         select new InflowDetailsDataModel
+                                         {
+                                             ID = de.ID,
+                                             Cantidad = de.Cantidad,
+                                             MovementId = de.MovementId,
+                                             ProductDetailId = de.ProductDetailId,
+                                             ProductDetail = new()
+                                             {
+                                                 Product = new()
+                                                 {
+                                                     Name = de.ProductDetail.Product.Name,
+                                                     Category = de.ProductDetail.Product.Category,
+                                                     Code = de.ProductDetail.Product.Code,
+                                                 }
+                                             }
+                                         }).ToListAsync();
+
+
+
+
 
                 // Calcula la inversión
                 var allInversions = from DE in context.DataBase.DetallesEntradas
