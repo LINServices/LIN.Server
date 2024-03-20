@@ -1,4 +1,5 @@
 ﻿using LIN.Inventory.Data;
+using Newtonsoft.Json.Linq;
 
 namespace LIN.Inventory.Controllers;
 
@@ -13,14 +14,15 @@ public class InventoryAccessController : ControllerBase
     /// </summary>
     /// <param name="id">Id de la cuenta</param>
     [HttpGet("read/all")]
-    public async Task<HttpReadAllResponse<Notificacion>> ReadAll([FromHeader] int id)
+    [InventoryToken]
+    public async Task<HttpReadAllResponse<Notificacion>> ReadAll([FromHeader] string token)
     {
-        // comprobaciones
-        if (id <= 0)
-            return new(Responses.InvalidParam);
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtiene la lista de Id's de inventarios
-        var result = await InventoryAccess.ReadAll(id);
+        var result = await InventoryAccess.ReadAll(tokenInfo.ProfileId);
 
         // Retorna el resultado
         return result;
