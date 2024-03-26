@@ -115,7 +115,7 @@ try
     Jwt.Open();
 
     LIN.Access.Auth.Build.Init();
-
+    LIN.Access.Contacts.Build.Init();
 
 
     // Estado del servidor
