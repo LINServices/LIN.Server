@@ -1,6 +1,4 @@
-﻿using LIN.Types.Inventory.Transient;
-
-namespace LIN.Inventory.Hubs;
+﻿namespace LIN.Inventory.Hubs;
 
 
 public class InventoryHub : Hub
@@ -8,6 +6,7 @@ public class InventoryHub : Hub
 
 
     public static Dictionary<int, List<DeviceModel>> List { get; set; } = [];
+
 
 
 
@@ -50,10 +49,42 @@ public class InventoryHub : Hub
 
 
     /// <summary>
+    /// Agregar una conexión a su grupo de cuenta.
+    /// </summary>
+    /// <param name="token">Token de acceso.</param>
+    public async Task JoinInventory(string token, int inventory)
+    {
+
+        // Información del token.
+        var tokenInfo = Jwt.Validate(token);
+
+        // Si el token es invalido.
+        if (!tokenInfo.IsAuthenticated)
+            return;
+
+
+        var iam = await Iam.OnInventory(inventory, tokenInfo.ProfileId);
+
+        // Roles que pueden crear.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+
+        // Si no tiene ese rol.
+        if (!acceptedRoles.Contains(iam))
+            return;
+
+        string groupName = $"inventory.{inventory}";
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+
+    }
+
+
+
+    /// <summary>
     /// Enviar un comando a los demás dispositivos.
     /// </summary>
     /// <param name="token">Token de acceso.</param>
-    /// <param name="command">Comando.</param>
+    /// <param name="comando">Comando.</param>
     public async Task SendCommand(string token, CommandModel comando)
     {
 
@@ -65,8 +96,14 @@ public class InventoryHub : Hub
             return;
 
         // Envía el comando.
-        string groupName = $"group.{tokenInfo.ProfileId}";
-        await Clients.Group(groupName).SendAsync("#command", comando);
+        string group = "";
+
+        if (comando.Inventory > 0)
+            group = $"inventory.{comando.Inventory}";
+        else
+            group = $"group.{tokenInfo.ProfileId}";
+
+        await Clients.Group(group).SendAsync("#command", comando);
 
     }
 
