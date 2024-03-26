@@ -60,12 +60,32 @@ public class InventoryAccessController : ControllerBase
     /// <param name="inventario">Id del inventario</param>
     /// <param name="usuario">Id del usuario</param>
     [HttpGet("members")]
-    public async Task<HttpReadAllResponse<IntegrantDataModel>> ReadAll([FromHeader] int inventario, [FromHeader] int usuario, [FromHeader] string token)
+    [InventoryToken]
+    public async Task<HttpReadAllResponse<IntegrantDataModel>> ReadAll([FromHeader] int inventario, [FromHeader] string token, [FromHeader] string tokenAuth)
     {
 
         // Comprobaciones
-        if (inventario <= 0 || usuario <= 0)
+        if (inventario <= 0 )
             return new(Responses.InvalidParam);
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(inventario, tokenInfo.ProfileId);
+
+        // Roles que pueden crear.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+
+        // Si no tiene ese rol.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
 
         // Obtiene la lista de Id's de inventarios
         var result = await InventoryAccess.ReadIntegrants(inventario);
@@ -73,7 +93,7 @@ public class InventoryAccessController : ControllerBase
 
         var map = result.Models.Select(T => T.Item2.AccountID).ToList();
 
-        var users = await LIN.Access.Auth.Controllers.Account.Read(map, token);
+        var users = await LIN.Access.Auth.Controllers.Account.Read(map, tokenAuth);
 
 
         var i = (from I in result.Models

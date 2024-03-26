@@ -1,4 +1,5 @@
 using LIN.Types.Contacts.Models;
+using Newtonsoft.Json.Linq;
 
 namespace LIN.Inventory.Controllers;
 
@@ -28,29 +29,6 @@ public class ContactController : ControllerBase
 
     }
 
-
-
-    /// <summary>
-    /// Obtiene un contacto
-    /// </summary>
-    /// <param name="id">Id del contacto</param>
-    [HttpGet("read")]
-    public async Task<HttpReadOneResponse<ContactModel>> Read([FromHeader] int id)
-    {
-
-        //// Comprobaciones
-        //if (id <= 0)
-        //    return new(Responses.InvalidParam);
-
-        //// Obtiene el usuario
-        //var result = await Data.Contacts.Read(id);
-
-        //// Retorna el resultado
-        //return result ?? new();
-
-        return new();
-
-    }
 
 
 
