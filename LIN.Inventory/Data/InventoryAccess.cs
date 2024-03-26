@@ -11,6 +11,21 @@ public class InventoryAccess
     #region Abstracciones
 
 
+
+    public async static Task<ReadOneResponse<Notificacion>> Read(int id)
+    {
+
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var rs = await Read(id, context);
+        context.CloseActions(connectionKey);
+        return rs;
+    }
+
+
+
+
     /// <summary>
     /// Obtiene la lista de invitaciones a un inventario
     /// </summary>
@@ -144,6 +159,51 @@ public class InventoryAccess
 
 
             var modelos = await res.ToListAsync();
+            if (modelos != null)
+                return new(Responses.Success, modelos);
+
+            return new(Responses.NotRows);
+
+
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+
+        return new();
+    }
+
+
+
+    /// <summary>
+    /// Obtiene la lista de invitaciones a un inventario que aun no han sido aceptadas
+    /// </summary>
+    /// <param name="id">Id de la cuenta</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async static Task<ReadOneResponse<Notificacion>> Read(int id, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            // Consulta
+            var res = from AI in context.DataBase.AccesoInventarios
+                      where AI.ID == id && AI.State == InventoryAccessState.OnWait
+                      join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
+                      join U in context.DataBase.Profiles on I.Creador equals U.ID
+                      select new Notificacion()
+                      {
+                          ID = AI.ID,
+                          Fecha = AI.Fecha,
+                          Inventario = I.Nombre,
+                          //UsuarioInvitador = U.Id,
+                          InventarioID = I.ID
+                      };
+
+
+            var modelos = await res.FirstOrDefaultAsync();
             if (modelos != null)
                 return new(Responses.Success, modelos);
 

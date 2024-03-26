@@ -298,9 +298,6 @@ public static class Products
             try
             {
                 
-                
-
-
                 context.DataBase.SaveChanges();
                 transaction.Commit();
                 return new(Responses.Success);

@@ -1,5 +1,4 @@
 ﻿using LIN.Inventory.Data;
-using Newtonsoft.Json.Linq;
 
 namespace LIN.Inventory.Controllers;
 
@@ -7,6 +6,30 @@ namespace LIN.Inventory.Controllers;
 [Route("Inventory/access")]
 public class InventoryAccessController : ControllerBase
 {
+
+
+
+    /// <summary>
+    /// Obtiene una lista de accesos asociados a un usuario.
+    /// </summary>
+    /// <param name="id">Id de la cuenta</param>
+    [HttpGet("read")]
+    [InventoryToken]
+    public async Task<HttpReadOneResponse<Notificacion>> Read([FromHeader] int id, [FromHeader] string token)
+    {
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Obtiene la lista de Id's de inventarios
+        var result = await InventoryAccess.Read(id);
+
+        // Retorna el resultado
+        return result;
+
+    }
+
+
 
 
     /// <summary>
@@ -65,7 +88,7 @@ public class InventoryAccessController : ControllerBase
     {
 
         // Comprobaciones
-        if (inventario <= 0 )
+        if (inventario <= 0)
             return new(Responses.InvalidParam);
 
         // Información del token.
@@ -97,18 +120,18 @@ public class InventoryAccessController : ControllerBase
 
 
         var i = (from I in result.Models
-                join A in users.Models
-                on I.Item2.AccountID equals A.Id
-                select new IntegrantDataModel
-                {
-                    AccessID = I.Item1.ID,
-                    InventoryID = I.Item1.Inventario,
-                    Nombre = A.Name,
-                    Perfil = A.Profile,
-                    ProfileID = I.Item2.ID,
-                    Rol = I.Item1.Rol,
-                    Usuario = A.Identity.Unique
-                }).ToList();
+                 join A in users.Models
+                 on I.Item2.AccountID equals A.Id
+                 select new IntegrantDataModel
+                 {
+                     AccessID = I.Item1.ID,
+                     InventoryID = I.Item1.Inventario,
+                     Nombre = A.Name,
+                     Perfil = A.Profile,
+                     ProfileID = I.Item2.ID,
+                     Rol = I.Item1.Rol,
+                     Usuario = A.Identity.Unique
+                 }).ToList();
 
 
 
@@ -150,7 +173,7 @@ public class InventoryAccessController : ControllerBase
     public async Task<HttpResponseBase> GenerateInvitaciones([FromHeader] string token, [FromBody] InventoryDataModel modelo)
     {
 
-    
+
         // Valida los nuevos integrantes y el inventario
         if (modelo.ID <= 0 || modelo.UsersAccess.Count <= 0)
             return new(Responses.InvalidParam);
