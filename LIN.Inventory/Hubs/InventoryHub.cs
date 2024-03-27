@@ -5,8 +5,10 @@ public class InventoryHub : Hub
 {
 
 
+    /// <summary>
+    /// Lista de dispositivos.
+    /// </summary>
     public static Dictionary<int, List<DeviceModel>> List { get; set; } = [];
-
 
 
 
@@ -49,9 +51,10 @@ public class InventoryHub : Hub
 
 
     /// <summary>
-    /// Agregar una conexión a su grupo de cuenta.
+    /// Agregar una conexión a un grupo de inventario.
     /// </summary>
     /// <param name="token">Token de acceso.</param>
+    /// <param name="inventory">Id del inventario.</param>
     public async Task JoinInventory(string token, int inventory)
     {
 
@@ -62,7 +65,7 @@ public class InventoryHub : Hub
         if (!tokenInfo.IsAuthenticated)
             return;
 
-
+        // Validar IAM.
         var iam = await Iam.OnInventory(inventory, tokenInfo.ProfileId);
 
         // Roles que pueden crear.
@@ -96,7 +99,7 @@ public class InventoryHub : Hub
             return;
 
         // Envía el comando.
-        string group = "";
+        string group;
 
         if (comando.Inventory > 0)
             group = $"inventory.{comando.Inventory}";
@@ -107,6 +110,64 @@ public class InventoryHub : Hub
 
     }
 
+
+
+
+    /// <summary>
+    /// Agregar una conexión a un grupo de inventario.
+    /// </summary>
+    /// <param name="token">Token de acceso.</param>
+    /// <param name="inventory">Id del inventario.</param>
+    public async Task<string> Notification(string token, int inventory)
+    {
+
+        // Información del token.
+        var tokenInfo = Jwt.Validate(token);
+
+        // Si el token es invalido.
+        if (!tokenInfo.IsAuthenticated)
+            return "No Auth";
+
+        // Validar IAM.
+        var iam = await Iam.OnInventory(inventory, tokenInfo.ProfileId);
+
+        // Roles que pueden crear.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+
+        // Si no tiene ese rol.
+        if (!acceptedRoles.Contains(iam))
+            return "No Rol";
+
+
+        var (context, contextKey) = Conexión.GetOneConnection();
+
+
+
+
+        var x = await (from i in context.DataBase.AccesoInventarios
+                       where i.Inventario == inventory
+                       where i.State == InventoryAccessState.OnWait
+                       select new
+                       {
+                           Profile = i.ProfileID,
+                           Id = i.ID,
+                       }).ToListAsync();
+
+
+        foreach (var id in x)
+        {
+            string groupName = $"group.{id.Profile}";
+            string command = $"newInvitation({id.Id})";
+            await Clients.Group(groupName).SendAsync("#command", new CommandModel()
+            {
+                Command = command
+            });
+        }
+
+
+        return "Success";
+
+    }
 
 
 

@@ -60,12 +60,23 @@ public class InventoryAccessController : ControllerBase
     /// <param name="id">Id del estado de inventario</param>
     /// <param name="estado">Nuevo estado del acceso</param>
     [HttpPut("update/state")]
-    public async Task<HttpResponseBase> AccessChange([FromHeader] int id, [FromHeader] InventoryAccessState estado)
+    [InventoryToken]
+    public async Task<HttpResponseBase> AccessChange([FromHeader] string token, [FromHeader] int id, [FromHeader] InventoryAccessState estado)
     {
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Comprobaciones
         if (id <= 0 || estado == InventoryAccessState.Undefined)
             return new(Responses.InvalidParam);
+
+
+        var can = await Iam.CanAccept(id, tokenInfo.ProfileId);
+
+        if (!can) 
+            return new(Responses.Unauthorized);
+
 
         // Obtiene la lista de Id's de inventarios
         var result = await InventoryAccess.UpdateState(id, estado);
