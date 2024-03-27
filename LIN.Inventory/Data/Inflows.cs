@@ -242,7 +242,7 @@ public class Inflows
 
             var res = from E in context.DataBase.Entradas
                       where E.InventoryId == id
-                      orderby E.Date ascending
+                      orderby E.Date descending
                       select new InflowDataModel()
                       {
                           ID = E.ID,
