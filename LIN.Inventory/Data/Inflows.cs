@@ -33,13 +33,13 @@ public class Inflows
     /// </summary>
     /// <param name="id">Id de la entrada</param>
     /// <param name="mask">Si es una mascara</param>
-    public async static Task<ReadOneResponse<InflowDataModel>> Read(int id, bool mask = false)
+    public async static Task<ReadOneResponse<InflowDataModel>> Read(int id, bool includeDetails = false)
     {
 
         // Obtiene la conexión
         (Conexión context, string connectionKey) = Conexión.GetOneConnection();
 
-        var response = await Read(id, mask, context);
+        var response = await Read(id, includeDetails, context);
         context.CloseActions(connectionKey);
         return response;
     }
@@ -156,29 +156,29 @@ public class Inflows
     /// </summary>
     /// <param name="id">Id de la entrada</param>
     /// <param name="context">Contexto de conexión</param>
-    public async static Task<ReadOneResponse<InflowDataModel>> Read(int id, bool mask, Conexión context)
+    public async static Task<ReadOneResponse<InflowDataModel>> Read(int id, bool includeDetails, Conexión context)
     {
 
         // Ejecución
         try
         {
-            // Selecciona la entrada
-            var entrada = context.DataBase.Entradas.FirstOrDefault(T => T.ID == id);
 
-            if (entrada == null)
-            {
+            // Consulta.
+            InflowDataModel? inflow = await (from i in context.DataBase.Entradas
+                                            where i.ID == id
+                                            select i).FirstOrDefaultAsync();
+
+            // Validar.
+            if (inflow == null)
                 return new(Responses.NotRows);
-            }
 
-            // Si es una mascara
-            if (mask)
-                entrada.CountDetails = context.DataBase.DetallesEntradas.Count(t => t.MovementId == id);
 
-            // Si se necesitan los detales
-            else
+            // Incluir detalles.
+            if (includeDetails)
             {
 
-                entrada.Details = await (from de in context.DataBase.DetallesEntradas
+                // Consulta de detalles.
+                inflow.Details = await (from de in context.DataBase.DetallesEntradas
                                          where de.MovementId == id
                                          select new InflowDetailsDataModel
                                          {
@@ -196,26 +196,14 @@ public class Inflows
                                                  }
                                              }
                                          }).ToListAsync();
-
-
-
-
-
-                // Calcula la inversión
-                var allInversions = from DE in context.DataBase.DetallesEntradas
-                                    where DE.MovementId == id
-                                    join PD in context.DataBase.ProductoDetalles
-                                    on DE.ProductDetailId equals PD.Id
-                                    select PD.PrecioCompra * DE.Cantidad;
-
-                var inversion = allInversions.Sum();
-                entrada.Inversion = inversion;
-
             }
 
+            // No incluir detalles.
+            else
+                inflow.CountDetails = context.DataBase.DetallesEntradas.Count(t => t.MovementId == id);
 
             // Retorna
-            return new(Responses.Success, entrada);
+            return new(Responses.Success, inflow);
 
         }
         catch (Exception ex)

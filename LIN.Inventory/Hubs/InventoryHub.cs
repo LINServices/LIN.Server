@@ -38,9 +38,18 @@ public class InventoryHub : Hub
                 Platform = model.Platform,
             }]);
         }
+        else
+        {
+            var any = List[tokenInfo.ProfileId].Any(t => t.LocalId == model.LocalId);
+
+            if (any)
+                return;
+
+
+            List[tokenInfo.ProfileId].Add(model);
+        }
 
         model.Id = Context.ConnectionId;
-        List[tokenInfo.ProfileId].Add(model);
 
         // Agregar el grupo.
         string groupName = $"group.{tokenInfo.ProfileId}";

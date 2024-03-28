@@ -64,7 +64,7 @@ public class InflowController : ControllerBase
     /// <param name="token">Token de acceso.</param>
     [HttpGet("read")]
     [InventoryToken]
-    public async Task<HttpReadOneResponse<InflowDataModel>> ReadOne([FromHeader] int id, [FromHeader] string token, [FromHeader] bool mascara = false)
+    public async Task<HttpReadOneResponse<InflowDataModel>> ReadOne([FromHeader] int id, [FromHeader] string token, [FromHeader] bool includeDetails = false)
     {
 
         // Validar parámetros.
@@ -101,7 +101,7 @@ public class InflowController : ControllerBase
             };
 
         // Obtiene el usuario
-        var result = await Data.Inflows.Read(id, mascara);
+        var result = await Data.Inflows.Read(id, includeDetails);
 
         // Retorna el resultado
         return result ?? new();

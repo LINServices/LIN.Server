@@ -1,5 +1,4 @@
 using LIN.Types.Contacts.Models;
-using Newtonsoft.Json.Linq;
 
 namespace LIN.Inventory.Controllers;
 
@@ -51,24 +50,35 @@ public class ContactController : ControllerBase
 
 
     /// <summary>
+    /// Obtener un contacto.
+    /// </summary>
+    /// <param name="id">Id.</param>
+    /// <param name="token">Token.</param>
+    [HttpGet("read")]
+    public async Task<HttpReadOneResponse<ContactModel>> ReadAll([FromHeader] int id, [FromHeader] string token)
+    {
+
+        // Obtiene el usuario
+        var result = await LIN.Access.Contacts.Controllers.Contacts.Read(id, token);
+
+        // Retorna el resultado
+        return result ?? new();
+
+    }
+
+
+
+    /// <summary>
     /// Actualiza la información de un contacto
     /// </summary>
     /// <param name="modelo">Modelo del contacto</param>
     [HttpPatch("update")]
-    public async Task<HttpResponseBase> Update([FromBody] ContactModel modelo)
+    public async Task<HttpResponseBase> Update([FromBody] ContactModel modelo, [FromHeader] string token)
     {
 
-        //// Comprobación de campos
-        //if (modelo.Name.Length <= 0)
-        //    return new(Responses.InvalidParam);
+        var response = await LIN.Access.Contacts.Controllers.Contacts.Update(modelo, token);
 
-        //// Obtiene el usuario
-        //var result = await Data.Contacts.Update(modelo);
-
-        //// Retorna el resultado
-        //return result ?? new();
-
-        return new();
+        return response;
     }
 
 
@@ -107,51 +117,10 @@ public class ContactController : ControllerBase
     public async Task<HttpResponseBase> Delete([FromHeader] int id, [FromHeader] string token)
     {
 
-        //var (isValid, _, _) = Jwt.Validate(token);
+        var response = await LIN.Access.Contacts.Controllers.Contacts.Delete(id, token);
 
-        //if (!isValid)
-        //    return new(Responses.InvalidParam);
+        return response;
 
-        //// Comprobación de campos
-        //if (id <= 0)
-        //    return new(Responses.InvalidParam);
-
-        //// Obtiene el usuario
-        //var result = await Data.Contacts.UpdateStatus(id, ContactStatus.Deleted);
-
-        //// Retorna el resultado
-        //return result ?? new();
-
-        return new();
-
-    }
-
-
-
-    /// <summary>
-    /// Envía a la papelera un contacto
-    /// </summary>
-    /// <param name="id">Id del contacto</param>
-    /// <param name="token">Token de acceso</param>
-    [HttpDelete("trash")]
-    public async Task<HttpResponseBase> ToTrash([FromHeader] int id, [FromHeader] string token)
-    {
-
-        //var (isValid, _, _) = Jwt.Validate(token);
-
-        //if (!isValid)
-        //    return new(Responses.InvalidParam);
-
-        //// Comprobación de campos
-        //if (id <= 0)
-        //    return new(Responses.InvalidParam);
-
-        //// Obtiene el usuario
-        //var result = await Data.Contacts.UpdateStatus(id, ContactStatus.OnTrash);
-
-        //// Retorna el resultado
-        //return result ?? new();
-        return new();
     }
 
 

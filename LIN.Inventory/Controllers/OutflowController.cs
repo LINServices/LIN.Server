@@ -62,7 +62,7 @@ public class OutflowController : ControllerBase
     /// <param name="token">Token de acceso.</param>
     [HttpGet("read")]
     [InventoryToken]
-    public async Task<HttpReadOneResponse<OutflowDataModel>> ReadOne([FromHeader] int id, [FromHeader] string token, [FromHeader] bool mascara = false)
+    public async Task<HttpReadOneResponse<OutflowDataModel>> ReadOne([FromHeader] int id, [FromHeader] string token, [FromHeader] bool includeDetails = false)
     {
 
         // Comprobaciones.
@@ -99,7 +99,7 @@ public class OutflowController : ControllerBase
             };
 
         // Obtiene el usuario
-        var result = await Data.Outflows.Read(id, mascara);
+        var result = await Data.Outflows.Read(id, includeDetails);
 
         // Retorna el resultado
         return result ?? new();

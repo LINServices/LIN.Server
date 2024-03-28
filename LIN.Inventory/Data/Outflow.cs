@@ -1,6 +1,4 @@
-﻿using LIN.Types.Inventory.Transient;
-
-namespace LIN.Inventory.Data;
+﻿namespace LIN.Inventory.Data;
 
 
 public class Outflows
@@ -31,13 +29,13 @@ public class Outflows
     /// Obtiene una salida
     /// </summary>
     /// <param name="id">Id de la salida</param>
-    public async static Task<ReadOneResponse<OutflowDataModel>> Read(int id, bool mask = false)
+    public async static Task<ReadOneResponse<OutflowDataModel>> Read(int id, bool includeDetails = false)
     {
 
         // Obtiene la conexión
         (Conexión context, string connectionKey) = Conexión.GetOneConnection();
 
-        var res = await Read(id, mask, context);
+        var res = await Read(id, includeDetails, context);
         context.CloseActions(connectionKey);
         return res;
     }
@@ -120,7 +118,7 @@ public class Outflows
 
                 // Guarda cambios
                 context.DataBase.SaveChanges();
-            
+
                 // Detalles
                 foreach (var detail in details)
                 {
@@ -138,7 +136,7 @@ public class Outflows
 
 
                     // Detalle de un producto
-                    var productoDetail = context.DataBase.ProductoDetalles.Where(T => T.Id == detail.ProductDetailId && T.Estado == ProductStatements.Normal).Select(t=> new { t.Quantity }).FirstOrDefault();
+                    var productoDetail = context.DataBase.ProductoDetalles.Where(T => T.Id == detail.ProductDetailId && T.Estado == ProductStatements.Normal).Select(t => new { t.Quantity }).FirstOrDefault();
 
                     // Si no existe el detalle
                     if (productoDetail == null)
@@ -159,7 +157,7 @@ public class Outflows
                     }
 
 
-                   await context.DataBase.ProductoDetalles.Where(t=>t.Id == detail.ProductDetailId).ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity - detail.Cantidad));
+                    await context.DataBase.ProductoDetalles.Where(t => t.Id == detail.ProductDetailId).ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity - detail.Cantidad));
 
 
                 }
@@ -190,7 +188,7 @@ public class Outflows
     /// </summary>
     /// <param name="id">Id de la salida</param>
     /// <param name="context">Contexto de conexión</param>
-    public async static Task<ReadOneResponse<OutflowDataModel>> Read(int id, bool mask, Conexión context)
+    public async static Task<ReadOneResponse<OutflowDataModel>> Read(int id, bool includeDetails, Conexión context)
     {
 
         // Ejecución
@@ -205,35 +203,32 @@ public class Outflows
             }
 
             // Si es una mascara
-            if (mask)
-                salida.CountDetails = context.DataBase.DetallesSalidas.Count(t => t.MovementId == id);
+            if (includeDetails)
+            {
+                salida.Details = await (from de in context.DataBase.DetallesSalidas
+                                        where de.MovementId == id
+                                        select new OutflowDetailsDataModel
+                                        {
+                                            ID = de.ID,
+                                            Cantidad = de.Cantidad,
+                                            MovementId = de.MovementId,
+                                            ProductDetailId = de.ProductDetailId,
+                                            ProductDetail = new()
+                                            {
+                                                Product = new()
+                                                {
+                                                    Name = de.ProductDetail.Product.Name,
+                                                    Category = de.ProductDetail.Product.Category,
+                                                    Code = de.ProductDetail.Product.Code,
+                                                }
+                                            }
+                                        }).ToListAsync();
+            }
 
             // Si se necesitan los detales
             else
-            {
+                salida.CountDetails = context.DataBase.DetallesSalidas.Count(t => t.MovementId == id);
 
-                salida.Details = await (from de in context.DataBase.DetallesSalidas
-                                         where de.MovementId == id
-                                         select new OutflowDetailsDataModel
-                                         {
-                                             ID = de.ID,
-                                             Cantidad = de.Cantidad,
-                                             MovementId = de.MovementId,
-                                             ProductDetailId = de.ProductDetailId,
-                                              ProductDetail = new()
-                                              {
-                                                  Product = new()
-                                                  {
-                                                      Name = de.ProductDetail.Product.Name,
-                                                      Category = de.ProductDetail.Product.Category,
-                                                      Code = de.ProductDetail.Product.Code,
-                                                  }
-                                              }
-                                         }).ToListAsync();
-
-
-
-            }
 
             // Retorna
             return new(Responses.Success, salida);
@@ -404,23 +399,24 @@ public class Outflows
 
             // Selecciona la entrada
             var query = from AI in context.DataBase.AccesoInventarios
-                        where AI.ProfileID == profile 
+                        where AI.ProfileID == profile
                         && AI.State == InventoryAccessState.Accepted
                         join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
                         join S in context.DataBase.Salidas on I.ID equals S.InventoryId
-                        where S.ProfileID == profile 
-                        && S.Type == OutflowsTypes.Venta 
+                        where S.ProfileID == profile
+                        && S.Type == OutflowsTypes.Venta
                         && S.Date >= lastDate
                         join SD in context.DataBase.DetallesSalidas on S.ID equals SD.MovementId
                         join P in context.DataBase.ProductoDetalles on SD.ProductDetailId equals P.Id
                         orderby S.Date
-                        select new SalesModel{
+                        select new SalesModel
+                        {
                             Money = P.PrecioVenta * SD.Cantidad,
                             Date = S.Date
-                                };
+                        };
 
 
-          
+
             // Retorna
             return new(Responses.Success, query.ToList());
 
