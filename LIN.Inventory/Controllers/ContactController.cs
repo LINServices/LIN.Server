@@ -9,9 +9,10 @@ public class ContactController : ControllerBase
 
 
     /// <summary>
-    /// Crea un nuevo contacto
+    /// Crear nuevo contacto.
     /// </summary>
-    /// <param name="modelo">Modelo del contacto</param>
+    /// <param name="modelo">Modelo.</param>
+    /// <param name="token">Token de acceso a Contactos.</param>
     [HttpPost("create")]
     public async Task<HttpCreateResponse> Create([FromBody] ContactModel modelo, [FromHeader] string token)
     {
@@ -32,9 +33,9 @@ public class ContactController : ControllerBase
 
 
     /// <summary>
-    /// Obtiene los contactos asociados a una cuenta
+    /// Obtiene los contactos,
     /// </summary>
-    /// <param name="id">Id de la cuenta</param>
+    /// <param name="token">Token de acceso a Contactos.</param>
     [HttpGet("read/all")]
     public async Task<HttpReadAllResponse<ContactModel>> ReadAll([FromHeader] string token)
     {
@@ -49,13 +50,14 @@ public class ContactController : ControllerBase
 
 
 
+
     /// <summary>
     /// Obtener un contacto.
     /// </summary>
     /// <param name="id">Id.</param>
-    /// <param name="token">Token.</param>
+    /// <param name="token">Token de acceso a Contactos.</param>
     [HttpGet("read")]
-    public async Task<HttpReadOneResponse<ContactModel>> ReadAll([FromHeader] int id, [FromHeader] string token)
+    public async Task<HttpReadOneResponse<ContactModel>> ReadOne([FromHeader] int id, [FromHeader] string token)
     {
 
         // Obtiene el usuario
@@ -68,10 +70,12 @@ public class ContactController : ControllerBase
 
 
 
+
     /// <summary>
-    /// Actualiza la información de un contacto
+    /// Actualiza la información de un contacto.
     /// </summary>
-    /// <param name="modelo">Modelo del contacto</param>
+    /// <param name="modelo">Modelo del contacto.</param>
+    /// <param name="token">Token de acceso.</param>
     [HttpPatch("update")]
     public async Task<HttpResponseBase> Update([FromBody] ContactModel modelo, [FromHeader] string token)
     {
@@ -83,36 +87,12 @@ public class ContactController : ControllerBase
 
 
 
-    /// <summary>
-    /// Cuenta cuantos contactos tiene una cuenta
-    /// </summary>
-    /// <param name="token">Token de acceso</param>
-    [HttpGet("count")]
-    public async Task<HttpReadOneResponse<int>> Count([FromHeader] string token)
-    {
-
-        //var (isValid, _, id) = Jwt.Validate(token);
-
-        //if (!isValid)
-        //    return new(Responses.Unauthorized);
-
-
-        //// Obtiene el usuario
-        //var result = await Data.Contacts.Count(id);
-
-        //// Retorna el resultado
-        //return result ?? new();
-        return new();
-
-    }
-
-
 
     /// <summary>
-    /// Elimina un contacto
+    /// Elimina un contacto.
     /// </summary>
-    /// <param name="id">Id del contacto</param>
-    /// <param name="token">Token de acceso</param>
+    /// <param name="id">Id del contacto.</param>
+    /// <param name="token">Token de acceso a contactos.</param>
     [HttpDelete("delete")]
     public async Task<HttpResponseBase> Delete([FromHeader] int id, [FromHeader] string token)
     {
