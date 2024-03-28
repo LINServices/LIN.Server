@@ -94,8 +94,20 @@ public class InventoryController : ControllerBase
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
+        // Obtener el Iam.
+        var iam = await Iam.OnAccess(accessID, tokenInfo.ProfileId);
+
+        // Validar Iam.
+        if (iam != InventoryRoles.Administrator)
+            return new()
+            {
+                Response = Responses.Unauthorized,
+                Message = "No tienes autorización."
+            };
+
+
         // Actualizar el rol.
-        var response = await Data.InventoryAccess.UpdateRol(accessID, tokenInfo.ProfileId, newRol);
+        var response = await Data.InventoryAccess.UpdateRol(accessID, newRol);
 
         // Retorna
         return response;

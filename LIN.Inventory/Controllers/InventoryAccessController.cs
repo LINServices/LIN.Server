@@ -122,7 +122,7 @@ public class InventoryAccessController : ControllerBase
 
 
         // Obtiene la lista de Id's de inventarios
-        var result = await InventoryAccess.ReadIntegrants(inventario);
+        var result = await InventoryAccess.ReadMembers(inventario);
 
 
         var map = result.Models.Select(T => T.Item2.AccountID).ToList();
@@ -159,41 +159,36 @@ public class InventoryAccessController : ControllerBase
     /// <param name="usuario">Id del usuario que va a ser eliminado</param>
     /// <param name="me">Id del usuario que esta realizando la operación</param>
     [HttpDelete("delete/one")]
-    public async Task<HttpResponseBase> DeleteSomeOne([FromHeader] int inventario, [FromHeader] int usuario, [FromHeader] int me)
+    [InventoryToken]
+    public async Task<HttpResponseBase> DeleteSomeOne([FromHeader] int inventario, [FromHeader] int usuario, [FromHeader] string token)
     {
 
         // Comprobaciones
-        if (inventario <= 0 || usuario <= 0 || me <= 0)
-            return new(Responses.InvalidParam);
-
-        // Obtiene la lista de Id's de inventarios
-        var result = await InventoryAccess.DeleteSomeOne(inventario, usuario, me);
-
-        return result;
-
-    }
-
-
-
-    /// <summary>
-    /// Genera una invitación
-    /// </summary>
-    [HttpPost("new/invitation")]
-    [Obsolete("Test")]
-    [InventoryToken]
-    public async Task<HttpResponseBase> GenerateInvitaciones([FromHeader] string token, [FromBody] InventoryDataModel modelo)
-    {
-
-
-        // Valida los nuevos integrantes y el inventario
-        if (modelo.ID <= 0 || modelo.UsersAccess.Count <= 0)
+        if (inventario <= 0 || usuario <= 0)
             return new(Responses.InvalidParam);
 
 
-        // Obtiene la lista de Id's de inventarios
-        var result = await InventoryAccess.GenerateInvitation(modelo);
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Retorna el resultado
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(inventario, tokenInfo.ProfileId);
+
+        // Roles que pueden crear.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+
+        // Si no tiene ese rol.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Obtiene la lista de Id's de inventarios
+        var result = await InventoryAccess.DeleteSomeOne(inventario, usuario);
+
         return result;
 
     }
