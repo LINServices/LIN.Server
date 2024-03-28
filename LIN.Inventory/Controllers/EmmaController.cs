@@ -1,5 +1,4 @@
 using LIN.Types.Emma.Models;
-using System.Text;
 
 namespace LIN.Inventory.Controllers;
 
@@ -28,7 +27,7 @@ public class EmmaController : ControllerBase
 
         var request = new LIN.Types.Models.EmmaRequest
         {
-            AppContext = "allo",
+            AppContext = "inventory",
             Asks = consult
         };
 
