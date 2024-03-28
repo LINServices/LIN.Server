@@ -1,9 +1,11 @@
 ﻿namespace LIN.Inventory.Data;
 
 
-public class Context : DbContext
+/// <summary>
+/// Nuevo contexto a la base de datos
+/// </summary>
+public class Context(DbContextOptions<Context> options) : DbContext(options)
 {
-
 
 
     /// <summary>
@@ -61,18 +63,11 @@ public class Context : DbContext
     public DbSet<ProductDetailModel> ProductoDetalles { get; set; }
 
 
+
     /// <summary>
     /// Acceso a los Inventarios
     /// </summary>
     public DbSet<InventoryAcessDataModel> AccesoInventarios { get; set; }
-
-
-
-
-    /// <summary>
-    /// Nuevo contexto a la base de datos
-    /// </summary>
-    public Context(DbContextOptions<Context> options) : base(options) { }
 
 
 
@@ -89,7 +84,7 @@ public class Context : DbContext
 
         modelBuilder.Entity<ProductModel>()
             .HasMany(t => t.Details)
-            .WithOne(t=>t.Product)
+            .WithOne(t => t.Product)
             .HasForeignKey(t => t.ProductId);
 
 

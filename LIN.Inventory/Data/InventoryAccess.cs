@@ -1,6 +1,4 @@
-﻿using LIN.Types.Inventory.Transient;
-
-namespace LIN.Inventory.Data;
+﻿namespace LIN.Inventory.Data;
 
 
 public class InventoryAccess
