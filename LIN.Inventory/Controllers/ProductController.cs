@@ -218,9 +218,6 @@ public class ProductController : ControllerBase
 
 
 
-    
-
-
 
     /// <summary>
     /// Actualiza la información de un producto
