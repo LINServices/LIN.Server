@@ -19,7 +19,7 @@ public class EmmaController : ControllerBase
 
 
 
-        HttpClient client = new HttpClient();
+        HttpClient client = new ();
 
         client.DefaultRequestHeaders.Add("token", tokenAuth);
         client.DefaultRequestHeaders.Add("useDefaultContext", true.ToString().ToLower());

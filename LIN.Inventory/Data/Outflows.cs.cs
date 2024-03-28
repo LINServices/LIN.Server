@@ -341,7 +341,7 @@ public partial class Outflows
 
 
             // Retorna
-            return new(Responses.Success, query.ToList());
+            return new(Responses.Success, [.. query]);
 
         }
         catch (Exception ex)
