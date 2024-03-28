@@ -1,12 +1,9 @@
-﻿using LIN.Inventory.Data;
-
-namespace LIN.Inventory.Controllers;
+﻿namespace LIN.Inventory.Controllers;
 
 
 [Route("Inventory/access")]
 public class InventoryAccessController : ControllerBase
 {
-
 
 
     /// <summary>
@@ -22,13 +19,12 @@ public class InventoryAccessController : ControllerBase
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtiene la lista de Id's de inventarios
-        var result = await InventoryAccess.Read(id);
+        var result = await Data.InventoryAccess.Read(id);
 
         // Retorna el resultado
         return result;
 
     }
-
 
 
 
@@ -45,7 +41,7 @@ public class InventoryAccessController : ControllerBase
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtiene la lista de Id's de inventarios
-        var result = await InventoryAccess.ReadAll(tokenInfo.ProfileId);
+        var result = await Data.InventoryAccess.ReadAll(tokenInfo.ProfileId);
 
         // Retorna el resultado
         return result;
@@ -79,7 +75,7 @@ public class InventoryAccessController : ControllerBase
 
 
         // Obtiene la lista de Id's de inventarios
-        var result = await InventoryAccess.UpdateState(id, estado);
+        var result = await Data.InventoryAccess.UpdateState(id, estado);
 
         // Retorna el resultado
         return result;
@@ -92,7 +88,7 @@ public class InventoryAccessController : ControllerBase
     /// Obtiene la lista de integrantes asociados a un inventario
     /// </summary>
     /// <param name="inventario">Id del inventario</param>
-    /// <param name="usuario">Id del usuario</param>
+    /// <param name="token">Token de acceso.</param>
     [HttpGet("members")]
     [InventoryToken]
     public async Task<HttpReadAllResponse<IntegrantDataModel>> ReadAll([FromHeader] int inventario, [FromHeader] string token, [FromHeader] string tokenAuth)
@@ -122,7 +118,7 @@ public class InventoryAccessController : ControllerBase
 
 
         // Obtiene la lista de Id's de inventarios
-        var result = await InventoryAccess.ReadMembers(inventario);
+        var result = await Data.InventoryAccess.ReadMembers(inventario);
 
 
         var map = result.Models.Select(T => T.Item2.AccountID).ToList();
@@ -157,7 +153,7 @@ public class InventoryAccessController : ControllerBase
     /// </summary>
     /// <param name="inventario">Id del inventario</param>
     /// <param name="usuario">Id del usuario que va a ser eliminado</param>
-    /// <param name="me">Id del usuario que esta realizando la operación</param>
+    /// <param name="token">Token de acceso.</param>
     [HttpDelete("delete/one")]
     [InventoryToken]
     public async Task<HttpResponseBase> DeleteSomeOne([FromHeader] int inventario, [FromHeader] int usuario, [FromHeader] string token)
@@ -187,7 +183,7 @@ public class InventoryAccessController : ControllerBase
             };
 
         // Obtiene la lista de Id's de inventarios
-        var result = await InventoryAccess.DeleteSomeOne(inventario, usuario);
+        var result = await Data.InventoryAccess.DeleteSomeOne(inventario, usuario);
 
         return result;
 
