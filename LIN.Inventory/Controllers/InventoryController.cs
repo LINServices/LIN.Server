@@ -76,6 +76,50 @@ public class InventoryController : ControllerBase
 
 
 
+
+    /// <summary>
+    /// Obtener un inventario.
+    /// </summary>
+    /// <param name="id">Id del inventario.</param>
+    /// <param name="token">Token de acceso.</param>
+    [HttpGet("read")]
+    [InventoryToken]
+    public async Task<HttpReadOneResponse<InventoryDataModel>> Read([FromQuery] int id, [FromHeader] string token)
+    {
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Obtener el Iam.
+        var iam = await Iam.OnInventory(id, tokenInfo.ProfileId);
+
+        // Roles admitidos.
+        InventoryRoles[] roles = [InventoryRoles.Administrator, InventoryRoles.Member, InventoryRoles.Guest];
+
+        // Validar Iam.
+        if (!roles.Contains(iam))
+            return new()
+            {
+                Response = Responses.Unauthorized,
+                Message = "No tienes autorización."
+            };
+
+
+        // Crea el inventario
+        var response = await Data.Inventories.Read(id);
+
+        // Si no se creo el inventario
+        if (response.Response != Responses.Success)
+            return response;
+
+        // Retorna
+        return response;
+
+    }
+
+
+
+
     /// <summary>
     /// Actualiza el rol de un usuario en un inventario
     /// </summary>
