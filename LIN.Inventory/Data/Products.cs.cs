@@ -143,20 +143,32 @@ public partial class Products
     /// <param name="context">Contexto de conexión</param>
     public async static Task<ResponseBase> UpdateBase(ProductModel data, Conexión context)
     {
-        using (var transaction = context.DataBase.Database.BeginTransaction())
+
+        try
         {
-            try
-            {
 
-                context.DataBase.SaveChanges();
-                transaction.Commit();
-                return new(Responses.Success);
+            // Actualizar el estado anterior.
+            var update = await (from PD in context.DataBase.Productos
+                                where PD.Id == data.Id
+                                select PD)
+                                .ExecuteUpdateAsync(t => t
+                                .SetProperty(t => t.Category, data.Category)
+                                .SetProperty(t => t.Code, p => data.Code ?? p.Code)
+                                .SetProperty(t => t.Description, p => data.Description ?? p.Description)
+                                .SetProperty(t => t.Name, p => data.Name ?? p.Name)
+                                .SetProperty(t => t.Image, p => data.Image ?? p.Image)
+                                );
 
-            }
-            catch
-            {
-                transaction.Rollback();
-            }
+            context.DataBase.SaveChanges();
+
+            if (update <= 0)
+                return new(Responses.NotRows);
+
+            return new(Responses.Success);
+
+        }
+        catch
+        {
         }
 
         return new();
@@ -169,43 +181,36 @@ public partial class Products
     /// Actualiza la información del detalle de un producto
     /// ** No actualiza las existencias
     /// </summary>
-    /// <param name="id">Id del producto</param>
-    /// <param name="data">Nuevo modelo</param>
-    /// <param name="context">Contexto de conexión</param>
+    /// <param name="id">Id del producto.</param>
+    /// <param name="data">Nuevo modelo de detalle.</param>
+    /// <param name="context">Contexto de conexión.</param>
     public async static Task<ResponseBase> UpdateDetail(int id, ProductDetailModel data, Conexión context)
     {
 
         // Ejecución (Transacción)
-        using (var transaction = context.DataBase.Database.BeginTransaction())
+        using (var transaction = context.DataBase.Database.CurrentTransaction ?? context.DataBase.Database.BeginTransaction())
         {
             try
             {
-                // Obtiene el producto detalle antiguo
-                var producto = (from PD in context.DataBase.ProductoDetalles
-                                where PD.ProductId == id && PD.Estado == ProductStatements.Normal
-                                select PD.Id).FirstOrDefault();
 
-                // Si no se encuentra
-                if (producto <= 0)
+                data.Id = 0;
+
+                // Modelo.
+                data.Product = new()
                 {
-                    transaction.Rollback();
-                    return new(Responses.NotRows);
-                }
+                    Id = id,
+                };
 
-                // Actualiza el antiguo detalle
-                var productoDetalleAntiguo = await context.DataBase.ProductoDetalles.FindAsync(producto);
+                // Actualizar el estado anterior.
+                var update = await (from PD in context.DataBase.ProductoDetalles
+                                    where PD.ProductId == id
+                                    select PD).ExecuteUpdateAsync(t => t.SetProperty(t => t.Estado, ProductStatements.Deprecated));
 
-                // SI no existe el detalle
-                if (productoDetalleAntiguo == null)
-                {
-                    transaction.Rollback();
-                    return new(Responses.Undefined);
-                }
+                // Definir producto.
+                context.DataBase.Attach(data.Product);
 
-                // Actualiza el estado
-                productoDetalleAntiguo.Estado = ProductStatements.Deprecated;
-
-
+                // Agregar.
+                context.DataBase.ProductoDetalles.Add(data);
 
                 // Guarda los cambios
                 context.DataBase.SaveChanges();
@@ -235,40 +240,24 @@ public partial class Products
     {
 
         // Ejecución (Transacción).
-        using (var transaction = context.DataBase.Database.BeginTransaction())
+        using (var transaction = context.DataBase.Database.CurrentTransaction ?? context.DataBase.Database.BeginTransaction())
         {
             try
             {
 
+                // Actualizar producto.
+                var responseBase = await UpdateBase(data);
 
-                // Obtiene el producto
-                var producto = await context.DataBase.Productos.FindAsync(data.Id);
-
-                // Si no se encuentra
-                if (producto == null)
+                // Validar.
+                if (responseBase.Response != Responses.Success)
                 {
                     transaction.Rollback();
-                    return new(Responses.NotRows);
+                    return new();
                 }
 
-
-                // Obtiene el producto detalle antiguo
-                var productoDetailId = (from PD in context.DataBase.ProductoDetalles
-                                        where PD.ProductId == producto.Id && PD.Estado == ProductStatements.Normal
-                                        select PD.Id).FirstOrDefault();
-
-                // Obtiene el antiguo detalle
-                var productoDetalleAntiguo = await context.DataBase.ProductoDetalles.FindAsync(productoDetailId);
-
-                // SI no existe el detalle
-                if (productoDetalleAntiguo == null)
-                {
-                    transaction.Rollback();
-                    return new(Responses.Undefined);
-                }
-
-                // Actualiza el estado
-                productoDetalleAntiguo.Estado = ProductStatements.Deprecated;
+                // Actualizar detalle.
+                if (data.DetailModel != null)
+                    await UpdateDetail(data.Id, data.DetailModel);
 
 
                 // Guarda los cambios

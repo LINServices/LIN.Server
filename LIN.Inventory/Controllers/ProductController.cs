@@ -218,56 +218,42 @@ public class ProductController : ControllerBase
 
 
 
-
-    /// <summary>
-    /// Actualiza la información de un producto
-    /// </summary>
-    /// <param name="modelo">Modelo del producto</param>
-    /// <param name="isBase">TRUE si solo se actualiza la base, FALSE si se actualiza el detalle</param>
-    [HttpPatch("update")]
-    public async Task<HttpResponseBase> Update([FromBody] ProductModel modelo, [FromHeader] bool isBase)
-    {
-
-        // Comprobaciones
-        if (isBase && !modelo.Name.Any() || modelo.Statement == ProductBaseStatements.Undefined)
-            return new(Responses.InvalidParam);
-
-        if (!isBase && (modelo.DetailModel.PrecioVenta < 0 || modelo.DetailModel.PrecioCompra < 0))
-            return new(Responses.InvalidParam);
-
-        // Respuesta
-        ResponseBase response = new();
-
-        //if (isBase)
-        //    response = await Data.Products.UpdateBase(modelo);
-        //else
-        //    response = await Data.Products.UpdateDetail(modelo.ProductID, new()
-        //    {
-        //        Id = modelo.IDDetail,
-        //        PrecioCompra = modelo.PrecioCompra,
-        //        PrecioVenta = modelo.PrecioVenta,
-        //        ProductoFK = modelo.ProductID,
-        //        Quantity = modelo.Quantity
-        //    });
-
-        return response ?? new();
-
-    }
-
-
-
     /// <summary>
     /// Actualiza la información de un producto
     /// </summary>
     /// <param name="modelo">Nuevo modelo del producto</param>
     [HttpPut("update")]
-    public async Task<HttpResponseBase> UpdateAll([FromBody] ProductModel modelo)
+    public async Task<HttpResponseBase> UpdateAll([FromBody] ProductModel modelo, [FromHeader] string token)
     {
 
-        //// Comprobaciones
-        //if (!modelo.Name.Any() || modelo.PrecioCompra < 0 || modelo.PrecioVenta < 0 || modelo.Estado == ProductBaseStatements.Undefined)
-        //    return new(Responses.InvalidParam);
 
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Obtener el inventario.
+        var inventory = await Data.Inventories.FindByProduct(modelo.Id);
+
+        // Hubo un error.
+        if (inventory.Response != Responses.Success)
+            return new()
+            {
+                Message = "Hubo un error al obtener el producto.",
+                Response = Responses.Unauthorized
+            };
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Member];
+
+        // Si no tiene permisos.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
 
         // Respuesta
         ResponseBase response = await Data.Products.Update(modelo);
