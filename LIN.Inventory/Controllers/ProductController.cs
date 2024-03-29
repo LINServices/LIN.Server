@@ -223,6 +223,7 @@ public class ProductController : ControllerBase
     /// </summary>
     /// <param name="modelo">Nuevo modelo del producto</param>
     [HttpPut("update")]
+    [InventoryToken]
     public async Task<HttpResponseBase> UpdateAll([FromBody] ProductModel modelo, [FromHeader] string token)
     {
 
