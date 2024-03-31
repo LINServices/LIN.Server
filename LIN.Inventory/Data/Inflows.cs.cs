@@ -197,6 +197,39 @@ public partial class Inflows
 
 
 
+    /// <summary>
+    /// Actualizar la fecha de una entrada.
+    /// </summary>
+    /// <param name="id">Id de la entrada.</param>
+    /// <param name="date">Nueva fecha.</param>
+    /// <param name="context">Contexto de conexión.</param>
+    public async static Task<ResponseBase> Update(int id, DateTime date, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            // Update.
+            var update = await (from inflow in context.DataBase.Entradas
+                                where inflow.ID == id
+                                select inflow).ExecuteUpdateAsync(t => t.SetProperty(t => t.Date, date));
+
+            // Si no existe el modelo
+            if (update <= 0)
+                return new(Responses.NotRows);
+
+            return new(Responses.Success);
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+        return new();
+    }
+
+
+
 
 
 

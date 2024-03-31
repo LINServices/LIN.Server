@@ -150,4 +150,59 @@ public class InflowController : ControllerBase
     }
 
 
+
+    /// <summary>
+    /// Actualizar la fecha de una entrada.
+    /// </summary>
+    /// <param name="id">Id de la entrada.</param>
+    /// <param name="date">Nueva fecha.</param>
+    /// <param name="token">Token de acceso</param>
+    [HttpPatch]
+    [InventoryToken]
+    public async Task<HttpResponseBase> Update([FromHeader] int id, [FromQuery] DateTime date, [FromHeader] string token)
+    {
+
+        // Validar parámetros.
+        if (id <= 0)
+            return new(Responses.InvalidParam);
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Obtener el inventario.
+        var inventory = await Data.Inventories.FindByInflow(id);
+
+        // Si hubo un error.
+        if (inventory.Response != Responses.Success)
+            return new()
+            {
+                Message = "Hubo un error al obtener el movimiento.",
+                Response = Responses.Unauthorized
+            };
+
+
+        // Acceso Iam.
+        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+
+        // Si no cumple con los roles.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Obtiene el usuario
+        var result = await Data.Inflows.Update(id, date);
+
+        // Retorna el resultado
+        return result ?? new();
+
+    }
+
+
+
 }

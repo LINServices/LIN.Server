@@ -55,6 +55,23 @@ public partial class Outflows
 
 
 
+    /// <summary>
+    /// Actualizar la fecha de una salida.
+    /// </summary>
+    /// <param name="id">Id de la salida.</param>
+    /// <param name="date">Nueva fecha.</param>
+    public async static Task<ResponseBase> Update(int id, DateTime date)
+    {
+
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var response = await Update(id, date, context);
+        context.CloseActions(connectionKey);
+        return response;
+    }
+
+
 
 
 

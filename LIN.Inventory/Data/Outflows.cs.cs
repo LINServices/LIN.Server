@@ -201,6 +201,36 @@ public partial class Outflows
 
 
 
+    /// <summary>
+    /// Actualizar la fecha de una salida.
+    /// </summary>
+    /// <param name="id">Id de la salida.</param>
+    /// <param name="date">Nueva fecha.</param>
+    /// <param name="context">Contexto de conexión.</param>
+    public async static Task<ResponseBase> Update(int id, DateTime date, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            // Update.
+            var update = await (from outflow in context.DataBase.Salidas
+                                where outflow.ID == id
+                                select outflow).ExecuteUpdateAsync(t => t.SetProperty(t => t.Date, date));
+
+            // Si no existe el modelo
+            if (update <= 0)
+                return new(Responses.NotRows);
+
+            return new(Responses.Success);
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+        return new();
+    }
 
 
 

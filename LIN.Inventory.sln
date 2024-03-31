@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Access.Auth", "..\..\Ac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Types", "..\..\Tipos\LIN.Types\LIN.Types.csproj", "{C98EDEE0-B040-48A1-A4CF-C628C476FD46}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Modules", "..\..\Tipos\LIN.Modules\LIN.Modules.csproj", "{993BE19A-6137-4D52-8B6E-45B799A3582E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Access.Contacts", "..\..\AccesoAPI\LIN.Access.Contacts\LIN.Access.Contacts.csproj", "{0FB5D9C9-97AB-4F67-9C58-D983CA535645}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Types.Contacts", "..\..\Tipos\LIN.Types.Contacts\LIN.Types.Contacts.csproj", "{AF2AB4D2-12BB-44BD-A6FB-0BA2F060A87B}"
@@ -49,10 +47,6 @@ Global
 		{C98EDEE0-B040-48A1-A4CF-C628C476FD46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C98EDEE0-B040-48A1-A4CF-C628C476FD46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C98EDEE0-B040-48A1-A4CF-C628C476FD46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{993BE19A-6137-4D52-8B6E-45B799A3582E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{993BE19A-6137-4D52-8B6E-45B799A3582E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{993BE19A-6137-4D52-8B6E-45B799A3582E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{993BE19A-6137-4D52-8B6E-45B799A3582E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0FB5D9C9-97AB-4F67-9C58-D983CA535645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0FB5D9C9-97AB-4F67-9C58-D983CA535645}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FB5D9C9-97AB-4F67-9C58-D983CA535645}.Release|Any CPU.ActiveCfg = Release|Any CPU
