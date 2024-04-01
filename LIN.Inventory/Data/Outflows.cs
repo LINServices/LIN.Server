@@ -73,40 +73,4 @@ public partial class Outflows
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-    /// <summary>
-    /// Obtiene las ventas realizadas por un usuario en todos los inventarios
-    /// </summary>
-    public async static Task<ReadOneResponse<int>> VentasOf(int id, int days)
-    {
-
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
-        var res = await VentasOf(id, days, context);
-        context.CloseActions(connectionKey);
-        return res;
-
-    }
-
-    public async static Task<ReadAllResponse<SalesModel>> Ventas(int id, int days)
-    {
-
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
-        var res = await Ventas(id, days, context);
-        context.CloseActions(connectionKey);
-        return res;
-
-    }
-
-
-
 }
