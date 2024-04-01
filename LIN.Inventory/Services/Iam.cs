@@ -1,8 +1,46 @@
 ﻿namespace LIN.Inventory.Services;
 
 
-public class Iam
+internal class Iam
 {
+
+
+    /// <summary>
+    /// Validar IAM.
+    /// </summary>
+    /// <param name="request">Solicitud.</param>
+    public static async Task<InventoryRoles> Validate(IamRequest request)
+    {
+
+        switch (request.IamBy)
+        {
+            case IamBy.Inventory:
+                return await OnInventory(request.Id, request.Profile);
+
+            case IamBy.Product:
+                return await OnProduct(request.Id, request.Profile);
+
+            case IamBy.Inflow:
+                return await OnInflow(request.Id, request.Profile);
+
+            case IamBy.Outflow:
+                return await OnOutflow(request.Id, request.Profile);
+
+            case IamBy.Access:
+                return await OnAccess(request.Id, request.Profile);
+        }
+
+        return InventoryRoles.Undefined;
+
+    }
+
+
+
+
+
+
+
+
 
 
     /// <summary>
@@ -10,7 +48,7 @@ public class Iam
     /// </summary>
     /// <param name="inventory">Id del inventario.</param>
     /// <param name="profile">Id del perfil.</param>
-    public static async Task<InventoryRoles> OnInventory(int inventory, int profile)
+    private static async Task<InventoryRoles> OnInventory(int inventory, int profile)
     {
 
         // Db.
@@ -28,6 +66,82 @@ public class Iam
 
         return access.Rol;
     }
+
+
+
+
+    private static async Task<InventoryRoles> OnProduct(int id, int profile)
+    {
+
+        // Db.
+        var (context, contextKey) = Conexión.GetOneConnection();
+
+        // Query.
+        var access = await (from P in context.DataBase.Productos
+                            where P.Id == id
+                            join AI in context.DataBase.AccesoInventarios
+                            on P.InventoryId equals AI.Inventario
+                            where AI.State == InventoryAccessState.Accepted
+                            where AI.ProfileID == profile
+                            select new { AI.Rol }).FirstOrDefaultAsync();
+
+        // Si no hay.
+        if (access == null)
+            return InventoryRoles.Undefined;
+
+        return access.Rol;
+    }
+
+
+    private static async Task<InventoryRoles> OnInflow(int id, int profile)
+    {
+
+        // Db.
+        var (context, contextKey) = Conexión.GetOneConnection();
+
+        // Query.
+        var access = await (from P in context.DataBase.Entradas
+                            where P.ID == id
+                            join AI in context.DataBase.AccesoInventarios
+                            on P.InventoryId equals AI.Inventario
+                            where AI.State == InventoryAccessState.Accepted
+                            where AI.ProfileID == profile
+                            select new { AI.Rol }).FirstOrDefaultAsync();
+
+        // Si no hay.
+        if (access == null)
+            return InventoryRoles.Undefined;
+
+        return access.Rol;
+    }
+
+
+    private static async Task<InventoryRoles> OnOutflow(int id, int profile)
+    {
+
+        // Db.
+        var (context, contextKey) = Conexión.GetOneConnection();
+
+        // Query.
+        var access = await (from P in context.DataBase.Salidas
+                            where P.ID == id
+                            join AI in context.DataBase.AccesoInventarios
+                            on P.InventoryId equals AI.Inventario
+                            where AI.State == InventoryAccessState.Accepted
+                            where AI.ProfileID == profile
+                            select new { AI.Rol }).FirstOrDefaultAsync();
+
+        // Si no hay.
+        if (access == null)
+            return InventoryRoles.Undefined;
+
+        return access.Rol;
+    }
+
+
+
+
+
 
 
 
@@ -60,7 +174,7 @@ public class Iam
     /// </summary>
     /// <param name="accessId">Id del acceso.</param>
     /// <param name="profile">Id del perfil.</param>
-    public static async Task<InventoryRoles> OnAccess(int accessId, int profile)
+    private static async Task<InventoryRoles> OnAccess(int accessId, int profile)
     {
 
         // Db.
@@ -68,8 +182,8 @@ public class Iam
 
         // Query.
         var inventory = await (from P in context.DataBase.AccesoInventarios
-                            where P.ID == accessId
-                            select P.Inventario).FirstOrDefaultAsync();
+                               where P.ID == accessId
+                               select P.Inventario).FirstOrDefaultAsync();
 
         // Rol.
         var rol = await OnInventory(inventory, profile);

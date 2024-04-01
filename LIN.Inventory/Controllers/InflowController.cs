@@ -27,7 +27,12 @@ public class InflowController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Acceso Iam.
-        var iam = await Iam.OnInventory(modelo.InventoryId, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = modelo.InventoryId,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles que pueden crear.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator];
@@ -74,20 +79,13 @@ public class InflowController : ControllerBase
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Obtener el inventario.
-        var inventory = await Data.Inventories.FindByInflow(id);
-
-        // Si hubo un error.
-        if (inventory.Response != Responses.Success)
-            return new()
-            {
-                Message = "Hubo un error al obtener el movimiento.",
-                Response = Responses.Unauthorized
-            };
-
-
         // Acceso Iam.
-        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inflow,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
@@ -128,7 +126,12 @@ public class InflowController : ControllerBase
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Acceso Iam.
-        var iam = await Iam.OnInventory(id, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
@@ -169,20 +172,13 @@ public class InflowController : ControllerBase
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Obtener el inventario.
-        var inventory = await Data.Inventories.FindByInflow(id);
-
-        // Si hubo un error.
-        if (inventory.Response != Responses.Success)
-            return new()
-            {
-                Message = "Hubo un error al obtener el movimiento.",
-                Response = Responses.Unauthorized
-            };
-
-
         // Acceso Iam.
-        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inflow,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
