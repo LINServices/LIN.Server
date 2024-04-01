@@ -90,8 +90,13 @@ public class InventoryController : ControllerBase
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Obtener el Iam.
-        var iam = await Iam.OnInventory(id, tokenInfo.ProfileId);
+        // Acceso Iam.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles admitidos.
         InventoryRoles[] roles = [InventoryRoles.Administrator, InventoryRoles.Member, InventoryRoles.Guest];
@@ -138,8 +143,13 @@ public class InventoryController : ControllerBase
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Obtener el Iam.
-        var iam = await Iam.OnAccess(accessID, tokenInfo.ProfileId);
+        // Acceso Iam.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Access,
+            Id = accessID,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Validar Iam.
         if (iam != InventoryRoles.Administrator)

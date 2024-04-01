@@ -74,8 +74,13 @@ public class InventoryHub : Hub
         if (!tokenInfo.IsAuthenticated)
             return;
 
-        // Validar IAM.
-        var iam = await Iam.OnInventory(inventory, tokenInfo.ProfileId);
+        // Acceso Iam.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = inventory,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles que pueden crear.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
@@ -137,8 +142,13 @@ public class InventoryHub : Hub
         if (!tokenInfo.IsAuthenticated)
             return "No Auth";
 
-        // Validar IAM.
-        var iam = await Iam.OnInventory(inventory, tokenInfo.ProfileId);
+        // Acceso Iam.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = inventory,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles que pueden crear.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];

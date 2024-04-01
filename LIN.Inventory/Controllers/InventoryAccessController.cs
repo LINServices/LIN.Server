@@ -103,7 +103,12 @@ public class InventoryAccessController : ControllerBase
 
 
         // Acceso Iam.
-        var iam = await Iam.OnInventory(inventario, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = inventario,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles que pueden crear.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
@@ -169,7 +174,12 @@ public class InventoryAccessController : ControllerBase
 
 
         // Acceso Iam.
-        var iam = await Iam.OnInventory(inventario, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = inventario,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles que pueden crear.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];

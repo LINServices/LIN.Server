@@ -51,7 +51,12 @@ public class ProductController : ControllerBase
 
 
         // Acceso Iam.
-        var iam = await Iam.OnInventory(modelo.InventoryId, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = modelo.InventoryId,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator];
@@ -97,7 +102,12 @@ public class ProductController : ControllerBase
 
 
         // Acceso Iam.
-        var iam = await Iam.OnInventory(id, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
@@ -134,20 +144,14 @@ public class ProductController : ControllerBase
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Obtener el inventario.
-        var inventory = await Data.Inventories.FindByProduct(id);
-
-        // Si hubo un error.
-        if (inventory.Response != Responses.Success)
-            return new()
-            {
-                Message = "Hubo un error al obtener el producto.",
-                Response = Responses.Unauthorized
-            };
-
 
         // Acceso Iam.
-        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Product,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
@@ -197,7 +201,12 @@ public class ProductController : ControllerBase
 
 
         // Acceso Iam.
-        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = inventory.Model,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
@@ -231,19 +240,14 @@ public class ProductController : ControllerBase
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Obtener el inventario.
-        var inventory = await Data.Inventories.FindByProduct(modelo.Id);
-
-        // Hubo un error.
-        if (inventory.Response != Responses.Success)
-            return new()
-            {
-                Message = "Hubo un error al obtener el producto.",
-                Response = Responses.Unauthorized
-            };
-
+       
         // Acceso Iam.
-        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Product,
+            Id = modelo.Id,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Member];
@@ -293,7 +297,12 @@ public class ProductController : ControllerBase
             };
 
         // Acceso Iam.
-        var iam = await Iam.OnInventory(inventory.Model, tokenInfo.ProfileId);
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Product,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
