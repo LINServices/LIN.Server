@@ -59,6 +59,27 @@ public partial class Inventories
 
 
 
+
+    /// <summary>
+    /// Actualizar la información de un inventario.
+    /// </summary>
+    /// <param name="id">Id del inventario.</param>
+    /// <param name="name">Nuevo nombre.</param>
+    /// <param name="description">Nueva descripción.</param>
+    public async static Task<ResponseBase> Update(int id, string name, string description)
+    {
+
+        // Conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var response = await Update(id, name, description, context);
+        context.CloseActions(connectionKey);
+        return response;
+    }
+
+
+
+
     /// <summary>
     /// Obtiene la valuación de los inventarios donde un usuario es administrador.
     /// </summary>

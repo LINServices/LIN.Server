@@ -126,19 +126,16 @@ public class InventoryController : ControllerBase
 
 
     /// <summary>
-    /// Actualiza el rol de un usuario en un inventario
+    /// Actualizar la información de un inventario.
     /// </summary>
-    /// <param name="accessID">Id del acceso</param>
-    /// <param name="newRol">Nuevo rol</param>
-    /// <param name="token">Token de acceso</param>
-    [HttpPatch("update/rol")]
+    /// <param name="id">Id del inventario.</param>
+    /// <param name="name">Nuevo nombre.</param>
+    /// <param name="description">Nueva descripción.</param>
+    /// <param name="token">Token de acceso.</param>
+    [HttpPatch]
     [InventoryToken]
-    public async Task<HttpResponseBase> UpdateRol([FromHeader] int accessID, [FromHeader] InventoryRoles newRol, [FromHeader] string token)
+    public async Task<HttpResponseBase> UpdateRol([FromQuery] int id, [FromQuery] string name, [FromQuery] string description, [FromHeader] string token)
     {
-
-        // Comprobaciones
-        if (accessID <= 0)
-            return new(Responses.InvalidParam);
 
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
@@ -146,8 +143,8 @@ public class InventoryController : ControllerBase
         // Acceso Iam.
         var iam = await Iam.Validate(new IamRequest()
         {
-            IamBy = IamBy.Access,
-            Id = accessID,
+            IamBy = IamBy.Inventory,
+            Id = id,
             Profile = tokenInfo.ProfileId
         });
 
@@ -159,9 +156,8 @@ public class InventoryController : ControllerBase
                 Message = "No tienes autorización."
             };
 
-
         // Actualizar el rol.
-        var response = await Data.InventoryAccess.UpdateRol(accessID, newRol);
+        var response = await Data.Inventories.Update(id, name, description);
 
         // Retorna
         return response;

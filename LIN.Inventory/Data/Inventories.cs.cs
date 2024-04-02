@@ -143,6 +143,46 @@ public partial class Inventories
 
 
     /// <summary>
+    /// Actualizar la información de un inventario.
+    /// </summary>
+    /// <param name="id">Id del inventario.</param>
+    /// <param name="name">Nuevo nombre.</param>
+    /// <param name="description">Nueva descripción.</param>
+    /// <param name="context">Contexto de conexión..</param>
+    public async static Task<ResponseBase> Update(int id, string name, string description, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+            var res = await (from I in context.DataBase.Inventarios
+                             where I.ID == id
+                             select I).ExecuteUpdateAsync(t => t.SetProperty(a => a.Nombre, name).SetProperty(a => a.Direction, description));
+
+
+            return new(Responses.Success);
+
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+
+        return new();
+
+    }
+
+
+
+
+
+
+
+
+
+
+    /// <summary>
     /// Obtiene la valuación de los inventarios donde un usuario es administrador.
     /// </summary>
     /// <param name="id">Id del perfil</param>
