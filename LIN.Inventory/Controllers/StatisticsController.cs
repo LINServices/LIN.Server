@@ -18,6 +18,7 @@ public class StatisticsController : Controller
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
+        // Id del perfil.
         int profile = tokenInfo.ProfileId;
 
         // Fecha actual.
@@ -31,9 +32,12 @@ public class StatisticsController : Controller
 
         // Ventas del dia.
         var daySales = Data.Statistics.Sales(profile, new DateTime(now.Year, now.Month, now.Day, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day, 23, 59, 59));
+        
+        // Ventas del dia anterior.
+        var lastDaySales = Data.Statistics.Sales(profile, new DateTime(now.Year, now.Month, now.Day - 1, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day - 1, 23, 59, 59));
 
         // Esperar las tareas.
-        await Task.WhenAll([weekSales, lastWeekSales, daySales]);
+        await Task.WhenAll([weekSales, lastWeekSales, daySales, lastDaySales]);
 
         // Respuesta.
         return new ReadOneResponse<HomeDto>()
@@ -43,7 +47,8 @@ public class StatisticsController : Controller
                 LastWeekSalesTotal = lastWeekSales.Result.Model,
                 WeekSalesTotal = weekSales.Result.Models.Sum(T => T.Money),
                 WeekSales = weekSales.Result.Models,
-                TodaySalesTotal = daySales.Result.Model
+                TodaySalesTotal = daySales.Result.Model,
+                YesterdaySalesTotal = lastDaySales.Result.Model
             },
             Response = Responses.Success
         };
