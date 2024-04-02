@@ -12,7 +12,7 @@ public partial class Statistics
     /// <param name="initDate">Fecha inicial.</param>
     /// <param name="endDate">Fecha final.</param>
     /// <param name="context">Contexto de conexión.</param>
-    public async static Task<ReadOneResponse<int>> Sales(int profile, DateTime initDate, DateTime endDate, Conexión context)
+    public async static Task<ReadOneResponse<decimal>> Sales(int profile, DateTime initDate, DateTime endDate, Conexión context)
     {
 
         try
@@ -20,17 +20,22 @@ public partial class Statistics
 
             // Consulta.
             var query = from AI in context.DataBase.AccesoInventarios
-                        where AI.ProfileID == profile && AI.State == InventoryAccessState.Accepted
+                        where AI.ProfileID == profile
+                        && AI.State == InventoryAccessState.Accepted
                         join I in context.DataBase.Inventarios on AI.Inventario equals I.ID
                         join S in context.DataBase.Salidas on I.ID equals S.InventoryId
-                        where S.ProfileID == profile && S.Type == OutflowsTypes.Venta
-                        && S.Date >= initDate && S.Date <= endDate
+                        where S.ProfileID == profile
+                        && S.Type == OutflowsTypes.Venta
+                        && S.Date >= initDate
+                        && S.Date <= endDate
                         join SD in context.DataBase.DetallesSalidas on S.ID equals SD.MovementId
-                        select SD;
+                        join P in context.DataBase.ProductoDetalles on SD.ProductDetailId equals P.Id
+                        orderby S.Date
+                        select  P.PrecioVenta * SD.Cantidad;
 
 
             // Contar.
-            int total = await query.CountAsync();
+            decimal total = await query.SumAsync();
 
             // Retornar.
             return new()

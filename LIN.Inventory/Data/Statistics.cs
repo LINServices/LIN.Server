@@ -11,7 +11,7 @@ public partial class Statistics
     /// <param name="profile">Id del perfil.</param>
     /// <param name="initDate">Fecha inicial.</param>
     /// <param name="endDate">Fecha final.</param>
-    public async static Task<ReadOneResponse<int>> Sales(int profile, DateTime initDate, DateTime endDate)
+    public async static Task<ReadOneResponse<decimal>> Sales(int profile, DateTime initDate, DateTime endDate)
     {
 
         // Obtiene la conexión
