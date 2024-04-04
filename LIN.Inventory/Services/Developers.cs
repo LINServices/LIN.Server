@@ -33,8 +33,12 @@ public static class Developers
         var json = JsonConvert.SerializeObject(name);
 
         // Crear HttpRequestMessage y agregar el encabezado
-        var request = new HttpRequestMessage(HttpMethod.Post, url);
-        request.Content = new StringContent(json);
+        var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = new StringContent(json)
+        };
+
+        // Agregar header.
         request.Headers.Add("apikey", $"{_apikey}");
 
         try

@@ -175,55 +175,6 @@ public partial class Inventories
 
 
 
-
-
-
-
-
-
-
-    /// <summary>
-    /// Obtiene la valuación de los inventarios donde un usuario es administrador.
-    /// </summary>
-    /// <param name="id">Id del perfil</param>
-    /// <param name="context">Contexto de conexión</param>
-    public async static Task<ReadOneResponse<decimal>> ValueOf(int id, Conexión context)
-    {
-
-        // Ejecución
-        try
-        {
-
-            var query = from acceso in context.DataBase.AccesoInventarios
-                        where acceso.ProfileID == id
-                        && acceso.State == InventoryAccessState.Accepted
-                        && acceso.Rol == InventoryRoles.Administrator
-
-                        join inventory in context.DataBase.Inventarios
-                        on acceso.Inventario equals inventory.ID
-
-                        join product in context.DataBase.Productos on inventory.ID equals product.InventoryId
-                        join productDetails in context.DataBase.ProductoDetalles on product.Id equals productDetails.ProductId
-                        where productDetails.Estado == ProductStatements.Normal
-                        select productDetails.PrecioVenta * productDetails.Quantity;
-
-
-            var valor = await query.SumAsync();
-
-            // Retorna
-            return new(Responses.Success, valor);
-
-        }
-        catch (Exception ex)
-        {
-            ServerLogger.LogError(ex.Message);
-        }
-
-        return new();
-    }
-
-
-
     /// <summary>
     /// Obtiene un inventario.
     /// </summary>
@@ -271,70 +222,6 @@ public partial class Inventories
             var res = await (from p in context.DataBase.ProductoDetalles
                              where p.Id == id
                              select p.Product.InventoryId).FirstOrDefaultAsync();
-
-            // Si no existe el modelo
-            if (res == 0)
-                return new(Responses.NotExistAccount);
-
-            return new(Responses.Success, res);
-        }
-        catch (Exception ex)
-        {
-            ServerLogger.LogError(ex.Message);
-        }
-
-        return new();
-    }
-
-
-
-    /// <summary>
-    /// Obtiene un inventario según una entrada.
-    /// </summary>
-    /// <param name="id">Id del entrada</param>
-    /// <param name="context">Contexto de conexión</param>
-    public async static Task<ReadOneResponse<int>> FindByInflow(int id, Conexión context)
-    {
-
-        // Ejecución
-        try
-        {
-
-            var res = await (from p in context.DataBase.Entradas
-                             where p.ID == id
-                             select p.InventoryId).FirstOrDefaultAsync();
-
-            // Si no existe el modelo
-            if (res == 0)
-                return new(Responses.NotExistAccount);
-
-            return new(Responses.Success, res);
-        }
-        catch (Exception ex)
-        {
-            ServerLogger.LogError(ex.Message);
-        }
-
-        return new();
-    }
-
-
-
-    /// <summary>
-    /// Obtiene un inventario según una salida.
-    /// </summary>
-    /// <param name="id">Id del salida</param>
-    /// <param name="context">Contexto de conexión</param>
-    public async static Task<ReadOneResponse<int>> FindByOutflow(int id, Conexión context)
-    {
-
-        // Ejecución
-        try
-        {
-
-            var res = await (from p in context.DataBase.Salidas
-                             where p.ID == id
-                             select p.InventoryId).FirstOrDefaultAsync();
 
             // Si no existe el modelo
             if (res == 0)

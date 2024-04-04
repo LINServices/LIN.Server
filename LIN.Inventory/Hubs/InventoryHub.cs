@@ -19,6 +19,10 @@ public class InventoryHub : Hub
     public async Task Join(string token, DeviceModel model)
     {
 
+        // Validar.
+        if (string.IsNullOrEmpty(model.LocalId))
+            return;
+
         // Información del token.
         var tokenInfo = Jwt.Validate(token);
 
@@ -36,6 +40,7 @@ public class InventoryHub : Hub
                 Id = Context.ConnectionId,
                 Name = model.Name,
                 Platform = model.Platform,
+               LocalId=model.LocalId,
             }]);
         }
         else

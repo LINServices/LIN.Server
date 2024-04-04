@@ -59,7 +59,6 @@ public partial class Inventories
 
 
 
-
     /// <summary>
     /// Actualizar la información de un inventario.
     /// </summary>
@@ -73,24 +72,6 @@ public partial class Inventories
         (Conexión context, string connectionKey) = Conexión.GetOneConnection();
 
         var response = await Update(id, name, description, context);
-        context.CloseActions(connectionKey);
-        return response;
-    }
-
-
-
-
-    /// <summary>
-    /// Obtiene la valuación de los inventarios donde un usuario es administrador.
-    /// </summary>
-    /// <param name="id">Id del perfil.</param>
-    public async static Task<ReadOneResponse<decimal>> ValueOf(int id)
-    {
-
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
-
-        var response = await ValueOf(id, context);
         context.CloseActions(connectionKey);
         return response;
     }
@@ -125,40 +106,6 @@ public partial class Inventories
         (Conexión context, string connectionKey) = Conexión.GetOneConnection();
 
         var response = await FindByProductDetail(id, context);
-        context.CloseActions(connectionKey);
-        return response;
-    }
-
-
-
-    /// <summary>
-    /// Obtener el id de un inventario.
-    /// </summary>
-    /// <param name="id">Id de la entrada.</param>
-    public async static Task<ReadOneResponse<int>> FindByInflow(int id)
-    {
-
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
-
-        var response = await FindByInflow(id, context);
-        context.CloseActions(connectionKey);
-        return response;
-    }
-
-
-
-    /// <summary>
-    /// Obtener el id de un inventario.
-    /// </summary>
-    /// <param name="id">Id de la salida.</param>
-    public async static Task<ReadOneResponse<int>> FindByOutflow(int id)
-    {
-
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
-
-        var response = await FindByOutflow(id, context);
         context.CloseActions(connectionKey);
         return response;
     }
