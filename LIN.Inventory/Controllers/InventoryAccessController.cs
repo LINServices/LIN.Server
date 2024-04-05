@@ -164,6 +164,51 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
 
 
 
+    
+    /// <summary>
+    /// Actualizar el rol.
+    /// </summary>
+    /// <param name="token">Token de acceso.</param>
+    /// <param name="id">Id del acceso.</param>
+    /// <param name="rol">Nuevo rol.</param>
+    [HttpPut("update/rol")]
+    [InventoryToken]
+    public async Task<HttpResponseBase> UpdateRol([FromHeader] string token, [FromQuery] int id, [FromQuery] InventoryRoles rol)
+    {
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Acceso Iam.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Access,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
+
+        // Roles que pueden crear.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+
+        // Si no tiene ese rol.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Actualizar el rol.
+        var result = await Data.InventoryAccess.UpdateRol(id, rol);
+
+        // Retorna el resultado
+        return result;
+
+    }
+
+
+
+
     /// <summary>
     /// Obtiene la lista de integrantes asociados a un inventario
     /// </summary>

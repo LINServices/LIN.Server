@@ -134,7 +134,7 @@ public class InventoryController : ControllerBase
     /// <param name="token">Token de acceso.</param>
     [HttpPatch]
     [InventoryToken]
-    public async Task<HttpResponseBase> UpdateRol([FromQuery] int id, [FromQuery] string name, [FromQuery] string description, [FromHeader] string token)
+    public async Task<HttpResponseBase> Update([FromQuery] int id, [FromQuery] string name, [FromQuery] string description, [FromHeader] string token)
     {
 
         // Información del token.
