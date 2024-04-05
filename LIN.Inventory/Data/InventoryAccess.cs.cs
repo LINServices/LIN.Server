@@ -35,7 +35,7 @@ public partial class InventoryAccess
 
             context.DataBase.SaveChanges();
 
-            return new(Responses.NotRows);
+            return new(Responses.Success);
 
 
         }

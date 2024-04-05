@@ -6,10 +6,80 @@ public class InventoryAccessController : ControllerBase
 {
 
 
+
+    private readonly IHubContext<InventoryHub> _hubContext;
+
+
+    public InventoryAccessController(IHubContext<InventoryHub> hubContext)
+    {
+        _hubContext = hubContext;
+    }
+
+
+
+
     /// <summary>
-    /// Obtiene una lista de accesos asociados a un usuario.
+    /// Crear acceso a inventario.
     /// </summary>
-    /// <param name="id">Id de la cuenta</param>
+    /// <param name="model">Modelo.</param>
+    /// <param name="token">Token de acceso.</param>
+    [HttpPost]
+    [InventoryToken]
+    public async Task<HttpCreateResponse> Read([FromBody] InventoryAcessDataModel model, [FromHeader] string token)
+    {
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Acceso Iam.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = model.Inventario,
+            Profile = tokenInfo.ProfileId
+        });
+
+        // Roles que pueden crear.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+
+        // Si no tiene ese rol.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Data.
+        model.State = InventoryAccessState.OnWait;
+        model.Fecha = DateTime.Now;
+
+        // Obtiene la lista de Id's de inventarios
+        var result = await Data.InventoryAccess.Create(model);
+
+        // Si fue correcto.
+        if (result.Response == Responses.Success)
+        {
+            // Realtime.
+            string groupName = $"group.{model.ProfileID}";
+            string command = $"newInvitation({result.LastID})";
+            await _hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
+            {
+                Command = command
+            });
+        }
+
+        // Retorna el resultado
+        return result;
+
+    }
+
+
+
+
+
+
+
     [HttpGet("read")]
     [InventoryToken]
     public async Task<HttpReadOneResponse<Notificacion>> Read([FromHeader] int id, [FromHeader] string token)
@@ -17,6 +87,26 @@ public class InventoryAccessController : ControllerBase
 
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Roles que pueden crear.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+
+        // Acceso Iam.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Access,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
+
+        // Si no tiene ese rol.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
 
         // Obtiene la lista de Id's de inventarios
         var result = await Data.InventoryAccess.Read(id);
@@ -70,7 +160,7 @@ public class InventoryAccessController : ControllerBase
 
         var can = await Iam.CanAccept(id, tokenInfo.ProfileId);
 
-        if (!can) 
+        if (!can)
             return new(Responses.Unauthorized);
 
 
