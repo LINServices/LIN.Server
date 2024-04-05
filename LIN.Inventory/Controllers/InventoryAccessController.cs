@@ -88,25 +88,7 @@ public class InventoryAccessController : ControllerBase
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Roles que pueden crear.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
-
-        // Acceso Iam.
-        var iam = await Iam.Validate(new IamRequest()
-        {
-            IamBy = IamBy.Access,
-            Id = id,
-            Profile = tokenInfo.ProfileId
-        });
-
-        // Si no tiene ese rol.
-        if (!acceptedRoles.Contains(iam))
-            return new()
-            {
-                Message = "No tienes privilegios en este inventario.",
-                Response = Responses.Unauthorized
-            };
-
+      
 
         // Obtiene la lista de Id's de inventarios
         var result = await Data.InventoryAccess.Read(id);
