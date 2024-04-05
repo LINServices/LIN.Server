@@ -2,18 +2,14 @@
 
 
 [Route("Inventory/access")]
-public class InventoryAccessController : ControllerBase
+public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : ControllerBase
 {
 
 
-
-    private readonly IHubContext<InventoryHub> _hubContext;
-
-
-    public InventoryAccessController(IHubContext<InventoryHub> hubContext)
-    {
-        _hubContext = hubContext;
-    }
+    /// <summary>
+    /// Hub de contexto.
+    /// </summary>
+    private readonly IHubContext<InventoryHub> _hubContext = hubContext;
 
 
 
@@ -25,7 +21,7 @@ public class InventoryAccessController : ControllerBase
     /// <param name="token">Token de acceso.</param>
     [HttpPost]
     [InventoryToken]
-    public async Task<HttpCreateResponse> Read([FromBody] InventoryAcessDataModel model, [FromHeader] string token)
+    public async Task<HttpCreateResponse> Create([FromBody] InventoryAcessDataModel model, [FromHeader] string token)
     {
 
         // Información del token.
@@ -54,8 +50,15 @@ public class InventoryAccessController : ControllerBase
         model.State = InventoryAccessState.OnWait;
         model.Fecha = DateTime.Now;
 
-        // Obtiene la lista de Id's de inventarios
+        // Crear acceso.
         var result = await Data.InventoryAccess.Create(model);
+
+        // Si el recurso ya existe.
+        if (result.Response == Responses.ResourceExist)
+        {
+            var update = await Data.InventoryAccess.UpdateState(result.LastID, InventoryAccessState.OnWait);
+            result.Response = update.Response;
+        }
 
         // Si fue correcto.
         if (result.Response == Responses.Success)
@@ -70,16 +73,21 @@ public class InventoryAccessController : ControllerBase
         }
 
         // Retorna el resultado
-        return result;
+        return new CreateResponse()
+        {
+            Response = result.Response,
+            LastID = result.LastID
+        };
 
     }
 
 
 
-
-
-
-
+    /// <summary>
+    /// Obtener una notificación.
+    /// </summary>
+    /// <param name="id">Id de la notificación.</param>
+    /// <param name="token">Token de acceso.</param>
     [HttpGet("read")]
     [InventoryToken]
     public async Task<HttpReadOneResponse<Notificacion>> Read([FromHeader] int id, [FromHeader] string token)
@@ -88,7 +96,7 @@ public class InventoryAccessController : ControllerBase
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-      
+
 
         // Obtiene la lista de Id's de inventarios
         var result = await Data.InventoryAccess.Read(id);
@@ -208,6 +216,7 @@ public class InventoryAccessController : ControllerBase
                  on I.Item2.AccountID equals A.Id
                  select new IntegrantDataModel
                  {
+                     State = I.Item1.State,
                      AccessID = I.Item1.ID,
                      InventoryID = I.Item1.Inventario,
                      Nombre = A.Name,

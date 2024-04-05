@@ -20,12 +20,13 @@ public partial class InventoryAccess
             var exist = await (from AI in context.DataBase.AccesoInventarios
                                where AI.ProfileID == model.ProfileID
                                && AI.Inventario == model.Inventario
-                               select AI).AnyAsync();
+                               select AI.ID).FirstOrDefaultAsync();
 
             // Si ya existe.
-            if (exist)
+            if (exist > 0)
                 return new()
                 {
+                    LastID = exist,
                     Response = Responses.ResourceExist
                 };
 
@@ -191,7 +192,8 @@ public partial class InventoryAccess
             // Consulta
             var res = from AI in context.DataBase.AccesoInventarios
                       where AI.Inventario == inventario
-                       &&( AI.State == InventoryAccessState.Accepted || AI.State == InventoryAccessState.OnWait)
+                       &&( AI.State == InventoryAccessState.Accepted 
+                       || AI.State == InventoryAccessState.OnWait)
                       join U in context.DataBase.Profiles on AI.ProfileID equals U.ID
                       select new Tuple<InventoryAcessDataModel, ProfileModel>(AI, U);
 
