@@ -35,7 +35,10 @@ public partial class InventoryAccess
 
             context.DataBase.SaveChanges();
 
-            return new(Responses.Success);
+            return new(Responses.Success)
+            {
+                LastID = model.ID
+            };
 
 
         }
