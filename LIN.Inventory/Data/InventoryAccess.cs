@@ -6,6 +6,23 @@ public partial class InventoryAccess
 
 
     /// <summary>
+    /// Crear acceso a inventario.
+    /// </summary>
+    /// <param name="model">Modelo.</param>
+    public async static Task<CreateResponse> Create(InventoryAcessDataModel model)
+    {
+
+        // Obtiene la conexión
+        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+
+        var rs = await Create(model, context);
+        context.CloseActions(connectionKey);
+        return rs;
+    }
+
+
+
+    /// <summary>
     /// Obtener una invitación.
     /// </summary>
     /// <param name="id">Id de la invitación.</param>

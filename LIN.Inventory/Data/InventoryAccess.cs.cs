@@ -6,6 +6,50 @@ public partial class InventoryAccess
 
 
     /// <summary>
+    /// Crear acceso a inventario.
+    /// </summary>
+    /// <param name="model">Modelo.</param>
+    /// <param name="context">Contexto de base de datos.</param>
+    public async static Task<CreateResponse> Create(InventoryAcessDataModel model, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+            // Consultar si ya existe.
+            var exist = await (from AI in context.DataBase.AccesoInventarios
+                               where AI.ProfileID == model.ProfileID
+                               && AI.Inventario == model.Inventario
+                               select AI).AnyAsync();
+
+            // Si ya existe.
+            if (exist)
+                return new()
+                {
+                    Response = Responses.ResourceExist
+                };
+
+            model.ID = 0;
+
+            await context.DataBase.AccesoInventarios.AddAsync(model);
+
+            context.DataBase.SaveChanges();
+
+            return new(Responses.NotRows);
+
+
+        }
+        catch (Exception ex)
+        {
+            ServerLogger.LogError(ex.Message);
+        }
+
+        return new();
+    }
+
+
+
+    /// <summary>
     /// Obtener las invitaciones de un perfil.
     /// </summary>
     /// <param name="id">Id del perfil.</param>

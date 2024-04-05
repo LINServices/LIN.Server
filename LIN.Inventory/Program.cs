@@ -63,7 +63,6 @@ try
 
     var app = builder.Build();
 
-
     try
     {
         // Si la base de datos no existe
