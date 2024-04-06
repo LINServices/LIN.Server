@@ -217,11 +217,14 @@ public class InventoryHub : Hub
         try
         {
 
-            // Obtiene la sesión por el dispositivo
-            var x = List.Values.FirstOrDefault(t => t.Any(t => t.Id == Context.ConnectionId));
+            await Task.Run(() =>
+               {
+                   // Obtiene la sesión por el dispositivo
+                   var x = List.Values.FirstOrDefault(t => t.Any(t => t.Id == Context.ConnectionId));
 
-            x?.RemoveAll(t => t.Id == Context.ConnectionId);
+                   x?.RemoveAll(t => t.Id == Context.ConnectionId);
 
+               });
         }
         catch
         {

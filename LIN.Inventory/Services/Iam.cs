@@ -28,6 +28,9 @@ internal class Iam
 
             case IamBy.Access:
                 return await OnAccess(request.Id, request.Profile);
+
+            case IamBy.ProductDetail:
+                break;
         }
 
         return InventoryRoles.Undefined;

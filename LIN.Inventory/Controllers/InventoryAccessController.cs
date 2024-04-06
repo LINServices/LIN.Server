@@ -94,7 +94,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
     {
 
         // Información del token.
-        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+        _ = HttpContext.Items[token] as JwtInformation ?? new();
 
 
 
