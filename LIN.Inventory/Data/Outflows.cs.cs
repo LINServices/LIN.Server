@@ -146,6 +146,21 @@ public partial class Outflows
                 salida.CountDetails = context.DataBase.DetallesSalidas.Count(t => t.MovementId == id);
 
 
+            // Calcular inversion.
+            salida.Inversion = await (from de in context.DataBase.DetallesSalidas
+                                      where de.MovementId == id
+                                      select de.ProductDetail.PrecioCompra * de.Cantidad).SumAsync();
+
+            // Calcular inversion.
+            salida.Ganancia = await (from de in context.DataBase.DetallesSalidas
+                                     where de.MovementId == id
+                                     select de.ProductDetail.PrecioVenta * de.Cantidad).SumAsync();
+
+            // Calcular inversion.
+            salida.Utilidad = await (from de in context.DataBase.DetallesSalidas
+                                     where de.MovementId == id
+                                     select (de.ProductDetail.PrecioVenta - de.ProductDetail.PrecioCompra) * de.Cantidad).SumAsync();
+
             // Retorna
             return new(Responses.Success, salida);
         }

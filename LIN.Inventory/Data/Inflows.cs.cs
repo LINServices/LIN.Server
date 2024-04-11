@@ -140,6 +140,13 @@ public partial class Inflows
             else
                 inflow.CountDetails = context.DataBase.DetallesEntradas.Count(t => t.MovementId == id);
 
+            // Calcular inversion.
+            inflow.Inversion = await (from de in context.DataBase.DetallesEntradas
+                                      where de.MovementId == id
+                                      select (de.Movement.Type == InflowsTypes.Compra)
+                                                  ? -(de.ProductDetail.PrecioCompra * de.Cantidad)
+                                                  : -(de.ProductDetail.PrecioVenta * de.Cantidad)).SumAsync();
+
             // Retorna
             return new(Responses.Success, inflow);
 
