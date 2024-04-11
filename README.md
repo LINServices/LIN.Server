@@ -33,4 +33,4 @@ La base de datos del servidor utiliza SQL Server respaldado por Entity Framework
 
 ## Licencia
 
-Este proyecto está bajo la Licencia MIT.
+Este proyecto está bajo la Licencia propietaria
