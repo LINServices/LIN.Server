@@ -151,13 +151,15 @@ public partial class Outflows
                                       where de.MovementId == id
                                       select de.ProductDetail.PrecioCompra * de.Cantidad).SumAsync();
 
-            // Calcular inversion.
+            // Calcular ganancia / perdida.
             salida.Ganancia = await (from de in context.DataBase.DetallesSalidas
+                                     where de.Movement.Type == OutflowsTypes.Venta
                                      where de.MovementId == id
                                      select de.ProductDetail.PrecioVenta * de.Cantidad).SumAsync();
 
-            // Calcular inversion.
+            // Calcular utilidad.
             salida.Utilidad = await (from de in context.DataBase.DetallesSalidas
+                                     where de.Movement.Type == OutflowsTypes.Venta
                                      where de.MovementId == id
                                      select (de.ProductDetail.PrecioVenta - de.ProductDetail.PrecioCompra) * de.Cantidad).SumAsync();
 

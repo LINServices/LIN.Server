@@ -142,10 +142,17 @@ public partial class Inflows
 
             // Calcular inversion.
             inflow.Inversion = await (from de in context.DataBase.DetallesEntradas
+                                      where de.Movement.Type == InflowsTypes.Compra
                                       where de.MovementId == id
-                                      select (de.Movement.Type == InflowsTypes.Compra)
-                                                  ? -(de.ProductDetail.PrecioCompra * de.Cantidad)
-                                                  : -(de.ProductDetail.PrecioVenta * de.Cantidad)).SumAsync();
+                                      select de.ProductDetail.PrecioCompra * de.Cantidad).SumAsync();
+
+            // Calcular inversion.
+            inflow.Prevision = await (from de in context.DataBase.DetallesEntradas
+                                      where de.MovementId == id
+                                      select (
+                                      de.Movement.Type == InflowsTypes.Compra
+                                      ? (de.ProductDetail.PrecioVenta - de.ProductDetail.PrecioCompra) * de.Cantidad
+                                      : ( de.Movement.Type == InflowsTypes.Regalo ? de.ProductDetail.PrecioVenta * de.Cantidad : 0 ) )).SumAsync();
 
             // Retorna
             return new(Responses.Success, inflow);
