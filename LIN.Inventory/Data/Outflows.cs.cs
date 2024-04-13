@@ -153,9 +153,10 @@ public partial class Outflows
 
             // Calcular ganancia / perdida.
             salida.Ganancia = await (from de in context.DataBase.DetallesSalidas
-                                     where de.Movement.Type == OutflowsTypes.Venta
                                      where de.MovementId == id
-                                     select de.ProductDetail.PrecioVenta * de.Cantidad).SumAsync();
+                                     select de.Movement.Type == OutflowsTypes.Venta
+                                     ? de.ProductDetail.PrecioVenta * de.Cantidad
+                                     : -(de.ProductDetail.PrecioCompra) * de.Cantidad).SumAsync();
 
             // Calcular utilidad.
             salida.Utilidad = await (from de in context.DataBase.DetallesSalidas
@@ -249,6 +250,60 @@ public partial class Outflows
         return new();
     }
 
+
+
+
+
+    /// <summary>
+    /// Informe de un mes.
+    /// </summary>
+    /// <param name="month">Mes.</param>
+    /// <param name="year">Año.</param>
+    /// <param name="inventory">Id del inventario.</param>
+    /// <param name="context">Contexto de conexión.</param>
+    public async static Task<ReadAllResponse<OutflowRow>> Informe(int month, int year, int inventory, Conexión context)
+    {
+
+        // Ejecución
+        try
+        {
+
+
+            // Consulta.
+            var query = from E in context.DataBase.Salidas
+                        where E.InventoryId == inventory
+                        && E.Date.Year == year && E.Date.Month == month
+
+                        join ED in context.DataBase.DetallesSalidas
+                        on E.ID equals ED.MovementId
+
+                        join P in context.DataBase.ProductoDetalles
+                        on ED.ProductDetailId equals P.Id
+                        select new OutflowRow
+                        {
+                            ProductId = P.ProductId,
+                            PrecioCompra = P.PrecioCompra,
+                            PrecioVenta = P.PrecioVenta,
+                            Fecha = E.Date,
+                            ProductCode = P.Product.Code,
+                            ProductName = P.Product.Name,
+                            Cantidad = ED.Cantidad,
+                            Type = E.Type
+                        };
+
+
+            var models = await query.ToListAsync();
+
+            // Retorna
+            return new(Responses.Success, models);
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new();
+    }
 
 
 }
