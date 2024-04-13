@@ -24,8 +24,8 @@ public class EmailWorker
     /// </summary>
     public static void StarService()
     {
-        Mail = Configuration.GetConfiguration("mail:email");
-        Password = Configuration.GetConfiguration("mail:password");
+        Mail = Http.Services.Configuration.GetConfiguration("mail:email");
+        Password = Http.Services.Configuration.GetConfiguration("mail:password");
     }
 
 
