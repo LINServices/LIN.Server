@@ -48,11 +48,6 @@ try
 
 
 
-    // LIN Services
-    Developers.SetKey(builder.Configuration["lin:key"] ?? string.Empty);
-    Developers.SetUrl(devServiceUrl);
-
-
     LIN.Access.Auth.Build.SetAuth(builder.Configuration["lin:app"] ?? string.Empty);
 
     builder.Services.AddControllers();
@@ -104,9 +99,6 @@ try
 
     // Inicia las conexiones
     _ = Conexión.StartConnections();
-
-    // Inicia el servicio de mails
-    EmailWorker.StarService();
 
     // Inicio de Jwt
     Jwt.Open();

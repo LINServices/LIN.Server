@@ -3,7 +3,7 @@ using LIN.Types.Emma.Models;
 namespace LIN.Inventory.Controllers;
 
 
-[Route("Emma")]
+[Route("emma")]
 public class EmmaController : ControllerBase
 {
 

@@ -13,7 +13,7 @@ public class ContactController : ControllerBase
     /// </summary>
     /// <param name="modelo">Modelo.</param>
     /// <param name="token">Token de acceso a Contactos.</param>
-    [HttpPost("create")]
+    [HttpPost]
     public async Task<HttpCreateResponse> Create([FromBody] ContactModel modelo, [FromHeader] string token)
     {
 
@@ -33,7 +33,7 @@ public class ContactController : ControllerBase
 
 
     /// <summary>
-    /// Obtiene los contactos,
+    /// Obtiene los contactos.
     /// </summary>
     /// <param name="token">Token de acceso a Contactos.</param>
     [HttpGet("read/all")]
@@ -56,7 +56,7 @@ public class ContactController : ControllerBase
     /// </summary>
     /// <param name="id">Id.</param>
     /// <param name="token">Token de acceso a Contactos.</param>
-    [HttpGet("read")]
+    [HttpGet]
     public async Task<HttpReadOneResponse<ContactModel>> ReadOne([FromHeader] int id, [FromHeader] string token)
     {
 
@@ -76,7 +76,7 @@ public class ContactController : ControllerBase
     /// </summary>
     /// <param name="modelo">Modelo del contacto.</param>
     /// <param name="token">Token de acceso.</param>
-    [HttpPatch("update")]
+    [HttpPatch]
     public async Task<HttpResponseBase> Update([FromBody] ContactModel modelo, [FromHeader] string token)
     {
 
@@ -93,7 +93,7 @@ public class ContactController : ControllerBase
     /// </summary>
     /// <param name="id">Id del contacto.</param>
     /// <param name="token">Token de acceso a contactos.</param>
-    [HttpDelete("delete")]
+    [HttpDelete]
     public async Task<HttpResponseBase> Delete([FromHeader] int id, [FromHeader] string token)
     {
 

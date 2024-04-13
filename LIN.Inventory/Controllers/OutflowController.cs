@@ -11,7 +11,7 @@ public class OutflowController : ControllerBase
     /// </summary>
     /// <param name="modelo">Modelo.</param>
     /// <param name="token">Token de acceso.</param>
-    [HttpPost("create")]
+    [HttpPost]
     [InventoryToken]
     public async Task<HttpCreateResponse> Create([FromBody] OutflowDataModel modelo, [FromHeader] string token)
     {
@@ -65,7 +65,7 @@ public class OutflowController : ControllerBase
     /// <param name="id">Id de la entrada</param>
     /// <param name="mascara">TRUE si NO necesita los detalles, y FALSE si necesita los detalles</param>
     /// <param name="token">Token de acceso.</param>
-    [HttpGet("read")]
+    [HttpGet]
     [InventoryToken]
     public async Task<HttpReadOneResponse<OutflowDataModel>> ReadOne([FromHeader] int id, [FromHeader] string token, [FromHeader] bool includeDetails = false)
     {
@@ -111,7 +111,7 @@ public class OutflowController : ControllerBase
     /// Obtiene todas las salida asociadas a un inventario
     /// </summary>
     /// <param name="id">Id del inventario</param>
-    [HttpGet("read/all")]
+    [HttpGet("all")]
     [InventoryToken]
     public async Task<HttpReadAllResponse<OutflowDataModel>> ReadAll([FromHeader] int id, [FromHeader] string token)
     {

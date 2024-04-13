@@ -1,7 +1,7 @@
 namespace LIN.Inventory.Controllers;
 
 
-[Route("Inventory")]
+[Route("inventory")]
 public class InventoryController : ControllerBase
 {
 
@@ -11,7 +11,7 @@ public class InventoryController : ControllerBase
     /// </summary>
     /// <param name="modelo">Modelo del inventario.</param>
     /// <param name="token">Token de acceso.</param>
-    [HttpPost("create")]
+    [HttpPost]
     [InventoryToken]
     public async Task<HttpCreateResponse> Create([FromBody] InventoryDataModel modelo, [FromHeader] string token)
     {
@@ -82,7 +82,7 @@ public class InventoryController : ControllerBase
     /// </summary>
     /// <param name="id">Id del inventario.</param>
     /// <param name="token">Token de acceso.</param>
-    [HttpGet("read")]
+    [HttpGet]
     [InventoryToken]
     public async Task<HttpReadOneResponse<InventoryDataModel>> Read([FromQuery] int id, [FromHeader] string token)
     {

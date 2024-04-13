@@ -1,7 +1,7 @@
 ﻿namespace LIN.Inventory.Controllers;
 
 
-[Route("Inventory/access")]
+[Route("inventory/access")]
 public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : ControllerBase
 {
 
@@ -88,7 +88,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
     /// </summary>
     /// <param name="id">Id de la notificación.</param>
     /// <param name="token">Token de acceso.</param>
-    [HttpGet("read")]
+    [HttpGet]
     [InventoryToken]
     public async Task<HttpReadOneResponse<Notificacion>> Read([FromHeader] int id, [FromHeader] string token)
     {

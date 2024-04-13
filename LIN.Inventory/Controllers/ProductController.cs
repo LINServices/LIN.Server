@@ -10,7 +10,7 @@ public class ProductController : ControllerBase
     /// Crea un nuevo producto
     /// </summary>
     /// <param name="modelo">Modelo del producto</param>
-    [HttpPost("create")]
+    [HttpPost]
     [InventoryToken]
     public async Task<HttpCreateResponse> Create([FromBody] ProductModel modelo, [FromHeader] string token)
     {
@@ -132,7 +132,7 @@ public class ProductController : ControllerBase
     /// Obtiene un producto por medio de su Id
     /// </summary>
     /// <param name="id">Id del producto</param>
-    [HttpGet("read")]
+    [HttpGet]
     [InventoryToken]
     public async Task<HttpReadOneResponse<ProductModel>> ReadOne([FromHeader] int id, [FromHeader] string token)
     {
@@ -231,7 +231,7 @@ public class ProductController : ControllerBase
     /// Actualiza la información de un producto
     /// </summary>
     /// <param name="modelo">Nuevo modelo del producto</param>
-    [HttpPut("update")]
+    [HttpPut]
     [InventoryToken]
     public async Task<HttpResponseBase> UpdateAll([FromBody] ProductModel modelo, [FromHeader] string token)
     {
@@ -273,7 +273,7 @@ public class ProductController : ControllerBase
     /// Elimina un producto
     /// </summary>
     /// <param name="id">Id del producto</param>
-    [HttpDelete("delete")]
+    [HttpDelete]
     [InventoryToken]
     public async Task<HttpResponseBase> Delete([FromHeader] int id, [FromHeader]string token)
     {
