@@ -35,7 +35,7 @@ public class InflowController : ControllerBase
         });
 
         // Roles que pueden crear.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor, InventoryRoles.Member];
 
         // Si no tiene ese rol.
         if (!acceptedRoles.Contains(iam))
@@ -88,7 +88,7 @@ public class InflowController : ControllerBase
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor, InventoryRoles.Member, InventoryRoles.Reader];
 
         // Si no cumple con los roles.
         if (!acceptedRoles.Contains(iam))
@@ -134,7 +134,7 @@ public class InflowController : ControllerBase
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor, InventoryRoles.Member, InventoryRoles.Reader];
 
         // Si no cumple con los roles.
         if (!acceptedRoles.Contains(iam))
@@ -181,7 +181,7 @@ public class InflowController : ControllerBase
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor];
 
         // Si no cumple con los roles.
         if (!acceptedRoles.Contains(iam))
