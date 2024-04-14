@@ -65,7 +65,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Supervisor];
 
         // Si no tiene permisos.
         if (!acceptedRoles.Contains(iam))
@@ -116,7 +116,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest, InventoryRoles.Supervisor, InventoryRoles.Reader];
 
         // Si no tiene permisos.
         if (!acceptedRoles.Contains(iam))
@@ -160,7 +160,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest, InventoryRoles.Reader, InventoryRoles.Supervisor];
 
         // Si no tiene permisos.
         if (!acceptedRoles.Contains(iam))
@@ -215,7 +215,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest, InventoryRoles.Supervisor, InventoryRoles.Reader];
 
         // Si no tiene permisos.
         if (!acceptedRoles.Contains(iam))
@@ -256,7 +256,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Member];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor];
 
         // Si no tiene permisos.
         if (!acceptedRoles.Contains(iam))
@@ -325,7 +325,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor];
 
         // Si no tiene permisos.
         if (!acceptedRoles.Contains(iam))
