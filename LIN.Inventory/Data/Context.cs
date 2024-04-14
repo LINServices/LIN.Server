@@ -139,7 +139,15 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
   .OnDelete(DeleteBehavior.NoAction);
 
 
-
+        modelBuilder.Entity<ProfileModel>().ToTable("PROFILES");
+        modelBuilder.Entity<InventoryDataModel>().ToTable("INVENTORIES");
+        modelBuilder.Entity<InflowDataModel>().ToTable("INFLOWS");
+        modelBuilder.Entity<OutflowDataModel>().ToTable("OUTFLOWS");
+        modelBuilder.Entity<InflowDetailsDataModel>().ToTable("INFLOW_DETAILS");
+        modelBuilder.Entity<OutflowDetailsDataModel>().ToTable("OUTFLOW_DETAILS");
+        modelBuilder.Entity<ProductDetailModel>().ToTable("PRODUCT_DETAILS");
+        modelBuilder.Entity<ProductModel>().ToTable("PRODUCTS");
+        modelBuilder.Entity<InventoryAcessDataModel>().ToTable("INVENTORY_ACCESS");
 
 
     }
