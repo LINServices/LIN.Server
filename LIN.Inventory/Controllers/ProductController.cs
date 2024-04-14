@@ -2,8 +2,14 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("product")]
-public class ProductController : ControllerBase
+public class ProductController(IHubContext<InventoryHub> hubContext) : ControllerBase
 {
+
+
+    /// <summary>
+    /// Hub de contexto.
+    /// </summary>
+    private readonly IHubContext<InventoryHub> _hubContext = hubContext;
 
 
     /// <summary>
@@ -262,6 +268,20 @@ public class ProductController : ControllerBase
 
         // Respuesta
         ResponseBase response = await Data.Products.Update(modelo);
+
+
+        // Si fue correcto.
+        if (response.Response == Responses.Success)
+        {
+            // Realtime.
+            string groupName = $"group.{tokenInfo.ProfileId}";
+            string command = $"updateProduct({modelo.Id})";
+            await _hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
+            {
+                Command = command
+            });
+        }
+
 
         return response;
 
