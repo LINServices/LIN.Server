@@ -36,7 +36,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
         });
 
         // Roles que pueden crear.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor];
 
         // Si no tiene ese rol.
         if (!acceptedRoles.Contains(iam))
@@ -188,13 +188,21 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
         });
 
         // Roles que pueden crear.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor];
 
         // Si no tiene ese rol.
         if (!acceptedRoles.Contains(iam))
             return new()
             {
                 Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Si se trata de escalar roles.
+        if (iam != InventoryRoles.Administrator && rol == InventoryRoles.Administrator)
+            return new()
+            {
+                Message = "No tienes suficientes privilegios para actualizar el rol a administrador.",
                 Response = Responses.Unauthorized
             };
 
@@ -236,7 +244,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
         });
 
         // Roles que pueden crear.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Supervisor, InventoryRoles.Administrator, InventoryRoles.Reader];
 
         // Si no tiene ese rol.
         if (!acceptedRoles.Contains(iam))
@@ -308,7 +316,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
         });
 
         // Roles que pueden crear.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor];
 
         // Si no tiene ese rol.
         if (!acceptedRoles.Contains(iam))

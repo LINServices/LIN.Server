@@ -99,7 +99,7 @@ public class InventoryController : ControllerBase
         });
 
         // Roles admitidos.
-        InventoryRoles[] roles = [InventoryRoles.Administrator, InventoryRoles.Member, InventoryRoles.Guest];
+        InventoryRoles[] roles = [InventoryRoles.Administrator, InventoryRoles.Member, InventoryRoles.Guest, InventoryRoles.Supervisor, InventoryRoles.Reader];
 
         // Validar Iam.
         if (!roles.Contains(iam))
