@@ -88,7 +88,7 @@ public class InflowController : ControllerBase
         });
 
         // Roles.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator];
 
         // Si no cumple con los roles.
         if (!acceptedRoles.Contains(iam))
