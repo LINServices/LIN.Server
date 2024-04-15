@@ -266,22 +266,24 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
                 Response = Responses.Unauthorized
             };
 
-        // Respuesta
+        // Encontrar el id del inventario.
+        var findInventory = Data.Inventories.FindByProduct(modelo.Id);
+
+        // Actualizar.
         ResponseBase response = await Data.Products.Update(modelo);
 
-
+        await findInventory;
         // Si fue correcto.
-        if (response.Response == Responses.Success)
+        if (response.Response == Responses.Success && findInventory.Result.Response == Responses.Success)
         {
             // Realtime.
-            string groupName = $"group.{tokenInfo.ProfileId}";
+            string groupName = $"inventory.{findInventory.Result.Model}";
             string command = $"updateProduct({modelo.Id})";
             await _hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
             {
                 Command = command
             });
         }
-
 
         return response;
 
