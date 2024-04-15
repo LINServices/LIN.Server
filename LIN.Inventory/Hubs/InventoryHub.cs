@@ -88,7 +88,7 @@ public class InventoryHub : Hub
         });
 
         // Roles que pueden crear.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Guest, InventoryRoles.Supervisor, InventoryRoles.Reader];
 
         // Si no tiene ese rol.
         if (!acceptedRoles.Contains(iam))
@@ -156,7 +156,7 @@ public class InventoryHub : Hub
         });
 
         // Roles que pueden crear.
-        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor];
 
         // Si no tiene ese rol.
         if (!acceptedRoles.Contains(iam))
