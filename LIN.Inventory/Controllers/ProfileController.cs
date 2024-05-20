@@ -1,7 +1,7 @@
 namespace LIN.Inventory.Controllers;
 
 
-[Route("profile")]
+[Route("[Controller]")]
 public class ProfileController : ControllerBase
 {
 

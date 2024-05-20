@@ -1,3 +1,4 @@
+using Http.Extensions;
 using LIN.Inventory.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,11 +51,8 @@ try
 
     LIN.Access.Auth.Build.SetAuth(builder.Configuration["lin:app"] ?? string.Empty);
 
-    builder.Services.AddControllers();
-
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
     builder.Services.AddHttpContextAccessor();
+    builder.Services.AddLINHttp();
 
     var app = builder.Build();
 
@@ -71,17 +69,8 @@ try
 
 
 
-
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-    }
-
-    app.UseSwagger();
-    app.UseSwaggerUI();
     app.UseHttpsRedirection();
     app.UseStaticFiles();
-    app.UseCors("AllowAnyOrigin");
     app.UseAuthentication();
     app.UseAuthorization();
 
@@ -89,13 +78,12 @@ try
 
     app.MapControllers();
 
+    app.UseLINHttp();
+
     // Rutas de servicios de tiempo real
     app.MapHub<InventoryHub>("/Realtime/inventory");
 
     app.UseRouting();
-
-    app.MapGet("/", () => "LIN APP Services esta funcionando");
-
 
     // Inicia las conexiones
     _ = Conexión.StartConnections();

@@ -1,7 +1,7 @@
 namespace LIN.Inventory.Controllers;
 
 
-[Route("inflow")]
+[Route("[Controller]")]
 public class InflowController : ControllerBase
 {
 

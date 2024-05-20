@@ -152,7 +152,7 @@ public partial class Inflows
                                       select (
                                       de.Movement.Type == InflowsTypes.Compra
                                       ? (de.ProductDetail.PrecioVenta - de.ProductDetail.PrecioCompra) * de.Cantidad
-                                      : ( de.Movement.Type == InflowsTypes.Regalo ? de.ProductDetail.PrecioVenta * de.Cantidad : 0 ) )).SumAsync();
+                                      : (de.Movement.Type == InflowsTypes.Regalo ? de.ProductDetail.PrecioVenta * de.Cantidad : 0))).SumAsync();
 
             // Retorna
             return new(Responses.Success, inflow);

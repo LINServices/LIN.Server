@@ -3,7 +3,7 @@ using LIN.Types.Contacts.Models;
 namespace LIN.Inventory.Controllers;
 
 
-[Route("contact")]
+[Route("[Controller]")]
 public class ContactController : ControllerBase
 {
 

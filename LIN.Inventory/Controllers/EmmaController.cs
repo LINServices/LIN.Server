@@ -3,23 +3,22 @@ using LIN.Types.Emma.Models;
 namespace LIN.Inventory.Controllers;
 
 
-[Route("emma")]
+[Route("[Controller]")]
 public class EmmaController : ControllerBase
 {
 
 
     /// <summary>
-    /// Consulta para LIN Allo Emma.
+    /// Consultas para Emma.
     /// </summary>
-    /// <param name="token">Token de acceso.</param>
-    /// <param name="consult">Consulta.</param>
+    /// <param name="tokenAuth">Token de identidad.</param>
+    /// <param name="query">Entrada a Emma.</param>
     [HttpPost]
-    public async Task<HttpReadOneResponse<ResponseIAModel>> Assistant([FromHeader] string tokenAuth, [FromBody] string consult)
+    public async Task<HttpReadOneResponse<ResponseIAModel>> Assistant([FromHeader] string tokenAuth, [FromBody] string query)
     {
 
 
-
-        HttpClient client = new ();
+        HttpClient client = new();
 
         client.DefaultRequestHeaders.Add("token", tokenAuth);
         client.DefaultRequestHeaders.Add("useDefaultContext", true.ToString().ToLower());
@@ -28,7 +27,7 @@ public class EmmaController : ControllerBase
         var request = new LIN.Types.Models.EmmaRequest
         {
             AppContext = "inventory",
-            Asks = consult
+            Asks = query
         };
 
 
@@ -41,7 +40,7 @@ public class EmmaController : ControllerBase
         var ss = await result.Content.ReadAsStringAsync();
 
 
-       dynamic? fin = Newtonsoft.Json.JsonConvert.DeserializeObject(ss);
+        dynamic? fin = Newtonsoft.Json.JsonConvert.DeserializeObject(ss);
 
 
         // Respuesta
@@ -109,7 +108,7 @@ public class EmmaController : ControllerBase
                         """";
 
 
-        foreach(var i in inventories.Models)
+        foreach (var i in inventories.Models)
         {
             final += $$"""{ Nombre: {{i.Nombre}}, MiRol: {{i.MyRol}}, Id: {{i.ID}} }""" + "\n";
         }
@@ -162,7 +161,6 @@ public class EmmaController : ControllerBase
         };
 
     }
-
 
 
 

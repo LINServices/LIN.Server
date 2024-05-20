@@ -1,7 +1,7 @@
 ﻿namespace LIN.Inventory.Controllers;
 
 
-[Route("auth")]
+[Route("[Controller]")]
 public class AuthController : ControllerBase
 {
 
@@ -83,7 +83,6 @@ public class AuthController : ControllerBase
                     Message = "Un error grave ocurrió"
                 };
         }
-
 
         // Genera el token
         var token = Jwt.Generate(profile.Model);

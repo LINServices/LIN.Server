@@ -192,7 +192,7 @@ public partial class InventoryAccess
             // Consulta
             var res = from AI in context.DataBase.AccesoInventarios
                       where AI.Inventario == inventario
-                       &&( AI.State == InventoryAccessState.Accepted 
+                       && (AI.State == InventoryAccessState.Accepted
                        || AI.State == InventoryAccessState.OnWait)
                       join U in context.DataBase.Profiles on AI.ProfileID equals U.ID
                       select new Tuple<InventoryAcessDataModel, ProfileModel>(AI, U);

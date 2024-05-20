@@ -1,7 +1,7 @@
 namespace LIN.Inventory.Controllers;
 
 
-[Route("inventory")]
+[Route("[Controller]")]
 public class InventoryController : ControllerBase
 {
 
@@ -76,7 +76,6 @@ public class InventoryController : ControllerBase
 
 
 
-
     /// <summary>
     /// Obtener un inventario.
     /// </summary>
@@ -121,7 +120,6 @@ public class InventoryController : ControllerBase
         return response;
 
     }
-
 
 
 

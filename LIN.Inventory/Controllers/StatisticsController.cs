@@ -1,7 +1,7 @@
 ﻿namespace LIN.Inventory.Controllers;
 
 
-[Route("statistics")]
+[Route("[Controller]")]
 public class StatisticsController : Controller
 {
 
@@ -32,7 +32,7 @@ public class StatisticsController : Controller
 
         // Ventas del dia.
         var daySales = Data.Statistics.Sales(profile, new DateTime(now.Year, now.Month, now.Day, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day, 23, 59, 59));
-        
+
         // Ventas del dia anterior.
         var lastDaySales = Data.Statistics.Sales(profile, new DateTime(now.Year, now.Month, now.Day - 1, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day - 1, 23, 59, 59));
 

@@ -7,14 +7,6 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
 
 
     /// <summary>
-    /// Hub de contexto.
-    /// </summary>
-    private readonly IHubContext<InventoryHub> _hubContext = hubContext;
-
-
-
-
-    /// <summary>
     /// Crear acceso a inventario.
     /// </summary>
     /// <param name="model">Modelo.</param>
@@ -66,7 +58,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
             // Realtime.
             string groupName = $"group.{model.ProfileID}";
             string command = $"newInvitation({result.LastID})";
-            await _hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
+            await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
             {
                 Command = command
             });
@@ -164,7 +156,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
 
 
 
-    
+
     /// <summary>
     /// Actualizar el rol.
     /// </summary>
@@ -218,7 +210,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
 
 
     /// <summary>
-    /// Obtiene la lista de integrantes asociados a un inventario
+    /// Obtiene la lista de integrantes asociados a un inventario.
     /// </summary>
     /// <param name="inventario">Id del inventario</param>
     /// <param name="token">Token de acceso.</param>
@@ -287,8 +279,9 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
 
 
 
+
     /// <summary>
-    /// Elimina a alguien de un inventario
+    /// Elimina a alguien de un inventario.
     /// </summary>
     /// <param name="inventario">Id del inventario</param>
     /// <param name="usuario">Id del usuario que va a ser eliminado</param>

@@ -1,5 +1,4 @@
-﻿using LIN.Inventory.Services.Model;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace LIN.Inventory.Services;

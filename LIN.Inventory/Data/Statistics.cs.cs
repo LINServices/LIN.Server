@@ -31,7 +31,7 @@ public partial class Statistics
                         join SD in context.DataBase.DetallesSalidas on S.ID equals SD.MovementId
                         join P in context.DataBase.ProductoDetalles on SD.ProductDetailId equals P.Id
                         orderby S.Date
-                        select  P.PrecioVenta * SD.Cantidad;
+                        select P.PrecioVenta * SD.Cantidad;
 
 
             // Contar.

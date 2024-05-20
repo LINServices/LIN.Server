@@ -1,7 +1,7 @@
 namespace LIN.Inventory.Controllers;
 
 
-[Route("outflow")]
+[Route("[Controller]")]
 public class OutflowController : ControllerBase
 {
 
@@ -199,10 +199,6 @@ public class OutflowController : ControllerBase
 
 
 
-
-
-
-
     /// <summary>
     /// Informe mensual de Salidas
     /// </summary>
@@ -346,5 +342,6 @@ public class OutflowController : ControllerBase
         //return new(Responses.Success, response.File.ToList());
 
     }
+
 
 }

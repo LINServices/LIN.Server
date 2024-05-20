@@ -1,16 +1,9 @@
 namespace LIN.Inventory.Controllers;
 
 
-[Route("product")]
+[Route("[Controller]")]
 public class ProductController(IHubContext<InventoryHub> hubContext) : ControllerBase
 {
-
-
-    /// <summary>
-    /// Hub de contexto.
-    /// </summary>
-    private readonly IHubContext<InventoryHub> _hubContext = hubContext;
-
 
     /// <summary>
     /// Crea un nuevo producto
@@ -52,7 +45,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         if (modelo.InventoryId <= 0 || modelo.DetailModel!.Quantity < 0 || modelo.DetailModel.PrecioCompra < 0 || modelo.DetailModel.PrecioVenta < 0)
             return new(Responses.InvalidParam)
             {
-                Message ="Uno o varios parámetros son inválidos."
+                Message = "Uno o varios parámetros son inválidos."
             };
 
 
@@ -246,7 +239,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-       
+
         // Acceso Iam.
         var iam = await Iam.Validate(new IamRequest()
         {
@@ -279,7 +272,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
             // Realtime.
             string groupName = $"inventory.{findInventory.Result.Model}";
             string command = $"updateProduct({modelo.Id})";
-            await _hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
+            await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
             {
                 Command = command
             });
@@ -297,11 +290,11 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
     /// <param name="id">Id del producto</param>
     [HttpDelete]
     [InventoryToken]
-    public async Task<HttpResponseBase> Delete([FromHeader] int id, [FromHeader]string token)
+    public async Task<HttpResponseBase> Delete([FromHeader] int id, [FromHeader] string token)
     {
 
         // Parámetros.
-        if (id < 0) 
+        if (id < 0)
             return new(Responses.InvalidParam);
 
         // Información del token.

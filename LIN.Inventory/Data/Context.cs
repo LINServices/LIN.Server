@@ -80,8 +80,6 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
            .HasIndex(e => e.AccountID)
            .IsUnique();
 
-
-
         modelBuilder.Entity<ProductModel>()
             .HasMany(t => t.Details)
             .WithOne(t => t.Product)
@@ -94,49 +92,37 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
          .HasForeignKey(t => t.InventoryId);
 
         modelBuilder.Entity<InventoryDataModel>()
-      .HasMany(t => t.Inflows)
-      .WithOne(t => t.Inventory)
-      .HasForeignKey(t => t.InventoryId);
+          .HasMany(t => t.Inflows)
+          .WithOne(t => t.Inventory)
+          .HasForeignKey(t => t.InventoryId);
 
 
         modelBuilder.Entity<InventoryDataModel>()
-     .HasMany(t => t.Outflows)
-     .WithOne(t => t.Inventory)
-     .HasForeignKey(t => t.InventoryId);
-
-
-
-
+         .HasMany(t => t.Outflows)
+         .WithOne(t => t.Inventory)
+         .HasForeignKey(t => t.InventoryId);
 
         modelBuilder.Entity<InflowDataModel>()
-     .HasMany(t => t.Details)
-     .WithOne(t => t.Movement)
-     .HasForeignKey(t => t.MovementId);
-
-
+         .HasMany(t => t.Details)
+         .WithOne(t => t.Movement)
+         .HasForeignKey(t => t.MovementId);
 
         modelBuilder.Entity<InflowDetailsDataModel>()
-  .HasOne(t => t.ProductDetail)
-  .WithMany()
-  .HasForeignKey(t => t.ProductDetailId)
-  .OnDelete(DeleteBehavior.NoAction)
-  ;
-
-
-
+          .HasOne(t => t.ProductDetail)
+          .WithMany()
+          .HasForeignKey(t => t.ProductDetailId)
+          .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<OutflowDataModel>()
-     .HasMany(t => t.Details)
-     .WithOne(t => t.Movement)
-     .HasForeignKey(t => t.MovementId);
-
-
+             .HasMany(t => t.Details)
+             .WithOne(t => t.Movement)
+             .HasForeignKey(t => t.MovementId);
 
         modelBuilder.Entity<OutflowDetailsDataModel>()
-  .HasOne(t => t.ProductDetail)
-  .WithMany()
-  .HasForeignKey(t => t.ProductDetailId)
-  .OnDelete(DeleteBehavior.NoAction);
+          .HasOne(t => t.ProductDetail)
+          .WithMany()
+          .HasForeignKey(t => t.ProductDetailId)
+          .OnDelete(DeleteBehavior.NoAction);
 
 
         modelBuilder.Entity<ProfileModel>().ToTable("PROFILES");
