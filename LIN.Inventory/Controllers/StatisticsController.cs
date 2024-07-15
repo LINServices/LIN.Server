@@ -2,7 +2,7 @@
 
 
 [Route("[Controller]")]
-public class StatisticsController : Controller
+public class StatisticsController(Data.Statistics statisticsData) : Controller
 {
 
 
@@ -25,16 +25,16 @@ public class StatisticsController : Controller
         DateTime now = DateTime.Now;
 
         // Ventas de esta semana.
-        var weekSales = Data.Statistics.SalesOn(profile, now.AddDays(-7), now);
+        var weekSales = statisticsData.SalesOn(profile, now.AddDays(-7), now);
 
         // Ventas de la semana pasada.
-        var lastWeekSales = Data.Statistics.Sales(profile, now.AddDays(-14), now.AddDays(-7));
+        var lastWeekSales = statisticsData.Sales(profile, now.AddDays(-14), now.AddDays(-7));
 
         // Ventas del dia.
-        var daySales = Data.Statistics.Sales(profile, new DateTime(now.Year, now.Month, now.Day, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day, 23, 59, 59));
+        var daySales = statisticsData.Sales(profile, new DateTime(now.Year, now.Month, now.Day, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day, 23, 59, 59));
 
         // Ventas del dia anterior.
-        var lastDaySales = Data.Statistics.Sales(profile, new DateTime(now.Year, now.Month, now.Day - 1, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day - 1, 23, 59, 59));
+        var lastDaySales = statisticsData.Sales(profile, new DateTime(now.Year, now.Month, now.Day - 1, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day - 1, 23, 59, 59));
 
         // Esperar las tareas.
         await Task.WhenAll([weekSales, lastWeekSales, daySales, lastDaySales]);

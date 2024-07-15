@@ -2,7 +2,7 @@
 
 
 [Route("inventory/access")]
-public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : ControllerBase
+public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Data.InventoryAccess inventoryAccess, IIam Iam) : ControllerBase
 {
 
 
@@ -43,12 +43,12 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
         model.Fecha = DateTime.Now;
 
         // Crear acceso.
-        var result = await Data.InventoryAccess.Create(model);
+        var result = await inventoryAccess.Create(model);
 
         // Si el recurso ya existe.
         if (result.Response == Responses.ResourceExist)
         {
-            var update = await Data.InventoryAccess.UpdateState(result.LastID, InventoryAccessState.OnWait);
+            var update = await inventoryAccess.UpdateState(result.LastID, InventoryAccessState.OnWait);
             result.Response = update.Response;
         }
 
@@ -91,7 +91,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
 
 
         // Obtiene la lista de Id's de inventarios
-        var result = await Data.InventoryAccess.Read(id);
+        var result = await inventoryAccess.Read(id);
 
         // Retorna el resultado
         return result;
@@ -113,7 +113,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtiene la lista de Id's de inventarios
-        var result = await Data.InventoryAccess.ReadAll(tokenInfo.ProfileId);
+        var result = await inventoryAccess.ReadAll(tokenInfo.ProfileId);
 
         // Retorna el resultado
         return result;
@@ -147,7 +147,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
 
 
         // Obtiene la lista de Id's de inventarios
-        var result = await Data.InventoryAccess.UpdateState(id, estado);
+        var result = await inventoryAccess.UpdateState(id, estado);
 
         // Retorna el resultado
         return result;
@@ -199,7 +199,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
             };
 
         // Actualizar el rol.
-        var result = await Data.InventoryAccess.UpdateRol(id, rol);
+        var result = await inventoryAccess.UpdateRol(id, rol);
 
         // Retorna el resultado
         return result;
@@ -248,7 +248,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
 
 
         // Obtiene la lista de Id's de inventarios
-        var result = await Data.InventoryAccess.ReadMembers(inventario);
+        var result = await inventoryAccess.ReadMembers(inventario);
 
 
         var map = result.Models.Select(T => T.Item2.AccountID).ToList();
@@ -320,7 +320,7 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext) : C
             };
 
         // Obtiene la lista de Id's de inventarios
-        var result = await Data.InventoryAccess.DeleteSomeOne(inventario, usuario);
+        var result = await inventoryAccess.DeleteSomeOne(inventario, usuario);
 
         return result;
 

@@ -1,7 +1,9 @@
-﻿namespace LIN.Inventory.Hubs;
+﻿using LIN.Inventory.Data;
+
+namespace LIN.Inventory.Hubs;
 
 
-public class InventoryHub : Hub
+public class InventoryHub(Context context, IIam Iam) : Hub
 {
 
 
@@ -163,12 +165,7 @@ public class InventoryHub : Hub
             return "No Rol";
 
 
-        var (context, contextKey) = Conexión.GetOneConnection();
-
-
-
-
-        var x = await (from i in context.DataBase.AccesoInventarios
+        var x = await (from i in context.AccesoInventarios
                        where i.Inventario == inventory
                        where i.State == InventoryAccessState.OnWait
                        select new

@@ -1,7 +1,9 @@
-﻿namespace LIN.Inventory.Services;
+﻿using LIN.Inventory.Data;
+
+namespace LIN.Inventory.Services;
 
 
-internal class Iam
+internal class Iam(Context context) : IIam
 {
 
 
@@ -9,7 +11,7 @@ internal class Iam
     /// Validar IAM.
     /// </summary>
     /// <param name="request">Solicitud.</param>
-    public static async Task<InventoryRoles> Validate(IamRequest request)
+    public async Task<InventoryRoles> Validate(IamRequest request)
     {
 
         switch (request.IamBy)
@@ -51,14 +53,11 @@ internal class Iam
     /// </summary>
     /// <param name="inventory">Id del inventario.</param>
     /// <param name="profile">Id del perfil.</param>
-    private static async Task<InventoryRoles> OnInventory(int inventory, int profile)
+    private async Task<InventoryRoles> OnInventory(int inventory, int profile)
     {
 
-        // Db.
-        var (context, contextKey) = Conexión.GetOneConnection();
-
         // Query.
-        var access = await (from P in context.DataBase.AccesoInventarios
+        var access = await (from P in context.AccesoInventarios
                             where P.Inventario == inventory && P.ProfileID == profile
                             where P.State == InventoryAccessState.Accepted
                             select new { P.Rol }).FirstOrDefaultAsync();
@@ -73,16 +72,13 @@ internal class Iam
 
 
 
-    private static async Task<InventoryRoles> OnProduct(int id, int profile)
+    private async Task<InventoryRoles> OnProduct(int id, int profile)
     {
 
-        // Db.
-        var (context, contextKey) = Conexión.GetOneConnection();
-
         // Query.
-        var access = await (from P in context.DataBase.Productos
+        var access = await (from P in context.Productos
                             where P.Id == id
-                            join AI in context.DataBase.AccesoInventarios
+                            join AI in context.AccesoInventarios
                             on P.InventoryId equals AI.Inventario
                             where AI.State == InventoryAccessState.Accepted
                             where AI.ProfileID == profile
@@ -96,16 +92,13 @@ internal class Iam
     }
 
 
-    private static async Task<InventoryRoles> OnInflow(int id, int profile)
+    private async Task<InventoryRoles> OnInflow(int id, int profile)
     {
 
-        // Db.
-        var (context, contextKey) = Conexión.GetOneConnection();
-
         // Query.
-        var access = await (from P in context.DataBase.Entradas
+        var access = await (from P in context.Entradas
                             where P.ID == id
-                            join AI in context.DataBase.AccesoInventarios
+                            join AI in context.AccesoInventarios
                             on P.InventoryId equals AI.Inventario
                             where AI.State == InventoryAccessState.Accepted
                             where AI.ProfileID == profile
@@ -119,16 +112,13 @@ internal class Iam
     }
 
 
-    private static async Task<InventoryRoles> OnOutflow(int id, int profile)
+    private async Task<InventoryRoles> OnOutflow(int id, int profile)
     {
 
-        // Db.
-        var (context, contextKey) = Conexión.GetOneConnection();
-
         // Query.
-        var access = await (from P in context.DataBase.Salidas
+        var access = await (from P in context.Salidas
                             where P.ID == id
-                            join AI in context.DataBase.AccesoInventarios
+                            join AI in context.AccesoInventarios
                             on P.InventoryId equals AI.Inventario
                             where AI.State == InventoryAccessState.Accepted
                             where AI.ProfileID == profile
@@ -153,14 +143,11 @@ internal class Iam
     /// </summary>
     /// <param name="id">Id del inventario.</param>
     /// <param name="profile">Id del perfil.</param>
-    public static async Task<bool> CanAccept(int id, int profile)
+    public async Task<bool> CanAccept(int id, int profile)
     {
 
-        // Db.
-        var (context, contextKey) = Conexión.GetOneConnection();
-
         // Query.
-        var access = await (from P in context.DataBase.AccesoInventarios
+        var access = await (from P in context.AccesoInventarios
                             where P.ID == id && P.ProfileID == profile
                             where P.State == InventoryAccessState.OnWait
                             select new { P.Rol }).FirstOrDefaultAsync();
@@ -177,14 +164,11 @@ internal class Iam
     /// </summary>
     /// <param name="accessId">Id del acceso.</param>
     /// <param name="profile">Id del perfil.</param>
-    private static async Task<InventoryRoles> OnAccess(int accessId, int profile)
+    private async Task<InventoryRoles> OnAccess(int accessId, int profile)
     {
 
-        // Db.
-        var (context, contextKey) = Conexión.GetOneConnection();
-
         // Query.
-        var inventory = await (from P in context.DataBase.AccesoInventarios
+        var inventory = await (from P in context.AccesoInventarios
                                where P.ID == accessId
                                select P.Inventario).FirstOrDefaultAsync();
 

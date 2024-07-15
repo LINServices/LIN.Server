@@ -1,24 +1,65 @@
 ﻿namespace LIN.Inventory.Data;
 
 
-public partial class Profiles
+public class Profiles(Context context, Access.Logger.Services.ILogger logger)
 {
-
 
     /// <summary>
     /// Crear nuevo perfil.
     /// </summary>
-    /// <param name="data">Modelo.</param>
-    public async static Task<ReadOneResponse<ProfileModel>> Create(AuthModel<ProfileModel> data)
+    /// <param name="data">Data.</param>
+    /// <param name="context">Contexto de base de datos.</param>
+    public async Task<ReadOneResponse<ProfileModel>> Create(AuthModel<ProfileModel> data)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        data.Profile.ID = 0;
 
-        var res = await Create(data, context);
-        context.CloseActions(connectionKey);
-        return res;
+        // Ejecución (Transacción)
+        using (var transaction = context.Database.BeginTransaction())
+        {
+            try
+            {
+                context.Profiles.Add(data.Profile);
+                context.SaveChanges();
 
+                // Creación del inventario
+                InventoryDataModel inventario = new()
+                {
+                    Creador = data.Profile.ID,
+                    Nombre = "Mi Inventario",
+                    Direction = $"Inventario personal de {data.Account.Identity.Unique}"
+                };
+
+                await context.Inventarios.AddAsync(inventario);
+                context.SaveChanges();
+
+                // Acceso a inventario
+                InventoryAcessDataModel acceso = new()
+                {
+                    Fecha = DateTime.Now,
+                    Inventario = inventario.ID,
+                    State = InventoryAccessState.Accepted,
+                    Rol = InventoryRoles.Administrator,
+                    ProfileID = data.Profile.ID
+                };
+
+                context.AccesoInventarios.Add(acceso);
+                context.SaveChanges();
+                transaction.Commit();
+
+
+                return new(Responses.Success, data.Profile);
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+                if ((ex.InnerException?.Message.Contains("Violation of UNIQUE KEY constraint") ?? false) || (ex.InnerException?.Message.Contains("duplicate key") ?? false))
+                    return new(Responses.ExistAccount);
+            }
+        }
+        return new();
     }
 
 
@@ -27,16 +68,28 @@ public partial class Profiles
     /// Obtener un perfil.
     /// </summary>
     /// <param name="id">Id del perfil.</param>
-    public async static Task<ReadOneResponse<ProfileModel>> Read(int id)
+    /// <param name="context">Contexto de base de datos.</param>
+    public async Task<ReadOneResponse<ProfileModel>> Read(int id)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var res = await Read(id, context);
-        context.CloseActions(connectionKey);
-        return res;
+            var res = await Query.Profiles.Read(id, context).FirstOrDefaultAsync();
 
+            // Si no existe el modelo
+            if (res == null)
+                return new(Responses.NotExistProfile);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
 
 
@@ -45,16 +98,28 @@ public partial class Profiles
     /// Obtener perfiles.
     /// </summary>
     /// <param name="ids">Id de los perfiles.</param>
-    public async static Task<ReadAllResponse<ProfileModel>> Read(List<int> ids)
+    /// <param name="context">Contexto de base de datos.</param>
+    public async Task<ReadAllResponse<ProfileModel>> Read(List<int> ids)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var res = await Read(ids, context);
-        context.CloseActions(connectionKey);
-        return res;
+            var res = await Query.Profiles.Read(ids, context).ToListAsync();
 
+            // Si no existe el modelo
+            if (res == null)
+                return new(Responses.NotExistProfile);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
 
 
@@ -62,36 +127,59 @@ public partial class Profiles
     /// <summary>
     /// Obtener perfiles.
     /// </summary>
-    /// <param name="ids">Id de las cuentas.</param>
-    public async static Task<ReadAllResponse<ProfileModel>> ReadByAccounts(List<int> ids)
+    /// <param name="ids">Id de los perfiles.</param>
+    /// <param name="context">Contexto de base de datos.</param>
+    public async Task<ReadAllResponse<ProfileModel>> ReadByAccounts(List<int> ids)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var res = await ReadByAccounts(ids, context);
-        context.CloseActions(connectionKey);
-        return res;
+            var res = await Query.Profiles.ReadByAccounts(ids, context).ToListAsync();
 
+            // Si no existe el modelo
+            if (res == null)
+                return new(Responses.NotExistProfile);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
 
 
 
     /// <summary>
-    /// Obtener un perfil.
+    /// Obtener perfil.
     /// </summary>
     /// <param name="id">Id de la cuenta.</param>
-    public async static Task<ReadOneResponse<ProfileModel>> ReadByAccount(int id)
+    /// <param name="context">Contexto de base de datos.</param>
+    public async Task<ReadOneResponse<ProfileModel>> ReadByAccount(int id)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var res = await ReadByAccount(id, context);
-        context.CloseActions(connectionKey);
-        return res;
+            var res = await Query.Profiles.ReadByAccount(id, context).FirstOrDefaultAsync();
 
+            // Si no existe el modelo
+            if (res == null)
+                return new(Responses.NotExistProfile);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
-
 
 }

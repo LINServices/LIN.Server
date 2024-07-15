@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class OutflowController : ControllerBase
+public class OutflowController(Data.Outflows outflowData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
 
@@ -51,7 +51,7 @@ public class OutflowController : ControllerBase
         };
 
         // Crea la nueva entrada
-        var response = await Data.Outflows.Create(modelo);
+        var response = await outflowData.Create(modelo);
 
         return response;
 
@@ -98,7 +98,7 @@ public class OutflowController : ControllerBase
             };
 
         // Obtiene el usuario
-        var result = await Data.Outflows.Read(id, includeDetails);
+        var result = await outflowData.Read(id, includeDetails);
 
         // Retorna el resultado
         return result ?? new();
@@ -143,7 +143,7 @@ public class OutflowController : ControllerBase
             };
 
         // Obtiene el usuario
-        var result = await Data.Outflows.ReadAll(id);
+        var result = await outflowData.ReadAll(id);
 
         // Retorna el resultado
         return result ?? new();
@@ -190,7 +190,7 @@ public class OutflowController : ControllerBase
             };
 
         // Obtiene el usuario
-        var result = await Data.Outflows.Update(id, date);
+        var result = await outflowData.Update(id, date);
 
         // Retorna el resultado
         return result ?? new();
@@ -234,14 +234,11 @@ public class OutflowController : ControllerBase
             };
 
 
-        // Contexto.
-        var context = Conexión.GetOneConnection();
-
         // Obtiene el informe.
-        var resultTask = Data.Outflows.Informe(month, year, id, context.context);
+        var resultTask = outflowData.Informe(month, year, id);
 
 
-        var inventoryTask = Data.Inventories.Read(id);
+        var inventoryTask = inventoryData.Read(id);
 
 
         var result = await resultTask;

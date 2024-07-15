@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class InventoryController : ControllerBase
+public class InventoryController(Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
 
@@ -42,7 +42,7 @@ public class InventoryController : ControllerBase
         }
 
         // Crea el inventario
-        var response = await Data.Inventories.Create(modelo);
+        var response = await inventoryData.Create(modelo);
 
         // Si no se creo el inventario
         if (response.Response != Responses.Success)
@@ -68,7 +68,7 @@ public class InventoryController : ControllerBase
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtiene la lista de Id's de inventarios
-        var result = await Data.Inventories.ReadAll(tokenInfo.ProfileId);
+        var result = await inventoryData.ReadAll(tokenInfo.ProfileId);
 
         return result;
 
@@ -110,7 +110,7 @@ public class InventoryController : ControllerBase
 
 
         // Crea el inventario
-        var response = await Data.Inventories.Read(id);
+        var response = await inventoryData.Read(id);
 
         // Si no se creo el inventario
         if (response.Response != Responses.Success)
@@ -155,7 +155,7 @@ public class InventoryController : ControllerBase
             };
 
         // Actualizar el rol.
-        var response = await Data.Inventories.Update(id, name, description);
+        var response = await inventoryData.Update(id, name, description);
 
         // Retorna
         return response;

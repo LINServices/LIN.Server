@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class ProfileController : ControllerBase
+public class ProfileController(Data.Profiles profileData) : ControllerBase
 {
 
 
@@ -18,7 +18,7 @@ public class ProfileController : ControllerBase
             return new(Responses.InvalidParam);
 
         // Obtiene el usuario
-        var response = await Data.Profiles.Read(id);
+        var response = await profileData.Read(id);
 
         // Si es erróneo
         if (response.Response != Responses.Success)
@@ -55,7 +55,7 @@ public class ProfileController : ControllerBase
         var map = users.Models.Select(T => T.Id).ToList();
 
         // Obtiene el usuario
-        var response = await Data.Profiles.ReadByAccounts(map);
+        var response = await profileData.ReadByAccounts(map);
 
         // Unir las respuestas.
         var joins = (from Account in users.Models

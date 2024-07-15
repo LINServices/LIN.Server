@@ -4,7 +4,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class EmmaController : ControllerBase
+public class EmmaController(Data.Profiles profileData, Data.Inventories inventoryData) : ControllerBase
 {
 
 
@@ -80,7 +80,7 @@ public class EmmaController : ControllerBase
         }
 
         // 
-        var profile = await Data.Profiles.ReadByAccount(response.Model.Id);
+        var profile = await profileData.ReadByAccount(response.Model.Id);
 
 
         if (profile.Response != Responses.Success)
@@ -94,7 +94,7 @@ public class EmmaController : ControllerBase
 
 
 
-        var inventories = await Data.Inventories.ReadAll(profile.Model.ID);
+        var inventories = await inventoryData.ReadAll(profile.Model.ID);
 
 
 

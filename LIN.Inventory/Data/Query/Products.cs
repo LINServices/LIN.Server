@@ -11,11 +11,11 @@ public static class Products
     /// <param name="id">Id del producto</param>
     /// <param name="context">Contexto de conexión</param>
     /// <param name="connectionKey">Llave para cerrar la conexión</param>
-    public static IQueryable<ProductModel> Read(int id, Conexión context)
+    public static IQueryable<ProductModel> Read(int id, Context context)
     {
 
         // Consulta
-        var query = from P in context.DataBase.Productos
+        var query = from P in context.Productos
                     where P.Id == id
                     select new ProductModel
                     {
@@ -42,11 +42,11 @@ public static class Products
     /// <param name="id">Id de el detalle</param>
     /// <param name="context">Contexto de conexión</param>
     /// <param name="connectionKey">Llave para cerrar la conexión</param>
-    public static IQueryable<ProductModel> ReadByDetail(int id, Conexión context)
+    public static IQueryable<ProductModel> ReadByDetail(int id, Context context)
     {
 
         // Consulta
-        var query = from P in context.DataBase.ProductoDetalles
+        var query = from P in context.ProductoDetalles
                     where P.Id == id
                     select new ProductModel
                     {
@@ -73,10 +73,10 @@ public static class Products
     /// <param name="id">Id del inventario</param>
     /// <param name="context">Contexto de conexión</param>
     /// <param name="connectionKey">Llave para cerrar la conexión</param>
-    public static IQueryable<ProductModel> ReadAll(int id, Conexión context)
+    public static IQueryable<ProductModel> ReadAll(int id, Context context)
     {
 
-        var query = from P in context.DataBase.Productos
+        var query = from P in context.Productos
                     where P.Statement == ProductBaseStatements.Normal
                     where P.InventoryId == id
                     select new ProductModel

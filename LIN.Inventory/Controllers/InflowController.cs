@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class InflowController : ControllerBase
+public class InflowController(Data.Inflows inflowData, IIam Iam) : ControllerBase
 {
 
 
@@ -52,7 +52,7 @@ public class InflowController : ControllerBase
         };
 
         // Crea la nueva entrada.
-        var response = await Data.Inflows.Create(modelo);
+        var response = await inflowData.Create(modelo);
 
         // Respuesta.
         return response;
@@ -99,7 +99,7 @@ public class InflowController : ControllerBase
             };
 
         // Obtiene el usuario
-        var result = await Data.Inflows.Read(id, includeDetails);
+        var result = await inflowData.Read(id, includeDetails);
 
         // Retorna el resultado
         return result ?? new();
@@ -145,7 +145,7 @@ public class InflowController : ControllerBase
             };
 
         // Obtiene el usuario
-        var result = await Data.Inflows.ReadAll(id);
+        var result = await inflowData.ReadAll(id);
 
         // Retorna el resultado
         return result ?? new();
@@ -192,7 +192,7 @@ public class InflowController : ControllerBase
             };
 
         // Obtiene el usuario
-        var result = await Data.Inflows.Update(id, date);
+        var result = await inflowData.Update(id, date);
 
         // Retorna el resultado
         return result ?? new();

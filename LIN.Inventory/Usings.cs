@@ -1,6 +1,4 @@
-﻿global using Global.Utilities;
-global using Http.ResponsesList;
-global using LIN.Inventory;
+﻿global using Http.ResponsesList;
 global using LIN.Inventory.Hubs;
 global using LIN.Inventory.Services;
 global using LIN.Inventory.Services.Model;

@@ -1,42 +1,28 @@
 using Http.Extensions;
+using LIN.Access.Logger;
 using LIN.Inventory.Data;
+using LIN.Inventory.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Logger.
+builder.Services.AddServiceLogging("LIN.INVENTORY");
+
+// Servicios.
+builder.Services.AddSignalR();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddLINHttp();
+builder.Services.AddLocalServices();
 try
 {
 
-    builder.Services.AddSignalR();
-
-
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowAnyOrigin",
-            builder =>
-            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyHeader()
-                       .AllowAnyMethod();
-            });
-    });
-
+    builder.Services.AddDbContextPool<Context>(options =>
+      {
+          options.UseSqlServer(builder.Configuration["ConnectionStrings:Somee"]);
+      });
 
     // Add services to the container.
-    string sqlConnection = string.Empty;
-
-    string devServiceUrl = string.Empty;
-
-
-#if RELEASE 
-    sqlConnection = builder.Configuration["ConnectionStrings:Somee"] ?? string.Empty;
-    devServiceUrl = builder.Configuration["lin:developer:Somee"] ?? string.Empty;
-#elif DEBUG
-    sqlConnection = builder.Configuration["ConnectionStrings:Somee"] ?? string.Empty;
-    devServiceUrl = builder.Configuration["lin:developer:Somee"] ?? string.Empty;
-#endif
-
-    Conexión.SetStringConnection(sqlConnection);
-
+    string sqlConnection = builder.Configuration["ConnectionStrings:Somee"] ?? string.Empty;
 
     if (sqlConnection.Length > 0)
     {
@@ -51,8 +37,7 @@ try
 
     LIN.Access.Auth.Build.SetAuth(builder.Configuration["lin:app"] ?? string.Empty);
 
-    builder.Services.AddHttpContextAccessor();
-    builder.Services.AddLINHttp();
+
 
     var app = builder.Build();
 
@@ -85,23 +70,16 @@ try
 
     app.UseRouting();
 
-    // Inicia las conexiones
-    _ = Conexión.StartConnections();
-
     // Inicio de Jwt
     Jwt.Open();
 
     LIN.Access.Auth.Build.Init();
     LIN.Access.Contacts.Build.Init();
 
-
-    // Estado del servidor
-    ServerLogger.OpenDate = DateTime.Now;
-
+    app.UseServiceLogging();
 
     app.Run();
 }
 catch (Exception ex)
 {
-    ServerLogger.LogError("--Servidor--: " + ex.Message);
 }

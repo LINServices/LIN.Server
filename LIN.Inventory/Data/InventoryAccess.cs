@@ -1,7 +1,7 @@
 ﻿namespace LIN.Inventory.Data;
 
 
-public partial class InventoryAccess
+public class InventoryAccess(Context context, Access.Logger.Services.ILogger logger)
 {
 
 
@@ -9,15 +9,91 @@ public partial class InventoryAccess
     /// Crear acceso a inventario.
     /// </summary>
     /// <param name="model">Modelo.</param>
-    public async static Task<CreateResponse> Create(InventoryAcessDataModel model)
+    /// <param name="context">Contexto de base de datos.</param>
+    public async Task<CreateResponse> Create(InventoryAcessDataModel model)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
+            // Consultar si ya existe.
+            var exist = await (from AI in context.AccesoInventarios
+                               where AI.ProfileID == model.ProfileID
+                               && AI.Inventario == model.Inventario
+                               select AI.ID).FirstOrDefaultAsync();
 
-        var rs = await Create(model, context);
-        context.CloseActions(connectionKey);
-        return rs;
+            // Si ya existe.
+            if (exist > 0)
+                return new()
+                {
+                    LastID = exist,
+                    Response = Responses.ResourceExist
+                };
+
+            model.ID = 0;
+
+            await context.AccesoInventarios.AddAsync(model);
+
+            context.SaveChanges();
+
+            return new(Responses.Success)
+            {
+                LastID = model.ID
+            };
+
+
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
+    }
+
+
+
+    /// <summary>
+    /// Obtener las invitaciones de un perfil.
+    /// </summary>
+    /// <param name="id">Id del perfil.</param>
+    /// <param name="context">Contexto de base de datos.</param>
+    public async Task<ReadAllResponse<Notificacion>> ReadAll(int id)
+    {
+
+        // Ejecución
+        try
+        {
+
+            // Consulta
+            var res = from AI in context.AccesoInventarios
+                      where AI.ProfileID == id && AI.State == InventoryAccessState.OnWait
+                      join I in context.Inventarios on AI.Inventario equals I.ID
+                      join U in context.Profiles on I.Creador equals U.ID
+                      select new Notificacion()
+                      {
+                          ID = AI.ID,
+                          Fecha = AI.Fecha,
+                          Inventario = I.Nombre,
+                          //UsuarioInvitador = U.Id,
+                          InventarioID = I.ID
+                      };
+
+
+            var modelos = await res.ToListAsync();
+            if (modelos != null)
+                return new(Responses.Success, modelos);
+
+            return new(Responses.NotRows);
+
+
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
 
 
@@ -26,32 +102,43 @@ public partial class InventoryAccess
     /// Obtener una invitación.
     /// </summary>
     /// <param name="id">Id de la invitación.</param>
-    public async static Task<ReadOneResponse<Notificacion>> Read(int id)
+    /// <param name="context">Contexto de conexión</param>
+    public async Task<ReadOneResponse<Notificacion>> Read(int id)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var rs = await Read(id, context);
-        context.CloseActions(connectionKey);
-        return rs;
-    }
+            // Consulta
+            var res = from AI in context.AccesoInventarios
+                      where AI.ID == id && AI.State == InventoryAccessState.OnWait
+                      join I in context.Inventarios on AI.Inventario equals I.ID
+                      join U in context.Profiles on I.Creador equals U.ID
+                      select new Notificacion()
+                      {
+                          ID = AI.ID,
+                          Fecha = AI.Fecha,
+                          Inventario = I.Nombre,
+                          //UsuarioInvitador = U.Id,
+                          InventarioID = I.ID
+                      };
 
 
+            var modelos = await res.FirstOrDefaultAsync();
+            if (modelos != null)
+                return new(Responses.Success, modelos);
 
-    /// <summary>
-    /// Obtiene la lista de invitaciones a un perfil.
-    /// </summary>
-    /// <param name="id">Id del perfil.</param>
-    public async static Task<ReadAllResponse<Notificacion>> ReadAll(int id)
-    {
+            return new(Responses.NotRows);
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
 
-        var rs = await ReadAll(id, context);
-        context.CloseActions(connectionKey);
-        return rs;
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
 
 
@@ -59,53 +146,73 @@ public partial class InventoryAccess
     /// <summary>
     /// Cambia el estado de una invitación.
     /// </summary>
-    /// <param name="id">Id de la invitación.</param>
-    /// <param name="estado">Nuevo estado.</param>
-    public async static Task<ResponseBase> UpdateState(int id, InventoryAccessState estado)
+    /// <param name="id">Id de la invitación</param>
+    /// <param name="estado">Nuevo estado</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async Task<ResponseBase> UpdateState(int id, InventoryAccessState estado)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
+            var model = await context.AccesoInventarios.FindAsync(id);
 
-        var res = await UpdateState(id, estado, context);
-        context.CloseActions(connectionKey);
-        return res;
+            if (model != null)
+            {
+                model.State = estado;
+                context.SaveChanges();
+                return new(Responses.Success);
+            }
+
+            return new(Responses.NotRows);
+
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
 
 
 
     /// <summary>
-    /// Cambiar el rol de un integrante del inventario.
+    /// Obtiene la lista de integrantes de un inventario.
     /// </summary>
-    /// <param name="id">Id del acceso.</param>
-    /// <param name="rol">Nuevo rol.</param>
-    public async static Task<ResponseBase> UpdateRol(int id, InventoryRoles rol)
+    /// <param name="inventario">Id del inventario</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async Task<ReadAllResponse<Tuple<InventoryAcessDataModel, ProfileModel>>> ReadMembers(int inventario)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var res = await UpdateRol(id, rol, context);
-        context.CloseActions(connectionKey);
-        return res;
-    }
+            // Consulta
+            var res = from AI in context.AccesoInventarios
+                      where AI.Inventario == inventario
+                       && (AI.State == InventoryAccessState.Accepted
+                       || AI.State == InventoryAccessState.OnWait)
+                      join U in context.Profiles on AI.ProfileID equals U.ID
+                      select new Tuple<InventoryAcessDataModel, ProfileModel>(AI, U);
 
 
+            var modelos = await res.ToListAsync();
 
-    /// <summary>
-    /// Obtener los integrantes.
-    /// </summary>
-    /// <param name="inventario">Id del inventario.</param>
-    public async static Task<ReadAllResponse<Tuple<InventoryAcessDataModel, ProfileModel>>> ReadMembers(int inventario)
-    {
+            if (modelos == null)
+                return new(Responses.NotRows);
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+            return new(Responses.Success, modelos);
 
-        var res = await ReadMembers(inventario, context);
-        context.CloseActions(connectionKey);
-        return res;
 
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
 
 
@@ -113,19 +220,65 @@ public partial class InventoryAccess
     /// <summary>
     /// Eliminar a alguien de un inventario.
     /// </summary>
-    /// <param name="inventario">Id del inventario</param>
+    /// <param name="inventario">Id del inventario.</param>
     /// <param name="profile">Id del perfil.</param>
-    public async static Task<ResponseBase> DeleteSomeOne(int inventario, int profile)
+    /// <param name="context">Contexto de conexión.</param>
+    public async Task<ResponseBase> DeleteSomeOne(int inventario, int profile)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var res = await DeleteSomeOne(inventario, profile, context);
-        context.CloseActions(connectionKey);
-        return res;
+            // Actualizar estado.
+            var result = await (from AI in context.AccesoInventarios
+                                where AI.Inventario == inventario
+                                where AI.ProfileID == profile
+                                select AI).ExecuteUpdateAsync(t => t.SetProperty(t => t.State, InventoryAccessState.Deleted).
+                                                                   SetProperty(t => t.Rol, InventoryRoles.Banned));
+
+            return new(Responses.Success);
+
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
 
+
+
+    /// <summary>
+    /// Cambia el rol.
+    /// </summary>
+    /// <param name="id">Id de la invitación</param>
+    /// <param name="rol">Nuevo rol</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async Task<ResponseBase> UpdateRol(int id, InventoryRoles rol)
+    {
+
+        // Ejecución
+        try
+        {
+
+            // Actualizar rol.
+            var result = await (from AI in context.AccesoInventarios
+                                where AI.ID == id
+                                && AI.State == InventoryAccessState.Accepted
+                                select AI).ExecuteUpdateAsync(t => t.SetProperty(t => t.Rol, rol));
+
+            return new(Responses.Success);
+
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
+    }
 
 
 }

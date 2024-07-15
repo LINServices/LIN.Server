@@ -1,23 +1,66 @@
 ﻿namespace LIN.Inventory.Data;
 
 
-public partial class Inventories
+public class Inventories(Context context, Access.Logger.Services.ILogger logger)
 {
 
 
+
     /// <summary>
-    /// Crear nuevo inventario.
+    /// Crea un nuevo inventario.
     /// </summary>
-    /// <param name="data">Modelo.</param>
-    public async static Task<CreateResponse> Create(InventoryDataModel data)
+    /// <param name="data">Modelo del inventario</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async Task<CreateResponse> Create(InventoryDataModel data)
     {
 
-        // Conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Modelo
+        data.ID = 0;
 
-        var response = await Create(data, context);
-        context.CloseActions(connectionKey);
-        return response;
+        // Transacción
+        using (var transaction = context.Database.BeginTransaction())
+        {
+            try
+            {
+
+                // InventoryId
+                context.Inventarios.Add(data);
+
+                // Guarda el inventario
+                await context.SaveChangesAsync();
+
+
+                // Accesos
+                DateTime dateTime = DateTime.Now;
+                foreach (var acceso in data.UsersAccess)
+                {
+                    // Propiedades
+                    acceso.ID = 0;
+                    acceso.Fecha = dateTime;
+                    acceso.Inventario = data.ID;
+
+                    // Accesos
+                    context.AccesoInventarios.Add(acceso);
+
+                }
+
+                // Guarda los cambios
+                await context.SaveChangesAsync();
+
+                // Finaliza
+                transaction.Commit();
+                return new(Responses.Success, data.ID);
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                context.Remove(data);
+                logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            }
+        }
+
+
+        return new();
     }
 
 
@@ -26,17 +69,27 @@ public partial class Inventories
     /// Obtiene un inventario.
     /// </summary>
     /// <param name="id">Id del inventario</param>
-    public async static Task<ReadOneResponse<InventoryDataModel>> Read(int id)
+    /// <param name="context">Contexto de conexión</param>
+    public async Task<ReadOneResponse<InventoryDataModel>> Read(int id)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
+            var res = await context.Inventarios.FirstOrDefaultAsync(T => T.ID == id);
 
-        var response = await Read(id, context);
-        context.CloseActions(connectionKey);
+            // Si no existe el modelo
+            if (res == null)
+                return new(Responses.NotExistAccount);
 
-        return response;
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
 
+        return new();
     }
 
 
@@ -45,15 +98,46 @@ public partial class Inventories
     /// Obtiene la lista de inventarios asociados a un perfil.
     /// </summary>
     /// <param name="id">Id del perfil.</param>
-    public async static Task<ReadAllResponse<InventoryDataModel>> ReadAll(int id)
+    /// <param name="context">Contexto de conexión</param>
+    public async Task<ReadAllResponse<InventoryDataModel>> ReadAll(int id)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var response = await ReadAll(id, context);
-        context.CloseActions(connectionKey);
-        return response;
+            var res = from AI in context.AccesoInventarios
+                      where AI.ProfileID == id && AI.State == InventoryAccessState.Accepted
+                      join I in context.Inventarios on AI.Inventario equals I.ID
+                      select new InventoryDataModel()
+                      {
+                          MyRol = AI.Rol,
+                          Creador = I.Creador,
+                          Direction = I.Direction,
+                          ID = I.ID,
+                          Nombre = I.Nombre,
+                          UsersAccess = I.UsersAccess
+                      };
+
+
+            var modelos = await res.ToListAsync();
+
+            if (modelos != null)
+                return new(Responses.Success, modelos);
+
+            return new(Responses.NotRows);
+
+
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
+
+
+
 
     }
 
@@ -65,51 +149,94 @@ public partial class Inventories
     /// <param name="id">Id del inventario.</param>
     /// <param name="name">Nuevo nombre.</param>
     /// <param name="description">Nueva descripción.</param>
-    public async static Task<ResponseBase> Update(int id, string name, string description)
+    /// <param name="context">Contexto de conexión..</param>
+    public async Task<ResponseBase> Update(int id, string name, string description)
     {
 
-        // Conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var response = await Update(id, name, description, context);
-        context.CloseActions(connectionKey);
-        return response;
+            var res = await (from I in context.Inventarios
+                             where I.ID == id
+                             select I).ExecuteUpdateAsync(t => t.SetProperty(a => a.Nombre, name).SetProperty(a => a.Direction, description));
+
+
+            return new(Responses.Success);
+
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
+
     }
 
 
 
     /// <summary>
-    /// Obtener el Id de un inventario.
+    /// Obtiene un inventario.
     /// </summary>
-    /// <param name="id">Id del producto.</param>
-    public async static Task<ReadOneResponse<int>> FindByProduct(int id)
+    /// <param name="id">Id del producto</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async Task<ReadOneResponse<int>> FindByProduct(int id)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var response = await FindByProduct(id, context);
-        context.CloseActions(connectionKey);
-        return response;
+            var res = await (from p in context.Productos
+                             where p.Id == id
+                             select p.InventoryId).FirstOrDefaultAsync();
+
+            // Si no existe el modelo
+            if (res == 0)
+                return new(Responses.NotExistAccount);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
 
 
 
     /// <summary>
-    /// Obtener el Id de un inventario.
+    /// Obtiene un inventario,
     /// </summary>
-    /// <param name="id">Id del detalle de producto.</param>
-    public async static Task<ReadOneResponse<int>> FindByProductDetail(int id)
+    /// <param name="id">Id del producto detalle</param>
+    /// <param name="context">Contexto de conexión</param>
+    public async Task<ReadOneResponse<int>> FindByProductDetail(int id)
     {
 
-        // Obtiene la conexión
-        (Conexión context, string connectionKey) = Conexión.GetOneConnection();
+        // Ejecución
+        try
+        {
 
-        var response = await FindByProductDetail(id, context);
-        context.CloseActions(connectionKey);
-        return response;
+            var res = await (from p in context.ProductoDetalles
+                             where p.Id == id
+                             select p.Product.InventoryId).FirstOrDefaultAsync();
+
+            // Si no existe el modelo
+            if (res == 0)
+                return new(Responses.NotExistAccount);
+
+            return new(Responses.Success, res);
+        }
+        catch (Exception ex)
+        {
+            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+        }
+
+        return new();
     }
-
 
 
 }

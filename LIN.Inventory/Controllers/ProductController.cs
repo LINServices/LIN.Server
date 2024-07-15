@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class ProductController(IHubContext<InventoryHub> hubContext) : ControllerBase
+public class ProductController(IHubContext<InventoryHub> hubContext, Data.Products productsData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
     /// <summary>
@@ -75,7 +75,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         };
 
         // Crear.
-        var response = await Data.Products.Create(modelo);
+        var response = await productsData.Create(modelo);
 
         return response;
 
@@ -120,7 +120,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
             };
 
         // Resultado.
-        var result = await Data.Products.ReadAll(id);
+        var result = await productsData.ReadAll(id);
         return result;
 
     }
@@ -164,7 +164,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
             };
 
         // Resultado.
-        var result = await Data.Products.Read(id);
+        var result = await productsData.Read(id);
         return result;
 
     }
@@ -188,7 +188,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtener el inventario.
-        var inventory = await Data.Inventories.FindByProductDetail(id);
+        var inventory = await inventoryData.FindByProductDetail(id);
 
         // Si hubo un problema.
         if (inventory.Response != Responses.Success)
@@ -219,7 +219,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
             };
 
         // Resultado.
-        var result = await Data.Products.ReadByDetail(id);
+        var result = await productsData.ReadByDetail(id);
         return result;
 
     }
@@ -260,10 +260,10 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
             };
 
         // Encontrar el id del inventario.
-        var findInventory = Data.Inventories.FindByProduct(modelo.Id);
+        var findInventory = inventoryData.FindByProduct(modelo.Id);
 
         // Actualizar.
-        ResponseBase response = await Data.Products.Update(modelo);
+        ResponseBase response = await productsData.Update(modelo);
 
         await findInventory;
         // Si fue correcto.
@@ -301,7 +301,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtener el inventario.
-        var inventory = await Data.Inventories.FindByProduct(id);
+        var inventory = await inventoryData.FindByProduct(id);
 
         // Hubo un error.
         if (inventory.Response != Responses.Success)
@@ -331,7 +331,7 @@ public class ProductController(IHubContext<InventoryHub> hubContext) : Controlle
             };
 
         // Respuesta
-        ResponseBase response = await Data.Products.Delete(id);
+        ResponseBase response = await productsData.Delete(id);
 
         return response;
 
