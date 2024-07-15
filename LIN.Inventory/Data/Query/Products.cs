@@ -10,7 +10,6 @@ public static class Products
     /// </summary>
     /// <param name="id">Id del producto</param>
     /// <param name="context">Contexto de conexión</param>
-    /// <param name="connectionKey">Llave para cerrar la conexión</param>
     public static IQueryable<ProductModel> Read(int id, Context context)
     {
 
@@ -41,7 +40,6 @@ public static class Products
     /// </summary>
     /// <param name="id">Id de el detalle</param>
     /// <param name="context">Contexto de conexión</param>
-    /// <param name="connectionKey">Llave para cerrar la conexión</param>
     public static IQueryable<ProductModel> ReadByDetail(int id, Context context)
     {
 
@@ -72,7 +70,6 @@ public static class Products
     /// </summary>
     /// <param name="id">Id del inventario</param>
     /// <param name="context">Contexto de conexión</param>
-    /// <param name="connectionKey">Llave para cerrar la conexión</param>
     public static IQueryable<ProductModel> ReadAll(int id, Context context)
     {
 

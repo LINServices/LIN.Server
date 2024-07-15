@@ -10,7 +10,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
     /// Crea un nuevo inventario.
     /// </summary>
     /// <param name="data">Modelo del inventario</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<CreateResponse> Create(InventoryDataModel data)
     {
 
@@ -69,7 +68,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
     /// Obtiene un inventario.
     /// </summary>
     /// <param name="id">Id del inventario</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ReadOneResponse<InventoryDataModel>> Read(int id)
     {
 
@@ -98,7 +96,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
     /// Obtiene la lista de inventarios asociados a un perfil.
     /// </summary>
     /// <param name="id">Id del perfil.</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ReadAllResponse<InventoryDataModel>> ReadAll(int id)
     {
 
@@ -149,7 +146,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
     /// <param name="id">Id del inventario.</param>
     /// <param name="name">Nuevo nombre.</param>
     /// <param name="description">Nueva descripción.</param>
-    /// <param name="context">Contexto de conexión..</param>
     public async Task<ResponseBase> Update(int id, string name, string description)
     {
 
@@ -180,7 +176,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
     /// Obtiene un inventario.
     /// </summary>
     /// <param name="id">Id del producto</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ReadOneResponse<int>> FindByProduct(int id)
     {
 
@@ -212,7 +207,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
     /// Obtiene un inventario,
     /// </summary>
     /// <param name="id">Id del producto detalle</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ReadOneResponse<int>> FindByProductDetail(int id)
     {
 

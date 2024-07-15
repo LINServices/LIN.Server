@@ -4,13 +4,13 @@
 public class Statistics(Context context)
 {
 
+
     /// <summary>
     /// Ventas de un perfil en un periodo de tiempo.
     /// </summary>
     /// <param name="profile">Id del perfil.</param>
     /// <param name="initDate">Fecha inicial.</param>
     /// <param name="endDate">Fecha final.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<ReadOneResponse<decimal>> Sales(int profile, DateTime initDate, DateTime endDate)
     {
 
@@ -59,7 +59,6 @@ public class Statistics(Context context)
     /// <param name="profile">Id del perfil.</param>
     /// <param name="initDate">Fecha inicial.</param>
     /// <param name="endDate">Fecha final.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<ReadAllResponse<SalesModel>> SalesOn(int profile, DateTime initDate, DateTime endDate)
     {
 

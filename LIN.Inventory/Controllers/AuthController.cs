@@ -90,7 +90,6 @@ public class AuthController(Data.Profiles profilesData) : ControllerBase
         // Respuesta.
         await contactsLogin;
 
-
         return new ReadOneResponse<AuthModel<ProfileModel>>
         {
             Response = Responses.Success,

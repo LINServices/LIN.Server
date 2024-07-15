@@ -8,7 +8,6 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
     /// Crea una salida de inventario.
     /// </summary>
     /// <param name="data">Modelo de la salida.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<CreateResponse> Create(OutflowDataModel data)
     {
 
@@ -102,7 +101,6 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
     /// </summary>
     /// <param name="id">Id de la salida.</param>
     /// <param name="includeDetails">Incluir los detalles.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<ReadOneResponse<OutflowDataModel>> Read(int id, bool includeDetails)
     {
 
@@ -180,7 +178,6 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
     /// Obtiene la lista de salidas asociadas a un inventario.
     /// </summary>
     /// <param name="id">Id del inventario.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<ReadAllResponse<OutflowDataModel>> ReadAll(int id)
     {
 
@@ -223,7 +220,6 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
     /// </summary>
     /// <param name="id">Id de la salida.</param>
     /// <param name="date">Nueva fecha.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<ResponseBase> Update(int id, DateTime date)
     {
 
@@ -251,15 +247,12 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
 
 
 
-
-
     /// <summary>
     /// Informe de un mes.
     /// </summary>
     /// <param name="month">Mes.</param>
     /// <param name="year">Año.</param>
     /// <param name="inventory">Id del inventario.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<ReadAllResponse<OutflowRow>> Informe(int month, int year, int inventory)
     {
 
@@ -303,6 +296,7 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
 
         return new();
     }
+
 
 
 }

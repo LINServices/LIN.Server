@@ -9,7 +9,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     /// Crear acceso a inventario.
     /// </summary>
     /// <param name="model">Modelo.</param>
-    /// <param name="context">Contexto de base de datos.</param>
     public async Task<CreateResponse> Create(InventoryAcessDataModel model)
     {
 
@@ -57,7 +56,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     /// Obtener las invitaciones de un perfil.
     /// </summary>
     /// <param name="id">Id del perfil.</param>
-    /// <param name="context">Contexto de base de datos.</param>
     public async Task<ReadAllResponse<Notificacion>> ReadAll(int id)
     {
 
@@ -102,7 +100,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     /// Obtener una invitación.
     /// </summary>
     /// <param name="id">Id de la invitación.</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ReadOneResponse<Notificacion>> Read(int id)
     {
 
@@ -148,7 +145,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     /// </summary>
     /// <param name="id">Id de la invitación</param>
     /// <param name="estado">Nuevo estado</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ResponseBase> UpdateState(int id, InventoryAccessState estado)
     {
 
@@ -181,7 +177,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     /// Obtiene la lista de integrantes de un inventario.
     /// </summary>
     /// <param name="inventario">Id del inventario</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ReadAllResponse<Tuple<InventoryAcessDataModel, ProfileModel>>> ReadMembers(int inventario)
     {
 
@@ -222,7 +217,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     /// </summary>
     /// <param name="inventario">Id del inventario.</param>
     /// <param name="profile">Id del perfil.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<ResponseBase> DeleteSomeOne(int inventario, int profile)
     {
 
@@ -255,7 +249,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     /// </summary>
     /// <param name="id">Id de la invitación</param>
     /// <param name="rol">Nuevo rol</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ResponseBase> UpdateRol(int id, InventoryRoles rol)
     {
 

@@ -4,11 +4,11 @@
 public class Products(Context context, Access.Logger.Services.ILogger logger)
 {
 
+
     /// <summary>
     /// Crea un nuevo producto.
     /// </summary>
     /// <param name="data">Modelo del producto.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<CreateResponse> Create(ProductModel data)
     {
 
@@ -51,7 +51,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     /// Obtiene un producto.
     /// </summary>
     /// <param name="id">Id del producto</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ReadOneResponse<ProductModel>> Read(int id)
     {
 
@@ -79,7 +78,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     /// Obtiene un producto.
     /// </summary>
     /// <param name="id">Id de el detalle</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ReadOneResponse<ProductModel>> ReadByDetail(int id)
     {
 
@@ -109,7 +107,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     /// Obtiene la lista de productos asociados a un inventario.
     /// </summary>
     /// <param name="id">Id del inventario</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ReadAllResponse<ProductModel>> ReadAll(int id)
     {
 
@@ -139,7 +136,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     /// Actualiza la información base de un producto.
     /// </summary>
     /// <param name="data">Modelo del producto</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ResponseBase> UpdateBase(ProductModel data)
     {
 
@@ -182,7 +178,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     /// </summary>
     /// <param name="id">Id del producto.</param>
     /// <param name="data">Nuevo modelo de detalle.</param>
-    /// <param name="context">Contexto de conexión.</param>
     public async Task<ResponseBase> UpdateDetail(int id, ProductDetailModel data)
     {
 
@@ -234,7 +229,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     /// Actualiza toda información base de un producto.
     /// </summary>
     /// <param name="data">Modelo del producto</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ResponseBase> Update(ProductModel data)
     {
 
@@ -284,7 +278,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     /// Elimina un producto de un inventario.
     /// </summary>
     /// <param name="id">Id del producto</param>
-    /// <param name="context">Contexto de conexión</param>
     public async Task<ResponseBase> Delete(int id)
     {
 

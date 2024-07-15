@@ -41,13 +41,6 @@ internal class Iam(Context context) : IIam
 
 
 
-
-
-
-
-
-
-
     /// <summary>
     /// Validar acceso.
     /// </summary>
@@ -71,7 +64,9 @@ internal class Iam(Context context) : IIam
 
 
 
-
+    /// <summary>
+    /// Iam (BY Product)
+    /// </summary>
     private async Task<InventoryRoles> OnProduct(int id, int profile)
     {
 
@@ -92,6 +87,10 @@ internal class Iam(Context context) : IIam
     }
 
 
+
+    /// <summary>
+    /// Iam (BY Inflow)
+    /// </summary>
     private async Task<InventoryRoles> OnInflow(int id, int profile)
     {
 
@@ -112,6 +111,10 @@ internal class Iam(Context context) : IIam
     }
 
 
+
+    /// <summary>
+    /// Iam (BY Outflow)
+    /// </summary>
     private async Task<InventoryRoles> OnOutflow(int id, int profile)
     {
 
@@ -130,11 +133,6 @@ internal class Iam(Context context) : IIam
 
         return access.Rol;
     }
-
-
-
-
-
 
 
 

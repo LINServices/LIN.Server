@@ -4,11 +4,11 @@
 public class Profiles(Context context, Access.Logger.Services.ILogger logger)
 {
 
+
     /// <summary>
     /// Crear nuevo perfil.
     /// </summary>
     /// <param name="data">Data.</param>
-    /// <param name="context">Contexto de base de datos.</param>
     public async Task<ReadOneResponse<ProfileModel>> Create(AuthModel<ProfileModel> data)
     {
 
@@ -22,7 +22,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
                 context.Profiles.Add(data.Profile);
                 context.SaveChanges();
 
-                // Creación del inventario
+                // Creación del inventario.
                 InventoryDataModel inventario = new()
                 {
                     Creador = data.Profile.ID,
@@ -30,10 +30,11 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
                     Direction = $"Inventario personal de {data.Account.Identity.Unique}"
                 };
 
+                // Guardar inventario.
                 await context.Inventarios.AddAsync(inventario);
                 context.SaveChanges();
 
-                // Acceso a inventario
+                // Acceso a inventario.
                 InventoryAcessDataModel acceso = new()
                 {
                     Fecha = DateTime.Now,
@@ -68,7 +69,6 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
     /// Obtener un perfil.
     /// </summary>
     /// <param name="id">Id del perfil.</param>
-    /// <param name="context">Contexto de base de datos.</param>
     public async Task<ReadOneResponse<ProfileModel>> Read(int id)
     {
 
@@ -98,7 +98,6 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
     /// Obtener perfiles.
     /// </summary>
     /// <param name="ids">Id de los perfiles.</param>
-    /// <param name="context">Contexto de base de datos.</param>
     public async Task<ReadAllResponse<ProfileModel>> Read(List<int> ids)
     {
 
@@ -127,8 +126,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
     /// <summary>
     /// Obtener perfiles.
     /// </summary>
-    /// <param name="ids">Id de los perfiles.</param>
-    /// <param name="context">Contexto de base de datos.</param>
+    /// <param name="ids">Id de las cuentas.</param>
     public async Task<ReadAllResponse<ProfileModel>> ReadByAccounts(List<int> ids)
     {
 
@@ -158,7 +156,6 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
     /// Obtener perfil.
     /// </summary>
     /// <param name="id">Id de la cuenta.</param>
-    /// <param name="context">Contexto de base de datos.</param>
     public async Task<ReadOneResponse<ProfileModel>> ReadByAccount(int id)
     {
 
@@ -181,5 +178,6 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
 
         return new();
     }
+
 
 }
