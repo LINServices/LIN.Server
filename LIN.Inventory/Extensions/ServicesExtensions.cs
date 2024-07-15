@@ -1,4 +1,5 @@
 ﻿using LIN.Inventory.Data;
+using LIN.Inventory.Services.Interfaces;
 
 namespace LIN.Inventory.Extensions;
 
@@ -26,6 +27,19 @@ public static class ServicesExtensions
         services.AddScoped<IIam, Iam>();
 
         return services;
+
+    }
+
+
+
+
+    /// <summary>
+    /// Agregar LIN Services.
+    /// </summary>
+    public static IApplicationBuilder UseLocalServices(this IApplicationBuilder app, IConfigurationManager configuration)
+    {
+        Jwt.Set(configuration["jwt:key"] ?? string.Empty);
+        return app;
 
     }
 

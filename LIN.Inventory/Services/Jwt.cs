@@ -1,10 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using LIN.Inventory.Services.Interfaces;
 
 namespace LIN.Inventory.Services;
 
 
-public class Jwt
+public class Jwt 
 {
 
 
@@ -18,19 +19,17 @@ public class Jwt
     /// <summary>
     /// Inicia el servicio Jwt
     /// </summary>
-    public static void Open()
+    public static void Set(string key)
     {
-        JwtKey = Http.Services.Configuration.GetConfiguration("jwt:key");
+        JwtKey = key;
     }
-
-
 
 
     /// <summary>
     /// Genera un JSON Web Token
     /// </summary>
     /// <param name="user">Modelo de usuario</param>
-    internal static string Generate(ProfileModel user)
+    public static string Generate(ProfileModel user)
     {
 
         // Configuración
@@ -62,7 +61,7 @@ public class Jwt
     /// Valida un JSON Web token
     /// </summary>
     /// <param name="token">Token a validar</param>
-    internal static JwtInformation Validate(string token)
+    public static JwtInformation Validate(string token)
     {
         try
         {

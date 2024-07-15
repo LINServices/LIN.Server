@@ -1,3 +1,5 @@
+using LIN.Inventory.Services.Interfaces;
+
 namespace LIN.Inventory.Controllers;
 
 

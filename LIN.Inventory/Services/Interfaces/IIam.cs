@@ -1,4 +1,4 @@
-﻿namespace LIN.Inventory.Services;
+﻿namespace LIN.Inventory.Services.Interfaces;
 
 
 public interface IIam

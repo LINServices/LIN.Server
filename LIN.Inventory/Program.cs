@@ -68,9 +68,8 @@ app.UseLINHttp();
 app.MapHub<InventoryHub>("/Realtime/inventory");
 
 app.UseRouting();
+app.UseLocalServices(builder.Configuration);
 
-// Inicio de Jwt
-Jwt.Open();
 
 LIN.Access.Auth.Build.Init();
 LIN.Access.Contacts.Build.Init();

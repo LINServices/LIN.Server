@@ -1,4 +1,6 @@
-﻿namespace LIN.Inventory.Controllers;
+﻿using LIN.Inventory.Services.Interfaces;
+
+namespace LIN.Inventory.Controllers;
 
 
 [Route("inventory/access")]
