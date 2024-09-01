@@ -262,17 +262,17 @@ public class ProductController(IHubContext<InventoryHub> hubContext, Data.Produc
             };
 
         // Encontrar el id del inventario.
-        var findInventory = inventoryData.FindByProduct(modelo.Id);
+        var findInventory = await inventoryData.FindByProduct(modelo.Id);
 
         // Actualizar.
-        ResponseBase response = await productsData.Update(modelo);
+        ResponseBase response =  await productsData.Update(modelo);
+        
 
-        await findInventory;
         // Si fue correcto.
-        if (response.Response == Responses.Success && findInventory.Result.Response == Responses.Success)
+        if (response.Response == Responses.Success && findInventory.Response == Responses.Success)
         {
             // Realtime.
-            string groupName = $"inventory.{findInventory.Result.Model}";
+            string groupName = $"inventory.{findInventory.Model}";
             string command = $"updateProduct({modelo.Id})";
             await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
             {
