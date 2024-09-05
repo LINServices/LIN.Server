@@ -2,7 +2,7 @@
 
 
 [Route("[Controller]")]
-public class AuthController(Data.Profiles profilesData) : ControllerBase
+public class AuthenticationController(Data.Profiles profilesData) : ControllerBase
 {
 
 

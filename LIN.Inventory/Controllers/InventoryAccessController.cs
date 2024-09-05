@@ -3,7 +3,7 @@
 namespace LIN.Inventory.Controllers;
 
 
-[Route("inventory/access")]
+[Route("Inventory/access")]
 public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Data.InventoryAccess inventoryAccess, IIam Iam) : ControllerBase
 {
 

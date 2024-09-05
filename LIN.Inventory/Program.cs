@@ -59,7 +59,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
-
 app.MapControllers();
 
 app.UseLINHttp();
@@ -73,6 +72,7 @@ app.UseLocalServices(builder.Configuration);
 
 LIN.Access.Auth.Build.Init();
 LIN.Access.Contacts.Build.Init();
+LIN.Access.Auth.Build.Start();
 
 app.UseServiceLogging();
 

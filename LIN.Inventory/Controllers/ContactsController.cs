@@ -4,7 +4,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class ContactController : ControllerBase
+public class ContactsController : ControllerBase
 {
 
 
