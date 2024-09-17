@@ -1,6 +1,5 @@
 ﻿namespace LIN.Inventory.Data;
 
-
 public class Outflows(Context context, Access.Logger.Services.ILogger logger)
 {
 
@@ -95,7 +94,6 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtiene una salida.
     /// </summary>
@@ -173,7 +171,6 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtiene la lista de salidas asociadas a un inventario.
     /// </summary>
@@ -214,7 +211,6 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Actualizar la fecha de una salida.
     /// </summary>
@@ -244,7 +240,6 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
         }
         return new();
     }
-
 
 
     /// <summary>
@@ -296,7 +291,6 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
 
         return new();
     }
-
 
 
 }

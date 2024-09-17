@@ -3,7 +3,6 @@ using LIN.Inventory.Services.Interfaces;
 
 namespace LIN.Inventory.Hubs;
 
-
 public class InventoryHub(Context context, IIam Iam) : Hub
 {
 

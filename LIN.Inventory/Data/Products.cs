@@ -46,7 +46,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtiene un producto.
     /// </summary>
@@ -71,7 +70,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
         }
         return new();
     }
-
 
 
     /// <summary>
@@ -102,7 +100,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtiene la lista de productos asociados a un inventario.
     /// </summary>
@@ -129,7 +126,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
         }
         return new();
     }
-
 
 
     /// <summary>
@@ -169,7 +165,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
         return new();
 
     }
-
 
 
     /// <summary>
@@ -224,7 +219,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Actualiza toda información base de un producto.
     /// </summary>
@@ -271,7 +265,6 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
         return new();
 
     }
-
 
 
     /// <summary>

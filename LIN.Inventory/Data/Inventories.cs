@@ -1,10 +1,7 @@
 ﻿namespace LIN.Inventory.Data;
 
-
 public class Inventories(Context context, Access.Logger.Services.ILogger logger)
 {
-
-
 
     /// <summary>
     /// Crea un nuevo inventario.
@@ -63,7 +60,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtiene un inventario.
     /// </summary>
@@ -89,7 +85,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
 
         return new();
     }
-
 
 
     /// <summary>
@@ -139,7 +134,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Actualizar la información de un inventario.
     /// </summary>
@@ -171,7 +165,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtiene un inventario.
     /// </summary>
@@ -200,7 +193,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
 
         return new();
     }
-
 
 
     /// <summary>

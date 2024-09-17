@@ -1,6 +1,5 @@
 ﻿namespace LIN.Inventory.Data.Query;
 
-
 public class Profiles
 {
 
@@ -39,7 +38,6 @@ public class Profiles
     }
 
 
-
     /// <summary>
     /// Obtener usuarios
     /// </summary>
@@ -57,8 +55,6 @@ public class Profiles
     }
 
 
-
-
     /// <summary>
     /// Obtener usuarios
     /// </summary>
@@ -74,7 +70,5 @@ public class Profiles
         return query;
 
     }
-
-
 
 }

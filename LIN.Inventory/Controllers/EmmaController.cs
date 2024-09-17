@@ -7,7 +7,6 @@ namespace LIN.Inventory.Controllers;
 public class EmmaController(Data.Profiles profileData, Data.Inventories inventoryData) : ControllerBase
 {
 
-
     /// <summary>
     /// Consultas para Emma.
     /// </summary>
@@ -55,7 +54,6 @@ public class EmmaController(Data.Profiles profileData, Data.Inventories inventor
         };
 
     }
-
 
 
     /// <summary>
@@ -161,7 +159,5 @@ public class EmmaController(Data.Profiles profileData, Data.Inventories inventor
         };
 
     }
-
-
 
 }

@@ -7,7 +7,6 @@ namespace LIN.Inventory.Controllers;
 public class InventoryController(Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
-
     /// <summary>
     /// Crea un nuevo Inventario.
     /// </summary>
@@ -56,7 +55,6 @@ public class InventoryController(Data.Inventories inventoryData, IIam Iam) : Con
     }
 
 
-
     /// <summary>
     /// Obtiene los inventarios asociados a un perfil
     /// </summary>
@@ -75,7 +73,6 @@ public class InventoryController(Data.Inventories inventoryData, IIam Iam) : Con
         return result;
 
     }
-
 
 
     /// <summary>
@@ -124,7 +121,6 @@ public class InventoryController(Data.Inventories inventoryData, IIam Iam) : Con
     }
 
 
-
     /// <summary>
     /// Actualizar la información de un inventario.
     /// </summary>
@@ -163,6 +159,5 @@ public class InventoryController(Data.Inventories inventoryData, IIam Iam) : Con
         return response;
 
     }
-
 
 }

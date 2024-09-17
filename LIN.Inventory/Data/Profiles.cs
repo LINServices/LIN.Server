@@ -1,9 +1,7 @@
 ﻿namespace LIN.Inventory.Data;
 
-
 public class Profiles(Context context, Access.Logger.Services.ILogger logger)
 {
-
 
     /// <summary>
     /// Crear nuevo perfil.
@@ -64,7 +62,6 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtener un perfil.
     /// </summary>
@@ -91,7 +88,6 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
 
         return new();
     }
-
 
 
     /// <summary>
@@ -122,7 +118,6 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtener perfiles.
     /// </summary>
@@ -149,7 +144,6 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
 
         return new();
     }
-
 
 
     /// <summary>

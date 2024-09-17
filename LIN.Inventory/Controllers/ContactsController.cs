@@ -2,11 +2,9 @@ using LIN.Types.Contacts.Models;
 
 namespace LIN.Inventory.Controllers;
 
-
 [Route("[Controller]")]
 public class ContactsController : ControllerBase
 {
-
 
     /// <summary>
     /// Crear nuevo contacto.
@@ -30,8 +28,6 @@ public class ContactsController : ControllerBase
     }
 
 
-
-
     /// <summary>
     /// Obtiene los contactos.
     /// </summary>
@@ -47,8 +43,6 @@ public class ContactsController : ControllerBase
         return result ?? new();
 
     }
-
-
 
 
     /// <summary>
@@ -69,8 +63,6 @@ public class ContactsController : ControllerBase
     }
 
 
-
-
     /// <summary>
     /// Actualiza la información de un contacto.
     /// </summary>
@@ -84,8 +76,6 @@ public class ContactsController : ControllerBase
 
         return response;
     }
-
-
 
 
     /// <summary>
@@ -102,7 +92,5 @@ public class ContactsController : ControllerBase
         return response;
 
     }
-
-
 
 }

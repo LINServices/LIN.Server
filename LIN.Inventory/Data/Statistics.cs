@@ -4,7 +4,6 @@
 public class Statistics(Context context)
 {
 
-
     /// <summary>
     /// Ventas de un perfil en un periodo de tiempo.
     /// </summary>
@@ -50,7 +49,6 @@ public class Statistics(Context context)
 
         return new();
     }
-
 
 
     /// <summary>

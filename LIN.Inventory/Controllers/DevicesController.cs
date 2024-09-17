@@ -5,7 +5,6 @@ namespace LIN.Inventory.Controllers;
 public class DevicesController : ControllerBase
 {
 
-
     /// <summary>
     /// Obtener dispositivos.
     /// </summary>
@@ -28,6 +27,5 @@ public class DevicesController : ControllerBase
             Models = devices.Value
         };
     }
-
 
 }

@@ -4,7 +4,6 @@
 public static class Products
 {
 
-
     /// <summary>
     /// Obtiene un producto por medio del Id
     /// </summary>
@@ -34,7 +33,6 @@ public static class Products
     }
 
 
-
     /// <summary>
     /// Obtiene un producto por medio del detalle
     /// </summary>
@@ -62,7 +60,6 @@ public static class Products
         return query;
 
     }
-
 
 
     /// <summary>

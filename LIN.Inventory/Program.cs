@@ -2,6 +2,7 @@ using Http.Extensions;
 using LIN.Access.Logger;
 using LIN.Inventory.Data;
 using LIN.Inventory.Extensions;
+using LIN.Access.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddLINHttp();
 builder.Services.AddLocalServices();
+
+// Autenticación
+builder.Services.AddAuthenticationService();
 
 
 builder.Services.AddDbContextPool<Context>(options =>
@@ -32,12 +36,6 @@ if (sqlConnection.Length > 0)
     });
 }
 
-
-
-LIN.Access.Auth.Build.SetAuth(builder.Configuration["lin:app"] ?? string.Empty);
-
-
-
 var app = builder.Build();
 
 try
@@ -50,14 +48,10 @@ try
 catch
 { }
 
-
-
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 
@@ -69,10 +63,7 @@ app.MapHub<InventoryHub>("/Realtime/inventory");
 app.UseRouting();
 app.UseLocalServices(builder.Configuration);
 
-
-LIN.Access.Auth.Build.Init();
 LIN.Access.Contacts.Build.Init();
-LIN.Access.Auth.Build.Start();
 
 app.UseServiceLogging();
 

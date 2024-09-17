@@ -1,19 +1,15 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using LIN.Inventory.Services.Interfaces;
 
 namespace LIN.Inventory.Services;
 
-
-public class Jwt 
+public class Jwt
 {
-
 
     /// <summary>
     /// Llave del token
     /// </summary>
     private static string JwtKey { get; set; } = string.Empty;
-
 
 
     /// <summary>

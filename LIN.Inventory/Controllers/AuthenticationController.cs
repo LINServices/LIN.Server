@@ -1,10 +1,8 @@
 ﻿namespace LIN.Inventory.Controllers;
 
-
 [Route("[Controller]")]
 public class AuthenticationController(Data.Profiles profilesData) : ControllerBase
 {
-
 
     /// <summary>
     /// Iniciar sesión.
@@ -110,7 +108,6 @@ public class AuthenticationController(Data.Profiles profilesData) : ControllerBa
     }
 
 
-
     /// <summary>
     /// Iniciar sesión de usuario por medio del token.
     /// </summary>
@@ -206,6 +203,5 @@ public class AuthenticationController(Data.Profiles profilesData) : ControllerBa
         };
 
     }
-
 
 }

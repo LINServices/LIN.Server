@@ -4,7 +4,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class ProductController(IHubContext<InventoryHub> hubContext, Data.Products productsData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
+public class ProductController(IHubService hubService, Data.Products productsData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
     /// <summary>
@@ -84,7 +84,6 @@ public class ProductController(IHubContext<InventoryHub> hubContext, Data.Produc
     }
 
 
-
     /// <summary>
     /// Obtiene todos los productos asociados a un inventario.
     /// </summary>
@@ -128,7 +127,6 @@ public class ProductController(IHubContext<InventoryHub> hubContext, Data.Produc
     }
 
 
-
     /// <summary>
     /// Obtiene un producto por medio de su Id
     /// </summary>
@@ -170,7 +168,6 @@ public class ProductController(IHubContext<InventoryHub> hubContext, Data.Produc
         return result;
 
     }
-
 
 
     /// <summary>
@@ -227,7 +224,6 @@ public class ProductController(IHubContext<InventoryHub> hubContext, Data.Produc
     }
 
 
-
     /// <summary>
     /// Actualiza la información de un producto
     /// </summary>
@@ -236,11 +232,8 @@ public class ProductController(IHubContext<InventoryHub> hubContext, Data.Produc
     [InventoryToken]
     public async Task<HttpResponseBase> UpdateAll([FromBody] ProductModel modelo, [FromHeader] string token)
     {
-
-
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
-
 
         // Acceso Iam.
         var iam = await Iam.Validate(new IamRequest()
@@ -271,19 +264,11 @@ public class ProductController(IHubContext<InventoryHub> hubContext, Data.Produc
         // Si fue correcto.
         if (response.Response == Responses.Success && findInventory.Response == Responses.Success)
         {
-            // Realtime.
-            string groupName = $"inventory.{findInventory.Model}";
-            string command = $"updateProduct({modelo.Id})";
-            await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
-            {
-                Command = command
-            });
+            await hubService.SendUpdateProduct(findInventory.Model, modelo.Id);
         }
 
         return response;
-
     }
-
 
 
     /// <summary>
@@ -338,7 +323,5 @@ public class ProductController(IHubContext<InventoryHub> hubContext, Data.Produc
         return response;
 
     }
-
-
 
 }

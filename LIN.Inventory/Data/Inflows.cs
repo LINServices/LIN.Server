@@ -1,9 +1,7 @@
 ﻿namespace LIN.Inventory.Data;
 
-
 public class Inflows(Context context, Access.Logger.Services.ILogger logger)
 {
-
 
     /// <summary>
     /// Crea una entrada de inventario.
@@ -87,7 +85,6 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtiene una entrada.
     /// </summary>
@@ -165,7 +162,6 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Obtiene la lista de entradas asociadas a un inventario.
     /// </summary>
@@ -207,7 +203,6 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
     /// <summary>
     /// Actualizar la fecha de una entrada.
     /// </summary>
@@ -239,9 +234,12 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
     }
 
 
-
-
-
+    /// <summary>
+    /// Informe.
+    /// </summary>
+    /// <param name="month">Mes</param>
+    /// <param name="year">Año</param>
+    /// <param name="inventory">Id del inventario.</param>
     public async Task<ReadAllResponse<InflowRow>> Informe(int month, int year, int inventory)
     {
 
@@ -279,22 +277,8 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
         {
             logger.Log(ex, Access.Logger.Models.LogLevels.Error);
         }
-
-
         return new();
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /// <summary>
@@ -304,10 +288,6 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
     /// <param name="days">Dias hacia atrás</param>
     public async Task<ReadOneResponse<int>> ComprasOf(int id, int days)
     {
-
-        Stopwatch reloj = new();
-        reloj.Start();
-
 
         // Ejecución
         try
@@ -328,8 +308,6 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
 
             var ventas = await query.CountAsync();
 
-            reloj.Stop();
-
             // Retorna
             return new(Responses.Success, ventas);
 
@@ -341,7 +319,6 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
 
         return new();
     }
-
 
 
 }

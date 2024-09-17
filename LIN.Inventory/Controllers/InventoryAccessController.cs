@@ -2,11 +2,9 @@
 
 namespace LIN.Inventory.Controllers;
 
-
 [Route("Inventory/access")]
-public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Data.InventoryAccess inventoryAccess, IIam Iam) : ControllerBase
+public class InventoryAccessController(IHubService hubService, Data.InventoryAccess inventoryAccess, IIam Iam) : ControllerBase
 {
-
 
     /// <summary>
     /// Crear acceso a inventario.
@@ -57,13 +55,8 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Dat
         // Si fue correcto.
         if (result.Response == Responses.Success)
         {
-            // Realtime.
-            string groupName = $"group.{model.ProfileID}";
-            string command = $"newInvitation({result.LastID})";
-            await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
-            {
-                Command = command
-            });
+            // Enviar en tiempo real.
+            await hubService.SendNotification(model.ProfileID, result.LastID);
         }
 
         // Retorna el resultado
@@ -74,7 +67,6 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Dat
         };
 
     }
-
 
 
     /// <summary>
@@ -101,7 +93,6 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Dat
     }
 
 
-
     /// <summary>
     /// Obtiene una lista de accesos asociados a un usuario.
     /// </summary>
@@ -121,7 +112,6 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Dat
         return result;
 
     }
-
 
 
     /// <summary>
@@ -155,8 +145,6 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Dat
         return result;
 
     }
-
-
 
 
     /// <summary>
@@ -207,8 +195,6 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Dat
         return result;
 
     }
-
-
 
 
     /// <summary>
@@ -280,8 +266,6 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Dat
     }
 
 
-
-
     /// <summary>
     /// Elimina a alguien de un inventario.
     /// </summary>
@@ -327,6 +311,5 @@ public class InventoryAccessController(IHubContext<InventoryHub> hubContext, Dat
         return result;
 
     }
-
 
 }

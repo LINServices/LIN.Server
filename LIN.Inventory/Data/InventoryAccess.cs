@@ -1,9 +1,7 @@
 ﻿namespace LIN.Inventory.Data;
 
-
 public class InventoryAccess(Context context, Access.Logger.Services.ILogger logger)
 {
-
 
     /// <summary>
     /// Crear acceso a inventario.
@@ -51,7 +49,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     }
 
 
-
     /// <summary>
     /// Obtener las invitaciones de un perfil.
     /// </summary>
@@ -93,7 +90,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
 
         return new();
     }
-
 
 
     /// <summary>
@@ -139,7 +135,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     }
 
 
-
     /// <summary>
     /// Cambia el estado de una invitación.
     /// </summary>
@@ -170,7 +165,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
 
         return new();
     }
-
 
 
     /// <summary>
@@ -211,7 +205,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
     }
 
 
-
     /// <summary>
     /// Eliminar a alguien de un inventario.
     /// </summary>
@@ -241,7 +234,6 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
 
         return new();
     }
-
 
 
     /// <summary>

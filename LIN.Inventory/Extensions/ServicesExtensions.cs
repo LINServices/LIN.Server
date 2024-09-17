@@ -23,6 +23,9 @@ public static class ServicesExtensions
         services.AddScoped<Profiles, Profiles>();
         services.AddScoped<Statistics, Statistics>();
 
+        // Hubs.
+        services.AddScoped<IHubService, HubService>();
+
         // Iam.
         services.AddScoped<IIam, Iam>();
 

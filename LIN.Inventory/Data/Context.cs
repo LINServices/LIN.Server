@@ -14,12 +14,10 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     public DbSet<ProfileModel> Profiles { get; set; }
 
 
-
     /// <summary>
     /// Inventarios
     /// </summary>
     public DbSet<InventoryDataModel> Inventarios { get; set; }
-
 
 
     /// <summary>
@@ -28,12 +26,10 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     public DbSet<InflowDataModel> Entradas { get; set; }
 
 
-
     /// <summary>
     /// Detalles de entradas
     /// </summary>
     public DbSet<InflowDetailsDataModel> DetallesEntradas { get; set; }
-
 
 
     /// <summary>
@@ -42,12 +38,10 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     public DbSet<OutflowDataModel> Salidas { get; set; }
 
 
-
     /// <summary>
     /// Detalles de salidas
     /// </summary>
     public DbSet<OutflowDetailsDataModel> DetallesSalidas { get; set; }
-
 
 
     /// <summary>
@@ -56,19 +50,16 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     public DbSet<ProductModel> Productos { get; set; }
 
 
-
     /// <summary>
     /// Detalles de productos
     /// </summary>
     public DbSet<ProductDetailModel> ProductoDetalles { get; set; }
 
 
-
     /// <summary>
     /// Acceso a los Inventarios
     /// </summary>
     public DbSet<InventoryAcessDataModel> AccesoInventarios { get; set; }
-
 
 
 
@@ -124,7 +115,6 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
           .HasForeignKey(t => t.ProductDetailId)
           .OnDelete(DeleteBehavior.NoAction);
 
-
         modelBuilder.Entity<ProfileModel>().ToTable("PROFILES");
         modelBuilder.Entity<InventoryDataModel>().ToTable("INVENTORIES");
         modelBuilder.Entity<InflowDataModel>().ToTable("INFLOWS");
@@ -136,7 +126,5 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
         modelBuilder.Entity<InventoryAcessDataModel>().ToTable("INVENTORY_ACCESS");
 
     }
-
-
 
 }

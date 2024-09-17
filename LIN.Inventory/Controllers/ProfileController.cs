@@ -5,7 +5,6 @@ namespace LIN.Inventory.Controllers;
 public class ProfileController(Data.Profiles profileData) : ControllerBase
 {
 
-
     /// <summary>
     /// Obtiene un usuario por medio del Id
     /// </summary>
@@ -32,7 +31,6 @@ public class ProfileController(Data.Profiles profileData) : ControllerBase
         return response;
 
     }
-
 
 
     /// <summary>
@@ -75,7 +73,5 @@ public class ProfileController(Data.Profiles profileData) : ControllerBase
         };
 
     }
-
-
 
 }

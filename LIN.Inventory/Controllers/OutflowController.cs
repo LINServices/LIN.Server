@@ -7,7 +7,6 @@ namespace LIN.Inventory.Controllers;
 public class OutflowController(Data.Outflows outflowData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
-
     /// <summary>
     /// Nuevo movimiento de salida.
     /// </summary>
@@ -19,13 +18,12 @@ public class OutflowController(Data.Outflows outflowData, Data.Inventories inven
     {
 
         // Validar parámetros.
-        if (!modelo.Details.Any() || modelo.Type == OutflowsTypes.None)
+        if (modelo.Details.Count == 0 || modelo.Type == OutflowsTypes.None)
             return new(Responses.InvalidParam);
 
 
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
-
 
         // Acceso Iam.
         var iam = await Iam.Validate(new IamRequest()
@@ -60,7 +58,6 @@ public class OutflowController(Data.Outflows outflowData, Data.Inventories inven
     }
 
 
-
     /// <summary>
     /// Obtiene una salida
     /// </summary>
@@ -78,7 +75,6 @@ public class OutflowController(Data.Outflows outflowData, Data.Inventories inven
 
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
-
 
         // Acceso Iam.
         var iam = await Iam.Validate(new IamRequest()
@@ -106,7 +102,6 @@ public class OutflowController(Data.Outflows outflowData, Data.Inventories inven
         return result ?? new();
 
     }
-
 
 
     /// <summary>
@@ -149,9 +144,7 @@ public class OutflowController(Data.Outflows outflowData, Data.Inventories inven
 
         // Retorna el resultado
         return result ?? new();
-
     }
-
 
 
     /// <summary>
@@ -198,7 +191,6 @@ public class OutflowController(Data.Outflows outflowData, Data.Inventories inven
         return result ?? new();
 
     }
-
 
 
     /// <summary>
@@ -341,6 +333,5 @@ public class OutflowController(Data.Outflows outflowData, Data.Inventories inven
         //return new(Responses.Success, response.File.ToList());
 
     }
-
 
 }

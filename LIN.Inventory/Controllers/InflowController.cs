@@ -7,7 +7,6 @@ namespace LIN.Inventory.Controllers;
 public class InflowController(Data.Inflows inflowData, IIam Iam) : ControllerBase
 {
 
-
     /// <summary>
     /// Crear nueva movimiento de entrada.
     /// </summary>
@@ -62,7 +61,6 @@ public class InflowController(Data.Inflows inflowData, IIam Iam) : ControllerBas
     }
 
 
-
     /// <summary>
     /// Obtener el movimiento (entrada).
     /// </summary>
@@ -107,7 +105,6 @@ public class InflowController(Data.Inflows inflowData, IIam Iam) : ControllerBas
         return result ?? new();
 
     }
-
 
 
     /// <summary>
@@ -155,7 +152,6 @@ public class InflowController(Data.Inflows inflowData, IIam Iam) : ControllerBas
     }
 
 
-
     /// <summary>
     /// Actualizar la fecha de una entrada.
     /// </summary>
@@ -200,7 +196,5 @@ public class InflowController(Data.Inflows inflowData, IIam Iam) : ControllerBas
         return result ?? new();
 
     }
-
-
 
 }
