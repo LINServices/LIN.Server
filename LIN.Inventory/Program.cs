@@ -1,8 +1,9 @@
 using Http.Extensions;
+using LIN.Access.Auth;
+using LIN.Access.Contacts;
 using LIN.Access.Logger;
 using LIN.Inventory.Data;
 using LIN.Inventory.Extensions;
-using LIN.Access.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +16,14 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddLINHttp();
 builder.Services.AddLocalServices();
 
-// Autenticación
-builder.Services.AddAuthenticationService();
+// LIN Services.
+builder.Services.AddAuthenticationService(builder.Configuration["services:auth"]);
+builder.Services.AddContactsService(builder.Configuration["services:contacts"]);
+
+
+
+
+
 
 
 builder.Services.AddDbContextPool<Context>(options =>
@@ -62,8 +69,6 @@ app.MapHub<InventoryHub>("/Realtime/inventory");
 
 app.UseRouting();
 app.UseLocalServices(builder.Configuration);
-
-LIN.Access.Contacts.Build.Init();
 
 app.UseServiceLogging();
 

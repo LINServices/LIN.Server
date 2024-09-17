@@ -55,7 +55,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
             }
         }
 
-
         return new();
     }
 

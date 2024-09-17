@@ -13,7 +13,6 @@ public class DevicesController : ControllerBase
     [InventoryToken]
     public HttpReadAllResponse<DeviceModel> Devices([FromHeader] string token)
     {
-
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
