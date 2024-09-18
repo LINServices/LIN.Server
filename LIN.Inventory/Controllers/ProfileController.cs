@@ -42,17 +42,17 @@ public class ProfileController(Data.Profiles profileData) : ControllerBase
     public async Task<HttpReadAllResponse<SessionModel<ProfileModel>>> ReadOneByID([FromQuery] string pattern, [FromHeader] string token)
     {
 
-        // Usuarios
+        // Usuarios.
         var users = await Access.Auth.Controllers.Account.Search(pattern, token);
 
-        // Si hubo un error
+        // Si hubo un error.
         if (users.Response != Responses.Success)
             return new(users.Response);
 
         // Mapear los ids de los usuarios.
         var map = users.Models.Select(T => T.Id).ToList();
 
-        // Obtiene el usuario
+        // Obtiene el usuario.
         var response = await profileData.ReadByAccounts(map);
 
         // Unir las respuestas.
@@ -65,7 +65,7 @@ public class ProfileController(Data.Profiles profileData) : ControllerBase
                          Profile = Profile
                      }).ToList();
 
-        // Retorna el resultado
+        // Retorna el resultado.
         return new ReadAllResponse<SessionModel<ProfileModel>>
         {
             Response = Responses.Success,

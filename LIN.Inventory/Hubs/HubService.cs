@@ -14,7 +14,6 @@ public class HubService(IHubContext<InventoryHub> hubContext) : IHubService
     /// <param name="lastId">Id de la invitación.</param>
     public async Task SendNotification(int profile, int lastId)
     {
-
         // Servicio.
         string groupName = string.Format(GroupName, profile);
         string command = $"newInvitation({lastId})";

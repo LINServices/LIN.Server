@@ -7,7 +7,6 @@
 public class Context(DbContextOptions<Context> options) : DbContext(options)
 {
 
-
     /// <summary>
     /// Tabla de usuarios
     /// </summary>
