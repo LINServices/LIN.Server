@@ -1,4 +1,7 @@
-﻿using LIN.Inventory.Data;
+﻿using Azure;
+using LIN.Inventory.Data;
+using LIN.Inventory.Data.Query;
+using LIN.Types.Responses;
 
 namespace LIN.Inventory.Hubs;
 
@@ -100,6 +103,38 @@ public class HubService(IHubContext<InventoryHub> hubContext, Context context) :
                 Command = command
             });
         }
+    }
+
+
+    /// <summary>
+    /// Enviar notificación de nueva entrada.
+    /// </summary>
+    public async Task SendInflowMovement(int inventoryId, int movement)
+    {
+        // Realtime.
+        string groupName = $"inventory.{inventoryId}";
+        string command = $"addInflow({movement}, true)";
+        await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
+        {
+            Command = command,
+            Inventory = inventoryId
+        });
+    }
+
+
+    /// <summary>
+    /// Enviar notificación de nueva salida.
+    /// </summary>
+    public async Task SendOutflowMovement(int inventoryId, int movement)
+    {
+        // Realtime.
+        string groupName = $"inventory.{inventoryId}";
+        string command = $"addOutflow({movement}, true)";
+        await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
+        {
+            Command = command,
+            Inventory = inventoryId
+        });
     }
 
 }

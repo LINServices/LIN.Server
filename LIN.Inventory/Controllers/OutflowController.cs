@@ -4,7 +4,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class OutflowController(Data.Outflows outflowData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
+public class OutflowController(IHubService hubService, Data.Outflows outflowData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
     /// <summary>
@@ -53,6 +53,10 @@ public class OutflowController(Data.Outflows outflowData, Data.Inventories inven
         // Crea la nueva entrada
         var response = await outflowData.Create(modelo);
 
+        // Enviar notificación en tiempo real.
+        if (response.Response == Responses.Success)
+            await hubService.SendOutflowMovement(modelo.InventoryId, response.LastID);
+        
         return response;
 
     }
