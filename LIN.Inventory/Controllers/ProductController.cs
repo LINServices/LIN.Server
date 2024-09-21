@@ -82,7 +82,7 @@ public class ProductController(IHubService hubService, Data.Products productsDat
         // Enviar en tiempo real.
         if (response.Response == Responses.Success)
             await hubService.SendNewProduct(modelo.InventoryId, response.LastID);
-
+       
         return response;
 
     }
@@ -263,7 +263,6 @@ public class ProductController(IHubService hubService, Data.Products productsDat
 
         // Actualizar.
         ResponseBase response = await productsData.Update(modelo);
-
 
         // Si fue correcto.
         if (response.Response == Responses.Success && findInventory.Response == Responses.Success)

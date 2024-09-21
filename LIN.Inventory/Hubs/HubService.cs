@@ -41,7 +41,8 @@ public class HubService(IHubContext<InventoryHub> hubContext, Context context) :
         string command = $"updateProduct({productId})";
         await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
         {
-            Command = command
+            Command = command,
+            Inventory = inventoryId
         });
     }
 
