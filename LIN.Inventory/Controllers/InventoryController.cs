@@ -50,7 +50,7 @@ public class InventoryController(IHubService hubService, Data.Inventories invent
             return response;
 
         // Enviar notificación.
-        _ = hubService.SendNotification(response.LastID);
+        await hubService.SendNotification(response.LastID);
 
         // Retorna
         return response;
