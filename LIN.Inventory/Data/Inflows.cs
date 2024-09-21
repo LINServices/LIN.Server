@@ -250,7 +250,7 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
             // Selecciona
             var query = from E in context.Entradas
                         where E.InventoryId == inventory
-                        && E.Date.Year == year 
+                        && E.Date.Year == year
                         && E.Date.Month == month
                         join ED in context.DetallesEntradas
                         on E.ID equals ED.MovementId

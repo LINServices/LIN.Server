@@ -79,6 +79,10 @@ public class ProductController(IHubService hubService, Data.Products productsDat
         // Crear.
         var response = await productsData.Create(modelo);
 
+        // Enviar en tiempo real.
+        if (response.Response == Responses.Success)
+            await hubService.SendNewProduct(modelo.InventoryId, response.LastID);
+
         return response;
 
     }
@@ -258,8 +262,8 @@ public class ProductController(IHubService hubService, Data.Products productsDat
         var findInventory = await inventoryData.FindByProduct(modelo.Id);
 
         // Actualizar.
-        ResponseBase response =  await productsData.Update(modelo);
-        
+        ResponseBase response = await productsData.Update(modelo);
+
 
         // Si fue correcto.
         if (response.Response == Responses.Success && findInventory.Response == Responses.Success)
@@ -319,6 +323,10 @@ public class ProductController(IHubService hubService, Data.Products productsDat
 
         // Respuesta
         ResponseBase response = await productsData.Delete(id);
+
+        // Si fue correcto.
+        if (response.Response == Responses.Success)
+            await hubService.SendDeleteProduct(inventory.Model, id);
 
         return response;
 

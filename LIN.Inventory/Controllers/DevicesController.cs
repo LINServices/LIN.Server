@@ -17,13 +17,15 @@ public class DevicesController : ControllerBase
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtener los dispositivos.
-        var devices = InventoryHub.List.Where(t => t.Key == tokenInfo.ProfileId).FirstOrDefault();
+        var devices = (from profile in InventoryHub.List
+                       where profile.Key == tokenInfo.ProfileId
+                       select profile.Value).FirstOrDefault();
 
         // Respuesta.
         return new ReadAllResponse<DeviceModel>()
         {
             Response = Responses.Success,
-            Models = devices.Value
+            Models = devices
         };
     }
 

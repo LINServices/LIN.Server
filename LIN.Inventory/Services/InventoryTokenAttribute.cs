@@ -6,8 +6,6 @@ namespace LIN.Inventory.Services;
 public class InventoryTokenAttribute : ActionFilterAttribute
 {
 
-
-
     /// <summary>
     /// Filtro del token.
     /// </summary>

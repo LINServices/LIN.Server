@@ -11,5 +11,4 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.SignalR;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
-global using System.Diagnostics;
 global using System.Text;

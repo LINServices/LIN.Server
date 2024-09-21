@@ -4,7 +4,7 @@ namespace LIN.Inventory.Controllers;
 
 
 [Route("[Controller]")]
-public class InventoryController(Data.Inventories inventoryData, IIam Iam) : ControllerBase
+public class InventoryController(IHubService hubService, Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
     /// <summary>
@@ -48,6 +48,9 @@ public class InventoryController(Data.Inventories inventoryData, IIam Iam) : Con
         // Si no se creo el inventario
         if (response.Response != Responses.Success)
             return response;
+
+        // Enviar notificación.
+        _ = hubService.SendNotification(response.LastID);
 
         // Retorna
         return response;
