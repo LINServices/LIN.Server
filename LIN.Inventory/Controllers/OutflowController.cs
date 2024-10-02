@@ -21,7 +21,6 @@ public class OutflowController(IHubService hubService, Data.Outflows outflowData
         if (modelo.Details.Count == 0 || modelo.Type == OutflowsTypes.None)
             return new(Responses.InvalidParam);
 
-
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 

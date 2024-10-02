@@ -61,7 +61,6 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     public DbSet<InventoryAcessDataModel> AccesoInventarios { get; set; }
 
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 

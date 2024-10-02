@@ -22,25 +22,21 @@ public class EmmaController(Data.Profiles profileData, Data.Inventories inventor
         client.DefaultRequestHeaders.Add("token", tokenAuth);
         client.DefaultRequestHeaders.Add("useDefaultContext", true.ToString().ToLower());
 
-
         var request = new LIN.Types.Models.EmmaRequest
         {
             AppContext = "inventory",
             Asks = query
         };
 
-
-
         StringContent stringContent = new(Newtonsoft.Json.JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
-        var result = await client.PostAsync("http://api.emma.linapps.co/emma", stringContent);
+        var result = await client.PostAsync("https://api.emma.linplatform.com/emma", stringContent);
 
 
         var ss = await result.Content.ReadAsStringAsync();
 
 
         dynamic? fin = Newtonsoft.Json.JsonConvert.DeserializeObject(ss);
-
 
         // Respuesta
         return new ReadOneResponse<ResponseIAModel>()

@@ -105,7 +105,6 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
             if (inflow == null)
                 return new(Responses.NotRows);
 
-
             // Incluir detalles.
             if (includeDetails)
             {
