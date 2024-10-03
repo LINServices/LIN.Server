@@ -1,7 +1,4 @@
-using LIN.Inventory.Services.Interfaces;
-
 namespace LIN.Inventory.Controllers;
-
 
 [Route("[Controller]")]
 public class InflowController(IHubService hubService, Data.Inflows inflowData, IIam Iam) : ControllerBase

@@ -12,3 +12,4 @@ global using Microsoft.AspNetCore.SignalR;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
 global using System.Text;
+global using LIN.Inventory.Services.Interfaces;

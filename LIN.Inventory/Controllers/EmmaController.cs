@@ -2,41 +2,44 @@ using LIN.Types.Emma.Models;
 
 namespace LIN.Inventory.Controllers;
 
-
 [Route("[Controller]")]
-public class EmmaController(Data.Profiles profileData, Data.Inventories inventoryData) : ControllerBase
+public class EmmaController(Data.Profiles profileData, Data.Inventories inventoryData, IConfiguration configuration) : ControllerBase
 {
 
     /// <summary>
-    /// Consultas para Emma.
+    /// Consulta a la asistente virtual.
     /// </summary>
     /// <param name="tokenAuth">Token de identidad.</param>
-    /// <param name="query">Entrada a Emma.</param>
+    /// <param name="consult">Query.</param>
     [HttpPost]
-    public async Task<HttpReadOneResponse<ResponseIAModel>> Assistant([FromHeader] string tokenAuth, [FromBody] string query)
+    public async Task<HttpReadOneResponse<ResponseIAModel>> Assistant([FromHeader] string tokenAuth, [FromBody] string consult)
     {
 
-
+        // Cliente HTTP.
         HttpClient client = new();
 
+        // Headers.
         client.DefaultRequestHeaders.Add("token", tokenAuth);
         client.DefaultRequestHeaders.Add("useDefaultContext", true.ToString().ToLower());
 
+        // Request.
         var request = new LIN.Types.Models.EmmaRequest
         {
-            AppContext = "inventory",
-            Asks = query
+            AppContext = configuration["app:name"],
+            Asks = consult
         };
 
+        // Contenido.
         StringContent stringContent = new(Newtonsoft.Json.JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
-        var result = await client.PostAsync("https://api.emma.linplatform.com/emma", stringContent);
+        // Petición.
+        var result = await client.PostAsync(configuration["services:emma"], stringContent);
 
+        // Obtener contenido.
+        var content = await result.Content.ReadAsStringAsync();
 
-        var ss = await result.Content.ReadAsStringAsync();
-
-
-        dynamic? fin = Newtonsoft.Json.JsonConvert.DeserializeObject(ss);
+        // Obtener objeto.
+        dynamic? fin = Newtonsoft.Json.JsonConvert.DeserializeObject(content);
 
         // Respuesta
         return new ReadOneResponse<ResponseIAModel>()
