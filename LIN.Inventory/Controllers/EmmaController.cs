@@ -1,4 +1,4 @@
-using LIN.Types.Emma.Models;
+using LIN.Types.Cloud.OpenAssistant.Api;
 
 namespace LIN.Inventory.Controllers;
 
@@ -7,12 +7,12 @@ public class EmmaController(Data.Profiles profileData, Data.Inventories inventor
 {
 
     /// <summary>
-    /// Consulta a la asistente virtual.
+    /// Respuesta de Emma al usuario.
     /// </summary>
-    /// <param name="tokenAuth">Token de identidad.</param>
-    /// <param name="consult">Query.</param>
+    /// <param name="tokenAuth">Token de identity.</param>
+    /// <param name="consult">Consulta del usuario.</param>
     [HttpPost]
-    public async Task<HttpReadOneResponse<ResponseIAModel>> Assistant([FromHeader] string tokenAuth, [FromBody] string consult)
+    public async Task<HttpReadOneResponse<AssistantResponse>> Assistant([FromHeader] string tokenAuth, [FromBody] string consult)
     {
 
         // Cliente HTTP.
@@ -22,35 +22,27 @@ public class EmmaController(Data.Profiles profileData, Data.Inventories inventor
         client.DefaultRequestHeaders.Add("token", tokenAuth);
         client.DefaultRequestHeaders.Add("useDefaultContext", true.ToString().ToLower());
 
-        // Request.
-        var request = new LIN.Types.Models.EmmaRequest
+        // Modelo de Emma.
+        var request = new AssistantRequest()
         {
-            AppContext = configuration["app:name"],
-            Asks = consult
+            App = configuration["app:name"],
+            Prompt = consult
         };
 
-        // Contenido.
+        // Generar el string content.
         StringContent stringContent = new(Newtonsoft.Json.JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
-        // Petición.
+        // Solicitud HTTP.
         var result = await client.PostAsync(configuration["services:emma"], stringContent);
 
-        // Obtener contenido.
-        var content = await result.Content.ReadAsStringAsync();
+        // Esperar respuesta.
+        var response = await result.Content.ReadAsStringAsync();
 
-        // Obtener objeto.
-        dynamic? fin = Newtonsoft.Json.JsonConvert.DeserializeObject(content);
+        // Objeto.
+        var assistantResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<ReadOneResponse<AssistantResponse>>(response);
 
         // Respuesta
-        return new ReadOneResponse<ResponseIAModel>()
-        {
-            Model = new()
-            {
-                IsSuccess = true,
-                Content = fin?.result
-            },
-            Response = Responses.Success
-        };
+        return assistantResponse ?? new(Responses.Undefined);
 
     }
 
