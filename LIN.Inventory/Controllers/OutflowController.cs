@@ -1,9 +1,7 @@
-using LIN.Inventory.Services.Interfaces;
-
 namespace LIN.Inventory.Controllers;
 
-
 [Route("[Controller]")]
+[RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
 public class OutflowController(IHubService hubService, Data.Outflows outflowData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
@@ -55,7 +53,7 @@ public class OutflowController(IHubService hubService, Data.Outflows outflowData
         // Enviar notificación en tiempo real.
         if (response.Response == Responses.Success)
             await hubService.SendOutflowMovement(modelo.InventoryId, response.LastID);
-        
+
         return response;
 
     }
@@ -302,12 +300,9 @@ public class OutflowController(IHubService hubService, Data.Outflows outflowData
             html = html.Replace("@Cantidad", $"{row.Cantidad}");
             html = html.Replace("@Ganancia", $"{ganancia}");
 
-            if (ganancia < 0)
-                html = html.Replace("@Color", "red-500");
-            else if (ganancia == 0)
-                html = html.Replace("@Color", "black");
-            else
-                html = html.Replace("@Color", "green-600");
+            html = ganancia < 0
+                ? html.Replace("@Color", "red-500")
+                : ganancia == 0 ? html.Replace("@Color", "black") : html.Replace("@Color", "green-600");
 
             rows += html;
         }

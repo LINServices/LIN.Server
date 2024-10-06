@@ -13,3 +13,4 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
 global using System.Text;
 global using LIN.Inventory.Services.Interfaces;
+global using Http.Attributes;

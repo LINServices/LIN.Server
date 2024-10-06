@@ -1,8 +1,7 @@
-﻿using LIN.Inventory.Services.Interfaces;
-
-namespace LIN.Inventory.Controllers;
+﻿namespace LIN.Inventory.Controllers;
 
 [Route("Inventory/access")]
+[RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
 public class InventoryAccessController(IHubService hubService, Data.InventoryAccess inventoryAccess, IIam Iam) : ControllerBase
 {
 

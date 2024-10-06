@@ -1,6 +1,7 @@
 namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
+[RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
 public class InflowController(IHubService hubService, Data.Inflows inflowData, IIam Iam) : ControllerBase
 {
 

@@ -1,6 +1,7 @@
 ﻿namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
+[RateLimit(requestLimit: 10, timeWindowSeconds: 60, blockDurationSeconds: 120)]
 public class AuthenticationController(Data.Profiles profilesData) : ControllerBase
 {
 

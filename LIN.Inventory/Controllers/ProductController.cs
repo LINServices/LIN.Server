@@ -1,9 +1,7 @@
-using LIN.Inventory.Services.Interfaces;
-
 namespace LIN.Inventory.Controllers;
 
-
 [Route("[Controller]")]
+[RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
 public class ProductController(IHubService hubService, Data.Products productsData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
@@ -82,7 +80,7 @@ public class ProductController(IHubService hubService, Data.Products productsDat
         // Enviar en tiempo real.
         if (response.Response == Responses.Success)
             await hubService.SendNewProduct(modelo.InventoryId, response.LastID);
-       
+
         return response;
 
     }
