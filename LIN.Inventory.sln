@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Inventory", "LIN.Invent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Http", "..\..\Tipos\Http\Http.csproj", "{9F6D48CB-6459-4F1D-9B58-EF82E6EFACEB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Access.Auth", "..\..\AccesoAPI\LIN.Access.Auth\LIN.Access.Auth.csproj", "{AC831B88-040A-48F4-95FF-A29DE9565183}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Access.Contacts", "..\..\AccesoAPI\LIN.Access.Contacts\LIN.Access.Contacts.csproj", "{0FB5D9C9-97AB-4F67-9C58-D983CA535645}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Access.Logger", "..\..\AccesoAPI\LIN.Access.Logger\LIN.Access.Logger.csproj", "{C30F14B1-5E35-46F2-9A15-568F6DA65256}"
 EndProject
 Global
@@ -27,14 +23,6 @@ Global
 		{9F6D48CB-6459-4F1D-9B58-EF82E6EFACEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F6D48CB-6459-4F1D-9B58-EF82E6EFACEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F6D48CB-6459-4F1D-9B58-EF82E6EFACEB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC831B88-040A-48F4-95FF-A29DE9565183}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC831B88-040A-48F4-95FF-A29DE9565183}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC831B88-040A-48F4-95FF-A29DE9565183}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC831B88-040A-48F4-95FF-A29DE9565183}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0FB5D9C9-97AB-4F67-9C58-D983CA535645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0FB5D9C9-97AB-4F67-9C58-D983CA535645}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0FB5D9C9-97AB-4F67-9C58-D983CA535645}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0FB5D9C9-97AB-4F67-9C58-D983CA535645}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C30F14B1-5E35-46F2-9A15-568F6DA65256}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C30F14B1-5E35-46F2-9A15-568F6DA65256}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C30F14B1-5E35-46F2-9A15-568F6DA65256}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,6 +1,5 @@
 ﻿namespace LIN.Inventory.Data;
 
-
 /// <summary>
 /// Nuevo contexto a la base de datos
 /// </summary>

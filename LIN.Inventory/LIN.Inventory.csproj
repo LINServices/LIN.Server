@@ -7,14 +7,14 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="LIN.Access.Auth" Version="1.0.0" />
+    <PackageReference Include="LIN.Access.Contacts" Version="1.0.0" />
     <PackageReference Include="LIN.Types.Inventory" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\AccesoAPI\LIN.Access.Auth\LIN.Access.Auth.csproj" />
-    <ProjectReference Include="..\..\..\AccesoAPI\LIN.Access.Contacts\LIN.Access.Contacts.csproj" />
     <ProjectReference Include="..\..\..\AccesoAPI\LIN.Access.Logger\LIN.Access.Logger.csproj" />
     <ProjectReference Include="..\..\..\Tipos\Http\Http.csproj" />
   </ItemGroup>

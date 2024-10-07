@@ -99,10 +99,7 @@ public class Jwt
             }
             catch (SecurityTokenException)
             {
-
             }
-
-
         }
         catch (Exception)
         {

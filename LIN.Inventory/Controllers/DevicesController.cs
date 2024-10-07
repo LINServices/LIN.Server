@@ -1,6 +1,5 @@
 namespace LIN.Inventory.Controllers;
 
-
 [Route("[controller]")]
 public class DevicesController : ControllerBase
 {

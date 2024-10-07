@@ -1,12 +1,9 @@
 ﻿using LIN.Inventory.Data;
-using LIN.Inventory.Services.Interfaces;
 
 namespace LIN.Inventory.Extensions;
 
-
 public static class ServicesExtensions
 {
-
 
     /// <summary>
     /// Agregar LIN Services.
@@ -34,8 +31,6 @@ public static class ServicesExtensions
     }
 
 
-
-
     /// <summary>
     /// Agregar LIN Services.
     /// </summary>
@@ -43,7 +38,6 @@ public static class ServicesExtensions
     {
         Jwt.Set(configuration["jwt:key"] ?? string.Empty);
         return app;
-
     }
 
 }

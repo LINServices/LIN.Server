@@ -1,15 +1,10 @@
-﻿using Azure;
-using LIN.Inventory.Data;
-using LIN.Inventory.Data.Query;
-using LIN.Types.Responses;
+﻿using LIN.Inventory.Data;
 
 namespace LIN.Inventory.Hubs;
 
-
 public class HubService(IHubContext<InventoryHub> hubContext, Context context) : IHubService
 {
-
-    const string GroupName = "group.{0}";
+    private const string GroupName = "group.{0}";
 
 
     /// <summary>
