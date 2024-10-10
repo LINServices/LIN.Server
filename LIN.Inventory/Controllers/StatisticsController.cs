@@ -45,7 +45,7 @@ public class StatisticsController(Data.Statistics statisticsData) : Controller
             {
                 LastWeekSalesTotal = lastWeekSales.Result.Model,
                 WeekSalesTotal = weekSales.Result.Models.Sum(T => T.Money),
-                WeekSales = weekSales.Result.Models,
+                WeekSales = weekSales.Result.Models.ToList(),
                 TodaySalesTotal = daySales.Result.Model,
                 YesterdaySalesTotal = lastDaySales.Result.Model
             },
