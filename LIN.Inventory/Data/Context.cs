@@ -65,7 +65,7 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
 
         // Indices y identidad
         modelBuilder.Entity<ProfileModel>()
-           .HasIndex(e => e.AccountID)
+           .HasIndex(e => e.AccountId)
            .IsUnique();
 
         modelBuilder.Entity<ProductModel>()

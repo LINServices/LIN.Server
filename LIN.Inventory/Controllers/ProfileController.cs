@@ -58,7 +58,7 @@ public class ProfileController(Data.Profiles profileData) : ControllerBase
         // Unir las respuestas.
         var joins = (from Account in users.Models
                      join Profile in response.Models
-                     on Account.Id equals Profile.AccountID
+                     on Account.Id equals Profile.AccountId
                      select new SessionModel<ProfileModel>
                      {
                          Account = Account,

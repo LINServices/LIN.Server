@@ -56,7 +56,7 @@ public class AuthenticationController(Data.Profiles profilesData) : ControllerBa
                         Account = authResponse.Model,
                         Profile = new()
                         {
-                            AccountID = authResponse.Model.Id,
+                            AccountId = authResponse.Model.Id,
                             Creation = DateTime.Now
                         }
                     });
@@ -155,7 +155,7 @@ public class AuthenticationController(Data.Profiles profilesData) : ControllerBa
                         Account = authResponse.Model,
                         Profile = new()
                         {
-                            AccountID = authResponse.Model.Id,
+                            AccountId = authResponse.Model.Id,
                             Creation = DateTime.Now
                         }
                     });

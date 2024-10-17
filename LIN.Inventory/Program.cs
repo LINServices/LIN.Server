@@ -66,4 +66,11 @@ app.UseLocalServices(builder.Configuration);
 
 app.UseServiceLogging();
 
+builder.Services.AddDatabaseAction(() =>
+{
+    var context = app.Services.GetRequiredService<Context>();
+    context.Profiles.Where(x => x.Id == 0).FirstOrDefaultAsync();
+    return "Success";
+});
+
 app.Run();

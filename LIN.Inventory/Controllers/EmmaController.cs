@@ -83,7 +83,7 @@ public class EmmaController(Data.Profiles profileData, Data.Inventories inventor
 
 
 
-        var inventories = await inventoryData.ReadAll(profile.Model.ID);
+        var inventories = await inventoryData.ReadAll(profile.Model.Id);
 
 
 

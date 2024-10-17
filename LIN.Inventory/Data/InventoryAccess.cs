@@ -64,7 +64,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
             var res = from AI in context.AccesoInventarios
                       where AI.ProfileID == id && AI.State == InventoryAccessState.OnWait
                       join I in context.Inventarios on AI.Inventario equals I.ID
-                      join U in context.Profiles on I.Creador equals U.ID
+                      join U in context.Profiles on I.Creador equals U.Id
                       select new Notificacion()
                       {
                           ID = AI.ID,
@@ -107,7 +107,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
             var res = from AI in context.AccesoInventarios
                       where AI.ID == id && AI.State == InventoryAccessState.OnWait
                       join I in context.Inventarios on AI.Inventario equals I.ID
-                      join U in context.Profiles on I.Creador equals U.ID
+                      join U in context.Profiles on I.Creador equals U.Id
                       select new Notificacion()
                       {
                           ID = AI.ID,
@@ -183,7 +183,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
                       where AI.Inventario == inventario
                        && (AI.State == InventoryAccessState.Accepted
                        || AI.State == InventoryAccessState.OnWait)
-                      join U in context.Profiles on AI.ProfileID equals U.ID
+                      join U in context.Profiles on AI.ProfileID equals U.Id
                       select new Tuple<InventoryAcessDataModel, ProfileModel>(AI, U);
 
 

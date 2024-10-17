@@ -238,14 +238,14 @@ public class InventoryAccessController(IHubService hubService, Data.InventoryAcc
         var result = await inventoryAccess.ReadMembers(inventario);
 
 
-        var map = result.Models.Select(T => T.Item2.AccountID).ToList();
+        var map = result.Models.Select(T => T.Item2.AccountId).ToList();
 
         var users = await LIN.Access.Auth.Controllers.Account.Read(map, tokenAuth);
 
 
         var i = (from I in result.Models
                  join A in users.Models
-                 on I.Item2.AccountID equals A.Id
+                 on I.Item2.AccountId equals A.Id
                  select new IntegrantDataModel
                  {
                      State = I.Item1.State,
@@ -253,7 +253,7 @@ public class InventoryAccessController(IHubService hubService, Data.InventoryAcc
                      InventoryID = I.Item1.Inventario,
                      Nombre = A.Name,
                      Perfil = A.Profile,
-                     ProfileID = I.Item2.ID,
+                     ProfileID = I.Item2.Id,
                      Rol = I.Item1.Rol,
                      Usuario = A.Identity.Unique
                  }).ToList();

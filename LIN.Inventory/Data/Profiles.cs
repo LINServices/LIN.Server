@@ -10,7 +10,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
     public async Task<ReadOneResponse<ProfileModel>> Create(AuthModel<ProfileModel> data)
     {
 
-        data.Profile.ID = 0;
+        data.Profile.Id = 0;
 
         // Ejecución (Transacción)
         using (var transaction = context.Database.BeginTransaction())
@@ -23,7 +23,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
                 // Creación del inventario.
                 InventoryDataModel inventario = new()
                 {
-                    Creador = data.Profile.ID,
+                    Creador = data.Profile.Id,
                     Nombre = "Mi Inventario",
                     Direction = $"Inventario personal de {data.Account.Identity.Unique}"
                 };
@@ -39,7 +39,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
                     Inventario = inventario.ID,
                     State = InventoryAccessState.Accepted,
                     Rol = InventoryRoles.Administrator,
-                    ProfileID = data.Profile.ID
+                    ProfileID = data.Profile.Id
                 };
 
                 context.AccesoInventarios.Add(acceso);
