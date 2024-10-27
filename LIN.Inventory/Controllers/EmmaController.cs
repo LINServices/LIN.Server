@@ -122,7 +122,6 @@ public class EmmaController(Data.Profiles profileData, Data.Inventories inventor
               }
             }
             
-            
             {
               "name": "#say",
               "description": "Utiliza esta función para decirle algo al usuario como saludos o responder a preguntas.",

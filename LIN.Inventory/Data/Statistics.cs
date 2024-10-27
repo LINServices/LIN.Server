@@ -1,6 +1,5 @@
 ﻿namespace LIN.Inventory.Data;
 
-
 public class Statistics(Context context)
 {
 
@@ -92,6 +91,5 @@ public class Statistics(Context context)
 
         return new();
     }
-
 
 }

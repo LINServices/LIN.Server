@@ -1,9 +1,7 @@
 ﻿namespace LIN.Inventory.Data;
 
-
 public class Products(Context context, Access.Logger.Services.ILogger logger)
 {
-
 
     /// <summary>
     /// Crea un nuevo producto.
