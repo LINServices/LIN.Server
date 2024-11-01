@@ -1,12 +1,9 @@
 ﻿using LIN.Inventory.Data;
-using LIN.Inventory.Services.Interfaces;
 
 namespace LIN.Inventory.Services;
 
-
 internal class Iam(Context context) : IIam
 {
-
 
     /// <summary>
     /// Validar IAM.
@@ -41,7 +38,6 @@ internal class Iam(Context context) : IIam
     }
 
 
-
     /// <summary>
     /// Validar acceso.
     /// </summary>
@@ -62,7 +58,6 @@ internal class Iam(Context context) : IIam
 
         return access.Rol;
     }
-
 
 
     /// <summary>
@@ -88,7 +83,6 @@ internal class Iam(Context context) : IIam
     }
 
 
-
     /// <summary>
     /// Iam (BY Inflow)
     /// </summary>
@@ -110,7 +104,6 @@ internal class Iam(Context context) : IIam
 
         return access.Rol;
     }
-
 
 
     /// <summary>
@@ -136,7 +129,6 @@ internal class Iam(Context context) : IIam
     }
 
 
-
     /// <summary>
     /// Validar acceso.
     /// </summary>
@@ -155,7 +147,6 @@ internal class Iam(Context context) : IIam
         return (access != null);
 
     }
-
 
 
     /// <summary>
@@ -177,6 +168,5 @@ internal class Iam(Context context) : IIam
         // Retornar.
         return rol;
     }
-
 
 }

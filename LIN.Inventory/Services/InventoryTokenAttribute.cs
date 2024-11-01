@@ -2,7 +2,6 @@
 
 namespace LIN.Inventory.Services;
 
-
 public class InventoryTokenAttribute : ActionFilterAttribute
 {
 
