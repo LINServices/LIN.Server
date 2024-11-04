@@ -12,7 +12,7 @@ public class EmmaController(Data.Profiles profileData, Data.Inventories inventor
     /// <param name="tokenAuth">Token de identity.</param>
     /// <param name="consult">Consulta del usuario.</param>
     [HttpPost]
-    public async Task<HttpReadOneResponse<AssistantResponse>> Assistant([FromHeader] string tokenAuth, [FromBody] string consult)
+    public async Task<HttpReadOneResponse<LIN.Types.Cloud.OpenAssistant.Models.EmmaSchemaResponse>> Assistant([FromHeader] string tokenAuth, [FromBody] string consult)
     {
 
         // Cliente HTTP.
@@ -39,7 +39,7 @@ public class EmmaController(Data.Profiles profileData, Data.Inventories inventor
         var response = await result.Content.ReadAsStringAsync();
 
         // Objeto.
-        var assistantResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<ReadOneResponse<AssistantResponse>>(response);
+        var assistantResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<ReadOneResponse<Types.Cloud.OpenAssistant.Models.EmmaSchemaResponse>>(response);
 
         // Respuesta
         return assistantResponse ?? new(Responses.Undefined);
