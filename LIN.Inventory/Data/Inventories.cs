@@ -25,7 +25,6 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
                 // Guarda el inventario
                 await context.SaveChangesAsync();
 
-
                 // Accesos
                 DateTime dateTime = DateTime.Now;
                 foreach (var acceso in data.UsersAccess)
@@ -222,6 +221,5 @@ public class Inventories(Context context, Access.Logger.Services.ILogger logger)
 
         return new();
     }
-
 
 }
