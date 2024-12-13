@@ -8,7 +8,7 @@ using LIN.Inventory.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Logger.
-builder.Services.AddServiceLogging("LIN.INVENTORY");
+builder.Services.AddLocalServices();
 
 // Servicios.
 builder.Services.AddSignalR();
@@ -63,8 +63,6 @@ app.MapHub<InventoryHub>("/Realtime/inventory");
 
 app.UseRouting();
 app.UseLocalServices(builder.Configuration);
-
-app.UseServiceLogging();
 
 builder.Services.AddDatabaseAction(() =>
 {

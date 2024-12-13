@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Data;
 
-public class InventoryAccess(Context context, Access.Logger.Services.ILogger logger)
+public class InventoryAccess(Context context, ILogger<InventoryAccess> logger)
 {
 
     /// <summary>
@@ -42,7 +42,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -85,7 +85,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -128,7 +128,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -160,7 +160,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -198,7 +198,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -229,7 +229,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -259,7 +259,7 @@ public class InventoryAccess(Context context, Access.Logger.Services.ILogger log
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();

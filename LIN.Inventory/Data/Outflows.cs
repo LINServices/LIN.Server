@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Data;
 
-public class Outflows(Context context, Access.Logger.Services.ILogger logger)
+public class Outflows(Context context, ILogger<Outflows> logger)
 {
 
     /// <summary>
@@ -53,7 +53,7 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
                     // Si no existe el detalle
                     if (productoDetail == null)
                     {
-                        logger.Log($"No existe detail: {detail.ID}", Access.Logger.Models.LogLevels.Error);
+                        logger.LogWarning("No existe el detalle {detalle}", detail.ID);
                         throw new Exception();
                     }
 
@@ -86,7 +86,7 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
             {
                 transaction.Rollback();
                 context.Remove(data);
-                logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+                logger.LogWarning(ex, "Error");
             }
         }
 
@@ -164,7 +164,7 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -205,7 +205,7 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
         return new();
     }
@@ -236,7 +236,7 @@ public class Outflows(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
         return new();
     }

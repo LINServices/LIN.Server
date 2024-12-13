@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Data;
 
-public class Profiles(Context context, Access.Logger.Services.ILogger logger)
+public class Profiles(Context context, ILogger<Profiles> logger)
 {
 
     /// <summary>
@@ -53,7 +53,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
             catch (Exception ex)
             {
                 transaction.Rollback();
-                logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+                logger.LogWarning(ex, "Error");
                 if ((ex.InnerException?.Message.Contains("Violation of UNIQUE KEY constraint") ?? false) || (ex.InnerException?.Message.Contains("duplicate key") ?? false))
                     return new(Responses.ExistAccount);
             }
@@ -83,7 +83,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -111,7 +111,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -139,7 +139,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -167,7 +167,7 @@ public class Profiles(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();

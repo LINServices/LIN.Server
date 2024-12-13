@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Data;
 
-public class Products(Context context, Access.Logger.Services.ILogger logger)
+public class Products(Context context, ILogger<Products> logger)
 {
 
     /// <summary>
@@ -35,7 +35,7 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
             {
                 transaction.Rollback();
                 context.Remove(data);
-                logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+                logger.LogWarning(ex, "Error");
             }
         }
 
@@ -64,7 +64,7 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
         return new();
     }
@@ -91,7 +91,7 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -120,7 +120,7 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
         return new();
     }
@@ -208,7 +208,7 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
             catch (Exception ex)
             {
                 transaction.Rollback();
-                logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+                logger.LogWarning(ex, "Error");
             }
         }
 
@@ -256,7 +256,7 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
             catch (Exception ex)
             {
                 transaction.Rollback();
-                logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+                logger.LogWarning(ex, "Error");
             }
         }
 
@@ -296,7 +296,7 @@ public class Products(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();

@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Data;
 
-public class Inflows(Context context, Access.Logger.Services.ILogger logger)
+public class Inflows(Context context, ILogger<Inflows> logger)
 {
 
     /// <summary>
@@ -77,7 +77,7 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
             {
                 transaction.Rollback();
                 context.Remove(data);
-                logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+                logger.LogWarning(ex, "Error");
             }
         }
 
@@ -154,7 +154,7 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
@@ -196,7 +196,7 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
         return new();
     }
@@ -227,7 +227,7 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
         return new();
     }
@@ -275,7 +275,7 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
         return new();
     }
@@ -314,7 +314,7 @@ public class Inflows(Context context, Access.Logger.Services.ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Log(ex, Access.Logger.Models.LogLevels.Error);
+            logger.LogWarning(ex, "Error");
         }
 
         return new();
