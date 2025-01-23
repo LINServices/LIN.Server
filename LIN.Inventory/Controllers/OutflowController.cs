@@ -1,8 +1,10 @@
+using LIN.Inventory.Services.Reportes;
+
 namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class OutflowController(IHubService hubService, Data.Outflows outflowData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
+public class OutflowController(IHubService hubService, Data.Outflows outflowData, Data.Inventories inventoryData, IIam Iam, OutflowsReport outflowReport) : ControllerBase
 {
 
     /// <summary>
@@ -228,100 +230,10 @@ public class OutflowController(IHubService hubService, Data.Outflows outflowData
                 Response = Responses.Unauthorized
             };
 
+        // Renderizar el informe.
+        await outflowReport.Render(month,year, id);
 
-        // Obtiene el informe.
-        var resultTask = outflowData.Informe(month, year, id);
-
-
-        var inventoryTask = inventoryData.Read(id);
-
-
-        var result = await resultTask;
-        var inventory = await inventoryTask;
-
-
-        decimal gananciaTotal = 0;
-
-        string HTML = System.IO.File.ReadAllText("wwwroot/Plantillas/Informes/Salidas/General.html");
-
-        string rows = "";
-        foreach (var row in result.Models)
-        {
-            string tipo = "";
-            decimal ganancia = 0;
-
-            switch (row.Type)
-            {
-
-                case OutflowsTypes.None:
-                    continue;
-
-                case OutflowsTypes.Consumo:
-                    tipo = "Consumo Interno";
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    break;
-
-                case OutflowsTypes.Perdida:
-                    tipo = "Perdida";
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    break;
-
-                case OutflowsTypes.Caducidad:
-                    tipo = "Caducidad";
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    break;
-
-                case OutflowsTypes.Venta:
-                    tipo = "Venta";
-                    ganancia = (row.PrecioVenta - row.PrecioCompra) * row.Cantidad;
-                    break;
-
-                case OutflowsTypes.Fraude:
-                    tipo = "Fraude";
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    break;
-
-                case OutflowsTypes.Donacion:
-                    tipo = "Donación";
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    break;
-
-                default:
-                    continue;
-            }
-
-            gananciaTotal += ganancia;
-
-            string html = System.IO.File.ReadAllText("wwwroot/Plantillas/Informes/Salidas/Row.html"); ;
-
-            html = html.Replace("@Tipo", $"{tipo}");
-            html = html.Replace("@Codigo", $"{row.ProductCode}");
-            html = html.Replace("@Nombre", $"{row.ProductName}");
-            html = html.Replace("@Cantidad", $"{row.Cantidad}");
-            html = html.Replace("@Ganancia", $"{ganancia}");
-
-            html = ganancia < 0
-                ? html.Replace("@Color", "red-500")
-                : ganancia == 0 ? html.Replace("@Color", "black") : html.Replace("@Color", "green-600");
-
-            rows += html;
-        }
-
-
-        HTML = HTML.Replace("@Rows", rows);
-        HTML = HTML.Replace("@Ganancia", $"{gananciaTotal}");
-        HTML = HTML.Replace("@Date", $"{DateTime.Now:yyy.MM.dd}");
-        //HTML = HTML.Replace("@Mes", $"{Utilities.IntToMonth(month)}");
-        HTML = HTML.Replace("@Año", $"{year}");
-        //HTML = HTML.Replace("@Name", $"{user.Model.Nombre}");
-        HTML = HTML.Replace("@Direccion", $"{inventory.Model.Direction}");
-        HTML = HTML.Replace("@Inventario", $"{inventory.Model.Nombre}");
-
-
-        var x = HTML;
-
-        //var response = await LIN.Access.Developer.Controllers.PDF.ConvertHTML(HTML);
-
+        System.IO.File.WriteAllText("wwwroot/Plantillas/Informes/Salidas/Prueba.html", outflowReport.Html);
 
         //if (response.File.Length <= 0)
         return new(Responses.UnavailableService);

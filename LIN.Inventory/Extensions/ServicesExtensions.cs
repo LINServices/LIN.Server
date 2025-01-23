@@ -1,4 +1,5 @@
 ﻿using LIN.Inventory.Data;
+using LIN.Inventory.Services.Reportes;
 
 namespace LIN.Inventory.Extensions;
 
@@ -19,6 +20,7 @@ public static class ServicesExtensions
         services.AddScoped<Products, Products>();
         services.AddScoped<Profiles, Profiles>();
         services.AddScoped<Statistics, Statistics>();
+        services.AddScoped<OutflowsReport, OutflowsReport>();
 
         // Hubs.
         services.AddScoped<IHubService, HubService>();

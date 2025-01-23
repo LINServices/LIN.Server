@@ -121,7 +121,6 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
         modelBuilder.Entity<ProductDetailModel>().ToTable("PRODUCT_DETAILS");
         modelBuilder.Entity<ProductModel>().ToTable("PRODUCTS");
         modelBuilder.Entity<InventoryAcessDataModel>().ToTable("INVENTORY_ACCESS");
-
     }
 
 }

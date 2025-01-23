@@ -20,7 +20,7 @@ builder.Services.AddLocalServices();
 builder.Services.AddAuthenticationService(builder.Configuration["services:auth"]);
 builder.Services.AddContactsService(builder.Configuration["services:contacts"]);
 
-builder.Services.AddDbContextPool<Context>(options =>
+builder.Services.AddDbContext<Context>(options =>
   {
       options.UseSqlServer(builder.Configuration["ConnectionStrings:Somee"]);
   });
