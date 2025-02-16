@@ -53,7 +53,6 @@ public class Inflows(Context context, ILogger<Inflows> logger)
                                          && dt.Estado == ProductStatements.Normal
                                          select dt);
 
-
                     // Ajustar.
                     if (data.Type == InflowsTypes.Ajuste)
                         await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => detail.Cantidad));

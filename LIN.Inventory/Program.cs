@@ -17,7 +17,7 @@ builder.Services.AddLINHttp();
 builder.Services.AddLocalServices();
 
 // LIN Services.
-builder.Services.AddAuthenticationService(builder.Configuration["services:auth"]);
+builder.Services.AddAuthenticationService(builder.Configuration["services:auth"], builder.Configuration["lin:app"]);
 builder.Services.AddContactsService(builder.Configuration["services:contacts"]);
 
 builder.Services.AddDbContext<Context>(options =>
