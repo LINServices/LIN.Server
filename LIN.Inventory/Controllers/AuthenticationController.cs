@@ -2,7 +2,7 @@
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 10, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class AuthenticationController(Data.Profiles profilesData) : ControllerBase
+public class AuthenticationController(Persistence.Data.Profiles profilesData) : ControllerBase
 {
 
     /// <summary>

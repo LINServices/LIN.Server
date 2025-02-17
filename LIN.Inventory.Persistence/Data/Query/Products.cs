@@ -1,4 +1,8 @@
-﻿namespace LIN.Inventory.Data.Query;
+﻿using LIN.Types.Inventory.Enumerations;
+using LIN.Types.Inventory.Models;
+
+
+namespace LIN.Inventory.Persistence.Data.Query;
 
 
 public static class Products
@@ -9,7 +13,7 @@ public static class Products
     /// </summary>
     /// <param name="id">Id del producto</param>
     /// <param name="context">Contexto de conexión</param>
-    public static IQueryable<ProductModel> Read(int id, Context context)
+    public static IQueryable<ProductModel> Read(int id, Context.Context context)
     {
 
         // Consulta
@@ -38,7 +42,7 @@ public static class Products
     /// </summary>
     /// <param name="id">Id de el detalle</param>
     /// <param name="context">Contexto de conexión</param>
-    public static IQueryable<ProductModel> ReadByDetail(int id, Context context)
+    public static IQueryable<ProductModel> ReadByDetail(int id, Context.Context context)
     {
 
         // Consulta
@@ -67,7 +71,7 @@ public static class Products
     /// </summary>
     /// <param name="id">Id del inventario</param>
     /// <param name="context">Contexto de conexión</param>
-    public static IQueryable<ProductModel> ReadAll(int id, Context context)
+    public static IQueryable<ProductModel> ReadAll(int id, Context.Context context)
     {
 
         var query = from P in context.Productos

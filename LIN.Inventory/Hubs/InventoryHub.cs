@@ -1,9 +1,6 @@
-﻿using LIN.Inventory.Data;
-using LIN.Inventory.Services.Interfaces;
+﻿namespace LIN.Inventory.Hubs;
 
-namespace LIN.Inventory.Hubs;
-
-public class InventoryHub(Context context, IIam Iam) : Hub
+public class InventoryHub(Persistence.Context.Context context, IIam Iam) : Hub
 {
 
     /// <summary>

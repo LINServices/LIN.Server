@@ -1,4 +1,4 @@
-﻿using LIN.Inventory.Data;
+﻿using LIN.Inventory.Persistence.Context;
 
 namespace LIN.Inventory.Services;
 

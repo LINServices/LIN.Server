@@ -1,8 +1,7 @@
-﻿using LIN.Inventory.Data;
-
+﻿
 namespace LIN.Inventory.Hubs;
 
-public class HubService(IHubContext<InventoryHub> hubContext, Context context) : IHubService
+public class HubService(IHubContext<InventoryHub> hubContext, Persistence.Context.Context context) : IHubService
 {
     private const string GroupName = "group.{0}";
 

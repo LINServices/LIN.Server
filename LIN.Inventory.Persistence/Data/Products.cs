@@ -1,6 +1,13 @@
-﻿namespace LIN.Inventory.Data;
+﻿using LIN.Types.Inventory.Enumerations;
+using LIN.Types.Inventory.Models;
+using LIN.Types.Responses;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-public class Products(Context context, ILogger<Products> logger)
+
+namespace LIN.Inventory.Persistence.Data;
+
+public class Products(Context.Context context, ILogger<Products> logger)
 {
 
     /// <summary>

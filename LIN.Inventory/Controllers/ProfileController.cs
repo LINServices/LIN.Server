@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 10, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class ProfileController(Data.Profiles profileData) : ControllerBase
+public class ProfileController(Persistence.Data.Profiles profileData) : ControllerBase
 {
 
     /// <summary>

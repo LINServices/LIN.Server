@@ -1,5 +1,4 @@
-﻿using LIN.Inventory.Data;
-using LIN.Inventory.Services.Reportes;
+﻿using LIN.Inventory.Services.Reportes;
 
 namespace LIN.Inventory.Extensions;
 

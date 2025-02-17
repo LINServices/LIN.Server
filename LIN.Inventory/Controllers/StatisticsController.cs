@@ -2,7 +2,7 @@
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 5, timeWindowSeconds: 60, blockDurationSeconds: 150)]
-public class StatisticsController(Data.Statistics statisticsData) : Controller
+public class StatisticsController(Persistence.Data.Statistics statisticsData) : Controller
 {
 
     /// <summary>

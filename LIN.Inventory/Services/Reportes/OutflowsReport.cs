@@ -1,6 +1,4 @@
-﻿using LIN.Inventory.Data;
-
-namespace LIN.Inventory.Services.Reportes;
+﻿namespace LIN.Inventory.Services.Reportes;
 
 public class OutflowsReport(Outflows outflowData) : BaseReport
 {

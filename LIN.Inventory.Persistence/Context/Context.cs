@@ -1,4 +1,7 @@
-﻿namespace LIN.Inventory.Data;
+﻿using LIN.Types.Inventory.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace LIN.Inventory.Persistence.Context;
 
 /// <summary>
 /// Nuevo contexto a la base de datos
@@ -112,15 +115,15 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
           .HasForeignKey(t => t.ProductDetailId)
           .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<ProfileModel>().ToTable("PROFILES");
-        modelBuilder.Entity<InventoryDataModel>().ToTable("INVENTORIES");
-        modelBuilder.Entity<InflowDataModel>().ToTable("INFLOWS");
-        modelBuilder.Entity<OutflowDataModel>().ToTable("OUTFLOWS");
-        modelBuilder.Entity<InflowDetailsDataModel>().ToTable("INFLOW_DETAILS");
-        modelBuilder.Entity<OutflowDetailsDataModel>().ToTable("OUTFLOW_DETAILS");
-        modelBuilder.Entity<ProductDetailModel>().ToTable("PRODUCT_DETAILS");
-        modelBuilder.Entity<ProductModel>().ToTable("PRODUCTS");
-        modelBuilder.Entity<InventoryAcessDataModel>().ToTable("INVENTORY_ACCESS");
+        modelBuilder.Entity<ProfileModel>().ToTable("Profile");
+        modelBuilder.Entity<InventoryDataModel>().ToTable("Inventory");
+        modelBuilder.Entity<InflowDataModel>().ToTable("Inflow");
+        modelBuilder.Entity<OutflowDataModel>().ToTable("Outflow");
+        modelBuilder.Entity<InflowDetailsDataModel>().ToTable("InflowDetail");
+        modelBuilder.Entity<OutflowDetailsDataModel>().ToTable("OutflowDetail");
+        modelBuilder.Entity<ProductDetailModel>().ToTable("ProductDetail");
+        modelBuilder.Entity<ProductModel>().ToTable("Product");
+        modelBuilder.Entity<InventoryAcessDataModel>().ToTable("InventoryAccess");
     }
 
 }

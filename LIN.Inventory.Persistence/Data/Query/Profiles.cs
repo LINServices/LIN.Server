@@ -1,4 +1,6 @@
-﻿namespace LIN.Inventory.Data.Query;
+﻿using LIN.Types.Inventory.Models;
+
+namespace LIN.Inventory.Persistence.Data.Query;
 
 public class Profiles
 {
@@ -9,7 +11,7 @@ public class Profiles
     /// </summary>
     /// <param name="id">Id del usuario</param>
     /// <param name="context">Contexto</param>
-    public static IQueryable<ProfileModel> Read(int id, Context context)
+    public static IQueryable<ProfileModel> Read(int id, Context.Context context)
     {
         // Consulta
         var query = (from U in context.Profiles
@@ -26,12 +28,12 @@ public class Profiles
     /// </summary>
     /// <param name="id">Id del usuario</param>
     /// <param name="context">Contexto</param>
-    public static IQueryable<ProfileModel> Read(List<int> id, Context context)
+    public static IQueryable<ProfileModel> Read(List<int> id, Context.Context context)
     {
         // Consulta
-        var query = (from U in context.Profiles
-                     where id.Contains(U.Id)
-                     select U);
+        var query = from U in context.Profiles
+                    where id.Contains(U.Id)
+                    select U;
 
         return query;
 
@@ -43,12 +45,12 @@ public class Profiles
     /// </summary>
     /// <param name="id">Id del usuario</param>
     /// <param name="context">Contexto</param>
-    public static IQueryable<ProfileModel> ReadByAccounts(List<int> id, Context context)
+    public static IQueryable<ProfileModel> ReadByAccounts(List<int> id, Context.Context context)
     {
         // Consulta
-        var query = (from U in context.Profiles
-                     where id.Contains(U.AccountId)
-                     select U);
+        var query = from U in context.Profiles
+                    where id.Contains(U.AccountId)
+                    select U;
 
         return query;
 
@@ -60,7 +62,7 @@ public class Profiles
     /// </summary>
     /// <param name="id">Id del usuario</param>
     /// <param name="context">Contexto</param>
-    public static IQueryable<ProfileModel> ReadByAccount(int id, Context context)
+    public static IQueryable<ProfileModel> ReadByAccount(int id, Context.Context context)
     {
         // Consulta
         var query = (from U in context.Profiles

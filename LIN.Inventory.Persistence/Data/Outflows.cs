@@ -1,6 +1,13 @@
-﻿namespace LIN.Inventory.Data;
+﻿using LIN.Types.Inventory.Enumerations;
+using LIN.Types.Inventory.Models;
+using LIN.Types.Inventory.Transient;
+using LIN.Types.Responses;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-public class Outflows(Context context, ILogger<Outflows> logger)
+namespace LIN.Inventory.Persistence.Data;
+
+public class Outflows(Context.Context context, ILogger<Outflows> logger)
 {
 
     /// <summary>
@@ -151,7 +158,7 @@ public class Outflows(Context context, ILogger<Outflows> logger)
                                      where de.MovementId == id
                                      select de.Movement.Type == OutflowsTypes.Venta
                                      ? de.ProductDetail.PrecioVenta * de.Cantidad
-                                     : -(de.ProductDetail.PrecioCompra) * de.Cantidad).SumAsync();
+                                     : -de.ProductDetail.PrecioCompra * de.Cantidad).SumAsync();
 
             // Calcular utilidad.
             salida.Utilidad = await (from de in context.DetallesSalidas

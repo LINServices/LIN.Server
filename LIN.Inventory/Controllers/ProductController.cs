@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class ProductController(IHubService hubService, Data.Products productsData, Data.Inventories inventoryData, IIam Iam) : ControllerBase
+public class ProductController(IHubService hubService, Persistence.Data.Products productsData, Persistence.Data.Inventories inventoryData, IIam Iam) : ControllerBase
 {
 
     /// <summary>

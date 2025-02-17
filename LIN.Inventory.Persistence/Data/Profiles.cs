@@ -1,6 +1,14 @@
-﻿namespace LIN.Inventory.Data;
+﻿using LIN.Types.Cloud.Identity.Abstracts;
+using LIN.Types.Inventory.Enumerations;
+using LIN.Types.Inventory.Models;
+using LIN.Types.Responses;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-public class Profiles(Context context, ILogger<Profiles> logger)
+
+namespace LIN.Inventory.Persistence.Data;
+
+public class Profiles(Context.Context context, ILogger<Profiles> logger)
 {
 
     /// <summary>

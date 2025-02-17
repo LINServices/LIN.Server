@@ -1,6 +1,13 @@
-﻿namespace LIN.Inventory.Data;
+﻿using LIN.Types.Inventory.Enumerations;
+using LIN.Types.Inventory.Models;
+using LIN.Types.Inventory.Transient;
+using LIN.Types.Responses;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-public class Inflows(Context context, ILogger<Inflows> logger)
+namespace LIN.Inventory.Persistence.Data;
+
+public class Inflows(Context.Context context, ILogger<Inflows> logger)
 {
 
     /// <summary>
@@ -48,10 +55,10 @@ public class Inflows(Context context, ILogger<Inflows> logger)
                         throw new Exception("Invalid detail quantity");
 
                     // Producto
-                    var productDetail = (from dt in context.ProductoDetalles
-                                         where dt.Id == detail.ProductDetailId
-                                         && dt.Estado == ProductStatements.Normal
-                                         select dt);
+                    var productDetail = from dt in context.ProductoDetalles
+                                        where dt.Id == detail.ProductDetailId
+                                        && dt.Estado == ProductStatements.Normal
+                                        select dt;
 
                     // Ajustar.
                     if (data.Type == InflowsTypes.Ajuste)
@@ -145,7 +152,7 @@ public class Inflows(Context context, ILogger<Inflows> logger)
                                       select (
                                       de.Movement.Type == InflowsTypes.Compra
                                       ? (de.ProductDetail.PrecioVenta - de.ProductDetail.PrecioCompra) * de.Cantidad
-                                      : (de.Movement.Type == InflowsTypes.Regalo ? de.ProductDetail.PrecioVenta * de.Cantidad : 0))).SumAsync();
+                                      : de.Movement.Type == InflowsTypes.Regalo ? de.ProductDetail.PrecioVenta * de.Cantidad : 0)).SumAsync();
 
             // Retorna
             return new(Responses.Success, inflow);

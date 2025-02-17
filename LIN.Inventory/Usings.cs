@@ -1,6 +1,9 @@
-﻿global using Http.ResponsesList;
+﻿global using Http.Attributes;
+global using Http.ResponsesList;
 global using LIN.Inventory.Hubs;
+global using LIN.Inventory.Persistence.Data;
 global using LIN.Inventory.Services;
+global using LIN.Inventory.Services.Interfaces;
 global using LIN.Inventory.Services.Model;
 global using LIN.Types.Cloud.Identity.Abstracts;
 global using LIN.Types.Inventory.Enumerations;
@@ -12,5 +15,3 @@ global using Microsoft.AspNetCore.SignalR;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
 global using System.Text;
-global using LIN.Inventory.Services.Interfaces;
-global using Http.Attributes;

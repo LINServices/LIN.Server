@@ -2,7 +2,7 @@
 
 [Route("Inventory/access")]
 [RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class InventoryAccessController(IHubService hubService, Data.InventoryAccess inventoryAccess, IIam Iam) : ControllerBase
+public class InventoryAccessController(IHubService hubService, Persistence.Data.InventoryAccess inventoryAccess, IIam Iam) : ControllerBase
 {
 
     /// <summary>
@@ -252,7 +252,6 @@ public class InventoryAccessController(IHubService hubService, Data.InventoryAcc
                      AccessID = I.Item1.ID,
                      InventoryID = I.Item1.Inventario,
                      Nombre = A.Name,
-                     Perfil = A.Profile,
                      ProfileID = I.Item2.Id,
                      Rol = I.Item1.Rol,
                      Usuario = A.Identity.Unique

@@ -1,6 +1,12 @@
-﻿namespace LIN.Inventory.Data;
+﻿using LIN.Types.Inventory.Enumerations;
+using LIN.Types.Inventory.Transient;
+using LIN.Types.Responses;
+using Microsoft.EntityFrameworkCore;
 
-public class Statistics(Context context)
+
+namespace LIN.Inventory.Persistence.Data;
+
+public class Statistics(Context.Context context)
 {
 
     /// <summary>

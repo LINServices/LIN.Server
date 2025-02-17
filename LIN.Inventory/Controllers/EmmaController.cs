@@ -3,7 +3,7 @@ using LIN.Types.Cloud.OpenAssistant.Api;
 namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
-public class EmmaController(Data.Profiles profileData, Data.Inventories inventoryData, IConfiguration configuration) : ControllerBase
+public class EmmaController(Persistence.Data.Profiles profileData, Persistence.Data.Inventories inventoryData, IConfiguration configuration) : ControllerBase
 {
 
     /// <summary>

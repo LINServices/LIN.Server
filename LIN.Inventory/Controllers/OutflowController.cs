@@ -4,7 +4,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class OutflowController(IHubService hubService, Data.Outflows outflowData, Data.Inventories inventoryData, IIam Iam, OutflowsReport outflowReport) : ControllerBase
+public class OutflowController(IHubService hubService, Persistence.Data.Outflows outflowData, Persistence.Data.Inventories inventoryData, IIam Iam, OutflowsReport outflowReport) : ControllerBase
 {
 
     /// <summary>
@@ -231,7 +231,7 @@ public class OutflowController(IHubService hubService, Data.Outflows outflowData
             };
 
         // Renderizar el informe.
-        await outflowReport.Render(month,year, id);
+        await outflowReport.Render(month, year, id);
 
         System.IO.File.WriteAllText("wwwroot/Plantillas/Informes/Salidas/Prueba.html", outflowReport.Html);
 
