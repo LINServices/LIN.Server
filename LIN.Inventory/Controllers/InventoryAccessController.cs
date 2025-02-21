@@ -12,7 +12,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
     /// <param name="token">Token de acceso.</param>
     [HttpPost]
     [InventoryToken]
-    public async Task<HttpCreateResponse> Create([FromBody] InventoryAcessDataModel model, [FromHeader] string token)
+    public async Task<HttpCreateResponse> Create([FromBody] InventoryAccessDataModel model, [FromHeader] string token)
     {
 
         // Información del token.
@@ -55,7 +55,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
         if (result.Response == Responses.Success)
         {
             // Enviar en tiempo real.
-            await hubService.SendNotification(model.ProfileID, result.LastID);
+            await hubService.SendNotification(model.ProfileId, result.LastID);
         }
 
         // Retorna el resultado
@@ -249,10 +249,10 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
                  select new IntegrantDataModel
                  {
                      State = I.Item1.State,
-                     AccessID = I.Item1.ID,
-                     InventoryID = I.Item1.Inventario,
+                     AccessId = I.Item1.Id,
+                     InventoryId = I.Item1.Inventario,
                      Nombre = A.Name,
-                     ProfileID = I.Item2.Id,
+                     ProfileId = I.Item2.Id,
                      Rol = I.Item1.Rol,
                      Usuario = A.Identity.Unique
                  }).ToList();

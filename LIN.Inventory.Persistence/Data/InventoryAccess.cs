@@ -15,7 +15,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
     /// Crear acceso a inventario.
     /// </summary>
     /// <param name="model">Modelo.</param>
-    public async Task<CreateResponse> Create(InventoryAcessDataModel model)
+    public async Task<CreateResponse> Create(InventoryAccessDataModel model)
     {
 
         // Ejecución
@@ -23,9 +23,9 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
         {
             // Consultar si ya existe.
             var exist = await (from AI in context.AccesoInventarios
-                               where AI.ProfileID == model.ProfileID
+                               where AI.ProfileId == model.ProfileId
                                && AI.Inventario == model.Inventario
-                               select AI.ID).FirstOrDefaultAsync();
+                               select AI.Id).FirstOrDefaultAsync();
 
             // Si ya existe.
             if (exist > 0)
@@ -35,7 +35,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
                     Response = Responses.ResourceExist
                 };
 
-            model.ID = 0;
+            model.Id = 0;
 
             await context.AccesoInventarios.AddAsync(model);
 
@@ -43,7 +43,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
 
             return new(Responses.Success)
             {
-                LastID = model.ID
+                LastID = model.Id
             };
 
 
@@ -70,16 +70,16 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
 
             // Consulta
             var res = from AI in context.AccesoInventarios
-                      where AI.ProfileID == id && AI.State == InventoryAccessState.OnWait
-                      join I in context.Inventarios on AI.Inventario equals I.ID
+                      where AI.ProfileId == id && AI.State == InventoryAccessState.OnWait
+                      join I in context.Inventarios on AI.Inventario equals I.Id
                       join U in context.Profiles on I.Creador equals U.Id
                       select new Notificacion()
                       {
-                          ID = AI.ID,
+                          ID = AI.Id,
                           Fecha = AI.Fecha,
                           Inventario = I.Nombre,
                           //UsuarioInvitador = U.Id,
-                          InventarioID = I.ID
+                          InventarioID = I.Id
                       };
 
 
@@ -113,16 +113,16 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
 
             // Consulta
             var res = from AI in context.AccesoInventarios
-                      where AI.ID == id && AI.State == InventoryAccessState.OnWait
-                      join I in context.Inventarios on AI.Inventario equals I.ID
+                      where AI.Id == id && AI.State == InventoryAccessState.OnWait
+                      join I in context.Inventarios on AI.Inventario equals I.Id
                       join U in context.Profiles on I.Creador equals U.Id
                       select new Notificacion()
                       {
-                          ID = AI.ID,
+                          ID = AI.Id,
                           Fecha = AI.Fecha,
                           Inventario = I.Nombre,
                           //UsuarioInvitador = U.Id,
-                          InventarioID = I.ID
+                          InventarioID = I.Id
                       };
 
 
@@ -179,7 +179,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
     /// Obtiene la lista de integrantes de un inventario.
     /// </summary>
     /// <param name="inventario">Id del inventario</param>
-    public async Task<ReadAllResponse<Tuple<InventoryAcessDataModel, ProfileModel>>> ReadMembers(int inventario)
+    public async Task<ReadAllResponse<Tuple<InventoryAccessDataModel, ProfileModel>>> ReadMembers(int inventario)
     {
 
         // Ejecución
@@ -191,8 +191,8 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
                       where AI.Inventario == inventario
                        && (AI.State == InventoryAccessState.Accepted
                        || AI.State == InventoryAccessState.OnWait)
-                      join U in context.Profiles on AI.ProfileID equals U.Id
-                      select new Tuple<InventoryAcessDataModel, ProfileModel>(AI, U);
+                      join U in context.Profiles on AI.ProfileId equals U.Id
+                      select new Tuple<InventoryAccessDataModel, ProfileModel>(AI, U);
 
 
             var modelos = await res.ToListAsync();
@@ -228,7 +228,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
             // Actualizar estado.
             var result = await (from AI in context.AccesoInventarios
                                 where AI.Inventario == inventario
-                                where AI.ProfileID == profile
+                                where AI.ProfileId == profile
                                 select AI).ExecuteUpdateAsync(t => t.SetProperty(t => t.State, InventoryAccessState.Deleted).
                                                                    SetProperty(t => t.Rol, InventoryRoles.Banned));
 
@@ -258,7 +258,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
 
             // Actualizar rol.
             var result = await (from AI in context.AccesoInventarios
-                                where AI.ID == id
+                                where AI.Id == id
                                 && AI.State == InventoryAccessState.Accepted
                                 select AI).ExecuteUpdateAsync(t => t.SetProperty(t => t.Rol, rol));
 

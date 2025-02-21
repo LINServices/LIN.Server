@@ -17,7 +17,8 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
     public async Task<CreateResponse> Create(OutflowDataModel data)
     {
 
-        data.ID = 0;
+        data.Id = 0;
+        data.Profile = new() { Id = data.ProfileID };
 
         // Ejecución (Transacción)
         using (var transaction = context.Database.BeginTransaction())
@@ -29,11 +30,10 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                 data.Details = [];
 
                 context.Attach(data.Inventory);
+                context.Attach(data.Profile);
 
                 // Entrada base
                 await context.Salidas.AddAsync(data);
-
-
 
                 // Guarda cambios
                 context.SaveChanges();
@@ -42,7 +42,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                 foreach (var detail in details)
                 {
                     // Modelo
-                    detail.ID = 0;
+                    detail.Id = 0;
                     detail.Movement = data;
 
                     // Agregar los detalles.
@@ -60,7 +60,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                     // Si no existe el detalle
                     if (productoDetail == null)
                     {
-                        logger.LogWarning("No existe el detalle {detalle}", detail.ID);
+                        logger.LogWarning("No existe el detalle {detalle}", detail.Id);
                         throw new Exception();
                     }
 
@@ -87,7 +87,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
 
                 // Finaliza
                 transaction.Commit();
-                return new(Responses.Success, data.ID);
+                return new(Responses.Success, data.Id);
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
         try
         {
             // Selecciona la entrada
-            var salida = context.Salidas.FirstOrDefault(T => T.ID == id);
+            var salida = context.Salidas.Include(t => t.Profile).FirstOrDefault(T => T.Id == id);
 
             if (salida == null)
             {
@@ -127,7 +127,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                                         where de.MovementId == id
                                         select new OutflowDetailsDataModel
                                         {
-                                            ID = de.ID,
+                                            Id = de.Id,
                                             Cantidad = de.Cantidad,
                                             MovementId = de.MovementId,
                                             ProductDetailId = de.ProductDetailId,
@@ -194,12 +194,12 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                       orderby S.Date descending
                       select new OutflowDataModel()
                       {
-                          ID = S.ID,
+                          Id = S.Id,
                           Date = S.Date,
                           InventoryId = S.InventoryId,
                           ProfileID = S.ProfileID,
                           Type = S.Type,
-                          CountDetails = context.DetallesSalidas.Count(t => t.MovementId == S.ID)
+                          CountDetails = context.DetallesSalidas.Count(t => t.MovementId == S.Id)
                       };
 
             var lista = await res.ToListAsync();
@@ -232,7 +232,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
 
             // Update.
             var update = await (from outflow in context.Salidas
-                                where outflow.ID == id
+                                where outflow.Id == id
                                 select outflow).ExecuteUpdateAsync(t => t.SetProperty(t => t.Date, date));
 
             // Si no existe el modelo
@@ -269,7 +269,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                         && E.Date.Year == year && E.Date.Month == month
 
                         join ED in context.DetallesSalidas
-                        on E.ID equals ED.MovementId
+                        on E.Id equals ED.MovementId
 
                         join P in context.ProductoDetalles
                         on ED.ProductDetailId equals P.Id

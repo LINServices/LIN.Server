@@ -41,13 +41,13 @@ public class Profiles(Context.Context context, ILogger<Profiles> logger)
                 context.SaveChanges();
 
                 // Acceso a inventario.
-                InventoryAcessDataModel acceso = new()
+                InventoryAccessDataModel acceso = new()
                 {
                     Fecha = DateTime.Now,
-                    Inventario = inventario.ID,
+                    Inventario = inventario.Id,
                     State = InventoryAccessState.Accepted,
                     Rol = InventoryRoles.Administrator,
-                    ProfileID = data.Profile.Id
+                    ProfileId = data.Profile.Id
                 };
 
                 context.AccesoInventarios.Add(acceso);

@@ -48,7 +48,7 @@ internal class Iam(Context context) : IIam
 
         // Query.
         var access = await (from P in context.AccesoInventarios
-                            where P.Inventario == inventory && P.ProfileID == profile
+                            where P.Inventario == inventory && P.ProfileId == profile
                             where P.State == InventoryAccessState.Accepted
                             select new { P.Rol }).FirstOrDefaultAsync();
 
@@ -72,7 +72,7 @@ internal class Iam(Context context) : IIam
                             join AI in context.AccesoInventarios
                             on P.InventoryId equals AI.Inventario
                             where AI.State == InventoryAccessState.Accepted
-                            where AI.ProfileID == profile
+                            where AI.ProfileId == profile
                             select new { AI.Rol }).FirstOrDefaultAsync();
 
         // Si no hay.
@@ -91,11 +91,11 @@ internal class Iam(Context context) : IIam
 
         // Query.
         var access = await (from P in context.Entradas
-                            where P.ID == id
+                            where P.Id == id
                             join AI in context.AccesoInventarios
                             on P.InventoryId equals AI.Inventario
                             where AI.State == InventoryAccessState.Accepted
-                            where AI.ProfileID == profile
+                            where AI.ProfileId == profile
                             select new { AI.Rol }).FirstOrDefaultAsync();
 
         // Si no hay.
@@ -114,11 +114,11 @@ internal class Iam(Context context) : IIam
 
         // Query.
         var access = await (from P in context.Salidas
-                            where P.ID == id
+                            where P.Id == id
                             join AI in context.AccesoInventarios
                             on P.InventoryId equals AI.Inventario
                             where AI.State == InventoryAccessState.Accepted
-                            where AI.ProfileID == profile
+                            where AI.ProfileId == profile
                             select new { AI.Rol }).FirstOrDefaultAsync();
 
         // Si no hay.
@@ -139,7 +139,7 @@ internal class Iam(Context context) : IIam
 
         // Query.
         var access = await (from P in context.AccesoInventarios
-                            where P.ID == id && P.ProfileID == profile
+                            where P.Id == id && P.ProfileId == profile
                             where P.State == InventoryAccessState.OnWait
                             select new { P.Rol }).FirstOrDefaultAsync();
 
@@ -159,7 +159,7 @@ internal class Iam(Context context) : IIam
 
         // Query.
         var inventory = await (from P in context.AccesoInventarios
-                               where P.ID == accessId
+                               where P.Id == accessId
                                select P.Inventario).FirstOrDefaultAsync();
 
         // Rol.

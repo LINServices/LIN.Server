@@ -17,7 +17,7 @@ public class Inventories(Context.Context context, ILogger<Inventories> logger)
     {
 
         // Modelo
-        data.ID = 0;
+        data.Id = 0;
 
         // Transacción
         using (var transaction = context.Database.BeginTransaction())
@@ -36,9 +36,9 @@ public class Inventories(Context.Context context, ILogger<Inventories> logger)
                 foreach (var acceso in data.UsersAccess)
                 {
                     // Propiedades
-                    acceso.ID = 0;
+                    acceso.Id = 0;
                     acceso.Fecha = dateTime;
-                    acceso.Inventario = data.ID;
+                    acceso.Inventario = data.Id;
 
                     // Accesos
                     context.AccesoInventarios.Add(acceso);
@@ -50,7 +50,7 @@ public class Inventories(Context.Context context, ILogger<Inventories> logger)
 
                 // Finaliza
                 transaction.Commit();
-                return new(Responses.Success, data.ID);
+                return new(Responses.Success, data.Id);
             }
             catch (Exception ex)
             {
@@ -74,7 +74,7 @@ public class Inventories(Context.Context context, ILogger<Inventories> logger)
         // Ejecución
         try
         {
-            var res = await context.Inventarios.FirstOrDefaultAsync(T => T.ID == id);
+            var res = await context.Inventarios.FirstOrDefaultAsync(T => T.Id == id);
 
             // Si no existe el modelo
             if (res == null)
@@ -103,14 +103,14 @@ public class Inventories(Context.Context context, ILogger<Inventories> logger)
         {
 
             var res = from AI in context.AccesoInventarios
-                      where AI.ProfileID == id && AI.State == InventoryAccessState.Accepted
-                      join I in context.Inventarios on AI.Inventario equals I.ID
+                      where AI.ProfileId == id && AI.State == InventoryAccessState.Accepted
+                      join I in context.Inventarios on AI.Inventario equals I.Id
                       select new InventoryDataModel()
                       {
                           MyRol = AI.Rol,
                           Creador = I.Creador,
                           Direction = I.Direction,
-                          ID = I.ID,
+                          Id = I.Id,
                           Nombre = I.Nombre,
                           UsersAccess = I.UsersAccess
                       };
@@ -152,7 +152,7 @@ public class Inventories(Context.Context context, ILogger<Inventories> logger)
         {
 
             var res = await (from I in context.Inventarios
-                             where I.ID == id
+                             where I.Id == id
                              select I).ExecuteUpdateAsync(t => t.SetProperty(a => a.Nombre, name).SetProperty(a => a.Direction, description));
 
 

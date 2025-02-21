@@ -12,7 +12,10 @@ builder.Services.AddLocalServices();
 // Servicios.
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddLINHttp();
+builder.Services.AddLINHttp(options: (option) =>
+{
+    option.CustomSchemaIds(type => type.FullName);
+});
 builder.Services.AddLocalServices();
 
 // LIN Services.

@@ -23,15 +23,15 @@ public class Statistics(Context.Context context)
 
             // Consulta.
             var query = from AI in context.AccesoInventarios
-                        where AI.ProfileID == profile
+                        where AI.ProfileId == profile
                         && AI.State == InventoryAccessState.Accepted
-                        join I in context.Inventarios on AI.Inventario equals I.ID
-                        join S in context.Salidas on I.ID equals S.InventoryId
+                        join I in context.Inventarios on AI.Inventario equals I.Id
+                        join S in context.Salidas on I.Id equals S.InventoryId
                         where S.ProfileID == profile
                         && S.Type == OutflowsTypes.Venta
                         && S.Date >= initDate
                         && S.Date <= endDate
-                        join SD in context.DetallesSalidas on S.ID equals SD.MovementId
+                        join SD in context.DetallesSalidas on S.Id equals SD.MovementId
                         join P in context.ProductoDetalles on SD.ProductDetailId equals P.Id
                         orderby S.Date
                         select P.PrecioVenta * SD.Cantidad;
@@ -70,15 +70,15 @@ public class Statistics(Context.Context context)
 
             // Selecciona la entrada
             var query = await (from AI in context.AccesoInventarios
-                               where AI.ProfileID == profile
+                               where AI.ProfileId == profile
                                && AI.State == InventoryAccessState.Accepted
-                               join I in context.Inventarios on AI.Inventario equals I.ID
-                               join S in context.Salidas on I.ID equals S.InventoryId
+                               join I in context.Inventarios on AI.Inventario equals I.Id
+                               join S in context.Salidas on I.Id equals S.InventoryId
                                where S.ProfileID == profile
                                && S.Type == OutflowsTypes.Venta
                                && S.Date >= initDate
                                && S.Date <= endDate
-                               join SD in context.DetallesSalidas on S.ID equals SD.MovementId
+                               join SD in context.DetallesSalidas on S.Id equals SD.MovementId
                                join P in context.ProductoDetalles on SD.ProductDetailId equals P.Id
                                orderby S.Date
                                select new SalesModel

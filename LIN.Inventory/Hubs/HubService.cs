@@ -83,8 +83,8 @@ public class HubService(IHubContext<InventoryHub> hubContext, Persistence.Contex
                          where i.State == InventoryAccessState.OnWait
                          select new
                          {
-                             Profile = i.ProfileID,
-                             Id = i.ID,
+                             Profile = i.ProfileId,
+                             Id = i.Id,
                          }).ToListAsync();
 
 
@@ -108,7 +108,7 @@ public class HubService(IHubContext<InventoryHub> hubContext, Persistence.Contex
     {
         // Realtime.
         string groupName = $"inventory.{inventoryId}";
-        string command = $"addInflow({movement}, true)";
+        string command = $"addInflow({movement})";
         await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
         {
             Command = command,
@@ -124,7 +124,7 @@ public class HubService(IHubContext<InventoryHub> hubContext, Persistence.Contex
     {
         // Realtime.
         string groupName = $"inventory.{inventoryId}";
-        string command = $"addOutflow({movement}, true)";
+        string command = $"addOutflow({movement})";
         await hubContext.Clients.Group(groupName).SendAsync("#command", new CommandModel()
         {
             Command = command,

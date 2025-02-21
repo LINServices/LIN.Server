@@ -60,7 +60,7 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     /// <summary>
     /// Acceso a los Inventarios
     /// </summary>
-    public DbSet<InventoryAcessDataModel> AccesoInventarios { get; set; }
+    public DbSet<InventoryAccessDataModel> AccesoInventarios { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -98,6 +98,17 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
          .WithOne(t => t.Movement)
          .HasForeignKey(t => t.MovementId);
 
+
+        modelBuilder.Entity<InflowDataModel>()
+       .HasOne(t => t.Profile)
+       .WithMany()
+       .HasForeignKey(t => t.ProfileID);
+
+        modelBuilder.Entity<OutflowDataModel>()
+     .HasOne(t => t.Profile)
+     .WithMany()
+     .HasForeignKey(t => t.ProfileID);
+
         modelBuilder.Entity<InflowDetailsDataModel>()
           .HasOne(t => t.ProductDetail)
           .WithMany()
@@ -123,7 +134,7 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
         modelBuilder.Entity<OutflowDetailsDataModel>().ToTable("OutflowDetail");
         modelBuilder.Entity<ProductDetailModel>().ToTable("ProductDetail");
         modelBuilder.Entity<ProductModel>().ToTable("Product");
-        modelBuilder.Entity<InventoryAcessDataModel>().ToTable("InventoryAccess");
+        modelBuilder.Entity<InventoryAccessDataModel>().ToTable("InventoryAccess");
     }
 
 }

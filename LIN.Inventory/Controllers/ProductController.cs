@@ -71,7 +71,7 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
         // Establecer el modelo.
         modelo.Inventory = new()
         {
-            ID = modelo.InventoryId
+            Id = modelo.InventoryId
         };
 
         // Crear.

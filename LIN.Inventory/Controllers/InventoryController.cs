@@ -29,7 +29,7 @@ public class InventoryController(IHubService hubService, Persistence.Data.Invent
         foreach (var access in modelo.UsersAccess)
         {
             access.Fecha = DateTime.Now;
-            if (modelo.Creador == access.ProfileID)
+            if (modelo.Creador == access.ProfileId)
             {
                 access.Rol = InventoryRoles.Administrator;
                 access.State = InventoryAccessState.Accepted;

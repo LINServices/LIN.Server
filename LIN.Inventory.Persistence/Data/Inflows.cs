@@ -18,7 +18,8 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
     {
 
         // Modelo
-        data.ID = 0;
+        data.Id = 0;
+        data.Profile = new() { Id = data.ProfileID };
 
         // Ejecución (Transacción)
         using (var transaction = context.Database.BeginTransaction())
@@ -31,6 +32,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                 data.Details = [];
 
                 context.Attach(data.Inventory);
+                context.Attach(data.Profile);
 
                 // Entrada base
                 await context.Entradas.AddAsync(data);
@@ -42,7 +44,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                 foreach (var detail in details)
                 {
                     // Modelo details
-                    detail.ID = 0;
+                    detail.Id = 0;
                     detail.Movement = data;
 
                     // Agregar los detalles.
@@ -76,7 +78,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
 
                 // Finaliza
                 transaction.Commit();
-                return new(Responses.Success, data.ID);
+                return new(Responses.Success, data.Id);
 
             }
             catch (Exception ex)
@@ -104,8 +106,16 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
 
             // Consulta.
             InflowDataModel? inflow = await (from i in context.Entradas
-                                             where i.ID == id
-                                             select i).FirstOrDefaultAsync();
+                                             where i.Id == id
+                                             select new InflowDataModel
+                                             {
+                                                 Id = i.Id,
+                                                 Date = i.Date,
+                                                 Type = i.Type,
+                                                 InventoryId = i.InventoryId,
+                                                 Profile = i.Profile,
+                                                 ProfileID = i.ProfileID
+                                             }).FirstOrDefaultAsync();
 
             // Validar.
             if (inflow == null)
@@ -120,7 +130,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                                         where de.MovementId == id
                                         select new InflowDetailsDataModel
                                         {
-                                            ID = de.ID,
+                                            Id = de.Id,
                                             Cantidad = de.Cantidad,
                                             MovementId = de.MovementId,
                                             ProductDetailId = de.ProductDetailId,
@@ -183,12 +193,12 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                       orderby E.Date descending
                       select new InflowDataModel()
                       {
-                          ID = E.ID,
+                          Id = E.Id,
                           Date = E.Date,
                           InventoryId = E.InventoryId,
                           ProfileID = E.ProfileID,
                           Type = E.Type,
-                          CountDetails = context.DetallesEntradas.Count(t => t.MovementId == E.ID)
+                          CountDetails = context.DetallesEntradas.Count(t => t.MovementId == E.Id)
                       };
 
             var lista = await res.ToListAsync();
@@ -222,7 +232,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
 
             // Update.
             var update = await (from inflow in context.Entradas
-                                where inflow.ID == id
+                                where inflow.Id == id
                                 select inflow).ExecuteUpdateAsync(t => t.SetProperty(t => t.Date, date));
 
             // Si no existe el modelo
@@ -258,7 +268,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                         && E.Date.Year == year
                         && E.Date.Month == month
                         join ED in context.DetallesEntradas
-                        on E.ID equals ED.MovementId
+                        on E.Id equals ED.MovementId
                         join P in context.ProductoDetalles
                         on ED.ProductDetailId equals P.Id
                         select new InflowRow
@@ -304,11 +314,11 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
 
             // Selecciona la entrada
             var query = from AI in context.AccesoInventarios
-                        where AI.ProfileID == id && AI.State == InventoryAccessState.Accepted
-                        join I in context.Inventarios on AI.Inventario equals I.ID
-                        join E in context.Entradas on I.ID equals E.InventoryId
+                        where AI.ProfileId == id && AI.State == InventoryAccessState.Accepted
+                        join I in context.Inventarios on AI.Inventario equals I.Id
+                        join E in context.Entradas on I.Id equals E.InventoryId
                         where E.ProfileID == id && E.Type == InflowsTypes.Compra && E.Date >= lastDate
-                        join SD in context.DetallesSalidas on E.ID equals SD.MovementId
+                        join SD in context.DetallesSalidas on E.Id equals SD.MovementId
                         select SD;
 
 

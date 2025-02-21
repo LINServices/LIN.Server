@@ -34,7 +34,7 @@ public static class PersistenceExtensions
         {
             var scope = app.ApplicationServices.CreateScope();
             var context = scope.ServiceProvider.GetService<Persistence.Context.Context>();
-            context?.Database.EnsureCreated();
+            bool? created = context?.Database.EnsureCreated();
         }
         catch (Exception)
         {

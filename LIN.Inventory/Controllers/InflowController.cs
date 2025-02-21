@@ -22,7 +22,7 @@ public class InflowController(IHubService hubService, Inflows inflowData, IIam I
         modelo.ProfileID = tokenInfo.ProfileId;
 
         // Comprobaciones
-        if (!modelo.Details.Any() || modelo.Type == InflowsTypes.Undefined)
+        if (modelo.Details.Count == 0 || modelo.Type == InflowsTypes.Undefined)
             return new(Responses.InvalidParam);
 
         // Acceso Iam.
@@ -47,7 +47,7 @@ public class InflowController(IHubService hubService, Inflows inflowData, IIam I
         // Generar el modelo.
         modelo.Inventory = new()
         {
-            ID = modelo.InventoryId
+            Id = modelo.InventoryId
         };
 
         // Crea la nueva entrada.
