@@ -55,7 +55,7 @@ public class InflowController(IHubService hubService, Inflows inflowData, IIam I
 
         // Enviar notificación en tiempo real.
         if (response.Response == Responses.Success)
-            await hubService.SendInflowMovement(modelo.InventoryId, response.LastID);
+            await hubService.SendInflowMovement(modelo.InventoryId, response.LastId);
 
         // Respuesta.
         return response;

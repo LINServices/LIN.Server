@@ -79,7 +79,7 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
 
         // Enviar en tiempo real.
         if (response.Response == Responses.Success)
-            await hubService.SendNewProduct(modelo.InventoryId, response.LastID);
+            await hubService.SendNewProduct(modelo.InventoryId, response.LastId);
 
         return response;
 

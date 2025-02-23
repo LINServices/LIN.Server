@@ -16,7 +16,7 @@ public class ContactsController : ControllerBase
     {
 
         // Comprobación de campos
-        if (modelo.Nombre.Length <= 0)
+        if (modelo.Name.Length <= 0)
             return new(Responses.InvalidParam);
 
         // Obtiene el resultado

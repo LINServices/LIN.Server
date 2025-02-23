@@ -48,7 +48,7 @@ public class InventoryController(IHubService hubService, Persistence.Data.Invent
             return response;
 
         // Enviar notificación.
-        await hubService.SendNotification(response.LastID);
+        await hubService.SendNotification(response.LastId);
 
         // Retorna
         return response;

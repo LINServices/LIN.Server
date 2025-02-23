@@ -31,7 +31,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
             if (exist > 0)
                 return new()
                 {
-                    LastID = exist,
+                    LastId = exist,
                     Response = Responses.ResourceExist
                 };
 
@@ -43,7 +43,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
 
             return new(Responses.Success)
             {
-                LastID = model.Id
+                LastId = model.Id
             };
 
 

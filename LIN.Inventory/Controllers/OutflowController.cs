@@ -55,7 +55,7 @@ public class OutflowController(IHubService hubService, Persistence.Data.Outflows
 
         // Enviar notificación en tiempo real.
         if (response.Response == Responses.Success)
-            await hubService.SendOutflowMovement(modelo.InventoryId, response.LastID);
+            await hubService.SendOutflowMovement(modelo.InventoryId, response.LastId);
 
         return response;
 

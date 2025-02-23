@@ -47,7 +47,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
         // Si el recurso ya existe.
         if (result.Response == Responses.ResourceExist)
         {
-            var update = await inventoryAccess.UpdateState(result.LastID, InventoryAccessState.OnWait);
+            var update = await inventoryAccess.UpdateState(result.LastId, InventoryAccessState.OnWait);
             result.Response = update.Response;
         }
 
@@ -55,14 +55,14 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
         if (result.Response == Responses.Success)
         {
             // Enviar en tiempo real.
-            await hubService.SendNotification(model.ProfileId, result.LastID);
+            await hubService.SendNotification(model.ProfileId, result.LastId);
         }
 
         // Retorna el resultado
         return new CreateResponse()
         {
             Response = result.Response,
-            LastID = result.LastID
+            LastId = result.LastId
         };
 
     }
