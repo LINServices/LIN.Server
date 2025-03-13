@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Inventory", "LIN.Inventory\LIN.Inventory.csproj", "{71DADCA5-4F3E-4B0C-9E88-786F966FD4EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIN.Access.Logger", "..\..\AccesoAPI\LIN.Access.Logger\LIN.Access.Logger.csproj", "{C30F14B1-5E35-46F2-9A15-568F6DA65256}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIN.Inventory.Persistence", "LIN.Inventory.Persistence\LIN.Inventory.Persistence.csproj", "{DD2DC186-9239-464F-B66A-85B2886989EE}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{71DADCA5-4F3E-4B0C-9E88-786F966FD4EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71DADCA5-4F3E-4B0C-9E88-786F966FD4EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71DADCA5-4F3E-4B0C-9E88-786F966FD4EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C30F14B1-5E35-46F2-9A15-568F6DA65256}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C30F14B1-5E35-46F2-9A15-568F6DA65256}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C30F14B1-5E35-46F2-9A15-568F6DA65256}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C30F14B1-5E35-46F2-9A15-568F6DA65256}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DD2DC186-9239-464F-B66A-85B2886989EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DD2DC186-9239-464F-B66A-85B2886989EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD2DC186-9239-464F-B66A-85B2886989EE}.Release|Any CPU.ActiveCfg = Release|Any CPU

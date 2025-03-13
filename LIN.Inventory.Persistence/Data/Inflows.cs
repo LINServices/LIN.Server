@@ -70,7 +70,6 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                     else
                         await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity + detail.Cantidad));
 
-
                 }
 
                 // Guarda los detalles

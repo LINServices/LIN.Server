@@ -7,10 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Http.Utils" Version="3.1.0" />
+		<PackageReference Include="Http.Utils" Version="4.0.5" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\AccesoAPI\LIN.Access.Logger\LIN.Access.Logger.csproj" />
 		<ProjectReference Include="..\LIN.Inventory.Persistence\LIN.Inventory.Persistence.csproj" />
 	</ItemGroup>
 	<ItemGroup>
