@@ -48,7 +48,7 @@ public class OutflowController(IHubService hubService, Persistence.Data.Outflows
         {
             Id = modelo.InventoryId
         };
-        modelo.ProfileID = tokenInfo.ProfileId;
+        modelo.ProfileId = tokenInfo.ProfileId;
 
         // Crea la nueva entrada
         var response = await outflowData.Create(modelo);

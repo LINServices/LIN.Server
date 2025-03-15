@@ -24,7 +24,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
             // Consultar si ya existe.
             var exist = await (from AI in context.AccesoInventarios
                                where AI.ProfileId == model.ProfileId
-                               && AI.Inventario == model.Inventario
+                               && AI.InventoryId == model.InventoryId
                                select AI.Id).FirstOrDefaultAsync();
 
             // Si ya existe.
@@ -71,13 +71,13 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
             // Consulta
             var res = from AI in context.AccesoInventarios
                       where AI.ProfileId == id && AI.State == InventoryAccessState.OnWait
-                      join I in context.Inventarios on AI.Inventario equals I.Id
-                      join U in context.Profiles on I.Creador equals U.Id
+                      join I in context.Inventarios on AI.InventoryId equals I.Id
+                      join U in context.Profiles on I.CreatorId equals U.Id
                       select new Notificacion()
                       {
                           ID = AI.Id,
-                          Fecha = AI.Fecha,
-                          Inventario = I.Nombre,
+                          Fecha = AI.Date,
+                          Inventario = I.Name,
                           //UsuarioInvitador = U.Id,
                           InventarioID = I.Id
                       };
@@ -114,13 +114,13 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
             // Consulta
             var res = from AI in context.AccesoInventarios
                       where AI.Id == id && AI.State == InventoryAccessState.OnWait
-                      join I in context.Inventarios on AI.Inventario equals I.Id
-                      join U in context.Profiles on I.Creador equals U.Id
+                      join I in context.Inventarios on AI.InventoryId equals I.Id
+                      join U in context.Profiles on I.CreatorId equals U.Id
                       select new Notificacion()
                       {
                           ID = AI.Id,
-                          Fecha = AI.Fecha,
-                          Inventario = I.Nombre,
+                          Fecha = AI.Date,
+                          Inventario = I.Name,
                           //UsuarioInvitador = U.Id,
                           InventarioID = I.Id
                       };
@@ -188,7 +188,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
 
             // Consulta
             var res = from AI in context.AccesoInventarios
-                      where AI.Inventario == inventario
+                      where AI.InventoryId == inventario
                        && (AI.State == InventoryAccessState.Accepted
                        || AI.State == InventoryAccessState.OnWait)
                       join U in context.Profiles on AI.ProfileId equals U.Id
@@ -227,7 +227,7 @@ public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> l
 
             // Actualizar estado.
             var result = await (from AI in context.AccesoInventarios
-                                where AI.Inventario == inventario
+                                where AI.InventoryId == inventario
                                 where AI.ProfileId == profile
                                 select AI).ExecuteUpdateAsync(t => t.SetProperty(t => t.State, InventoryAccessState.Deleted).
                                                                    SetProperty(t => t.Rol, InventoryRoles.Banned));

@@ -19,7 +19,7 @@ public class InflowController(IHubService hubService, Inflows inflowData, IIam I
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Establecer el perfil.
-        modelo.ProfileID = tokenInfo.ProfileId;
+        modelo.ProfileId = tokenInfo.ProfileId;
 
         // Comprobaciones
         if (modelo.Details.Count == 0 || modelo.Type == InflowsTypes.Undefined)
@@ -49,6 +49,7 @@ public class InflowController(IHubService hubService, Inflows inflowData, IIam I
         {
             Id = modelo.InventoryId
         };
+        modelo.IsAccepted = true;
 
         // Crea la nueva entrada.
         var response = await inflowData.Create(modelo);

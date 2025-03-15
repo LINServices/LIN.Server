@@ -79,7 +79,7 @@ public class HubService(IHubContext<InventoryHub> hubContext, Persistence.Contex
     {
 
         var ids = await (from i in context.AccesoInventarios
-                         where i.Inventario == inventory
+                         where i.InventoryId == inventory
                          where i.State == InventoryAccessState.OnWait
                          select new
                          {

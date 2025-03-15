@@ -31,8 +31,8 @@ public class Profiles(Context.Context context, ILogger<Profiles> logger)
                 // Creación del inventario.
                 InventoryDataModel inventario = new()
                 {
-                    Creador = data.Profile.Id,
-                    Nombre = "Mi Inventario",
+                    CreatorId = data.Profile.Id,
+                    Name = "Mi Inventario",
                     Direction = $"Inventario personal de {data.Account.Identity.Unique}"
                 };
 
@@ -43,8 +43,8 @@ public class Profiles(Context.Context context, ILogger<Profiles> logger)
                 // Acceso a inventario.
                 InventoryAccessDataModel acceso = new()
                 {
-                    Fecha = DateTime.Now,
-                    Inventario = inventario.Id,
+                    Date = DateTime.Now,
+                    InventoryId = inventario.Id,
                     State = InventoryAccessState.Accepted,
                     Rol = InventoryRoles.Administrator,
                     ProfileId = data.Profile.Id

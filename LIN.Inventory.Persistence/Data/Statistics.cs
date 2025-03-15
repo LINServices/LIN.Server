@@ -25,16 +25,16 @@ public class Statistics(Context.Context context)
             var query = from AI in context.AccesoInventarios
                         where AI.ProfileId == profile
                         && AI.State == InventoryAccessState.Accepted
-                        join I in context.Inventarios on AI.Inventario equals I.Id
+                        join I in context.Inventarios on AI.InventoryId equals I.Id
                         join S in context.Salidas on I.Id equals S.InventoryId
-                        where S.ProfileID == profile
-                        && S.Type == OutflowsTypes.Venta
+                        where S.ProfileId == profile
+                        && S.Type == OutflowsTypes.Purchase
                         && S.Date >= initDate
                         && S.Date <= endDate
                         join SD in context.DetallesSalidas on S.Id equals SD.MovementId
                         join P in context.ProductoDetalles on SD.ProductDetailId equals P.Id
                         orderby S.Date
-                        select P.PrecioVenta * SD.Cantidad;
+                        select P.SalePrice * SD.Quantity;
 
 
             // Contar.
@@ -72,10 +72,10 @@ public class Statistics(Context.Context context)
             var query = await (from AI in context.AccesoInventarios
                                where AI.ProfileId == profile
                                && AI.State == InventoryAccessState.Accepted
-                               join I in context.Inventarios on AI.Inventario equals I.Id
+                               join I in context.Inventarios on AI.InventoryId equals I.Id
                                join S in context.Salidas on I.Id equals S.InventoryId
-                               where S.ProfileID == profile
-                               && S.Type == OutflowsTypes.Venta
+                               where S.ProfileId == profile
+                               && S.Type == OutflowsTypes.Purchase
                                && S.Date >= initDate
                                && S.Date <= endDate
                                join SD in context.DetallesSalidas on S.Id equals SD.MovementId
@@ -83,7 +83,7 @@ public class Statistics(Context.Context context)
                                orderby S.Date
                                select new SalesModel
                                {
-                                   Money = P.PrecioVenta * SD.Cantidad,
+                                   Money = P.SalePrice * SD.Quantity,
                                    Date = S.Date
                                }).ToListAsync();
 

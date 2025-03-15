@@ -10,6 +10,7 @@
 		<PackageReference Include="Http.Utils" Version="4.0.5" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\AccesoAPI\LIN.Access.Payments\LIN.Access.Payments.csproj" />
 		<ProjectReference Include="..\LIN.Inventory.Persistence\LIN.Inventory.Persistence.csproj" />
 	</ItemGroup>
 	<ItemGroup>

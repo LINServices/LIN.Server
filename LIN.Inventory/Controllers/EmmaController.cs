@@ -99,7 +99,7 @@ public class EmmaController(Persistence.Data.Profiles profileData, Persistence.D
 
         foreach (var i in inventories.Models)
         {
-            final += $$"""{ Nombre: {{i.Nombre}}, MiRol: {{i.MyRol}}, Id: {{i.Id}} }""" + "\n";
+            final += $$"""{ Nombre: {{i.Name}}, MiRol: {{i.MyRol}}, Id: {{i.Id}} }""" + "\n";
         }
 
 

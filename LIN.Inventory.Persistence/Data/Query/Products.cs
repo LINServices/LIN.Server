@@ -29,7 +29,7 @@ public static class Products
                         Image = P.Image,
                         Name = P.Name,
                         InventoryId = P.InventoryId,
-                        Details = P.Details.Where(t => t.Estado == ProductStatements.Normal).Take(1).ToList(),
+                        Details = P.Details.Where(t => t.Status == ProductStatements.Normal).Take(1).ToList(),
                     };
 
         return query;
@@ -87,7 +87,7 @@ public static class Products
                         Image = P.Image,
                         Name = P.Name,
                         InventoryId = P.InventoryId,
-                        Details = P.Details.Where(t => t.Estado == ProductStatements.Normal).Take(1).ToList()
+                        Details = P.Details.Where(t => t.Status == ProductStatements.Normal).Take(1).ToList()
                     };
 
         return query;

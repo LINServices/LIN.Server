@@ -19,17 +19,17 @@ public class InventoryController(IHubService hubService, Persistence.Data.Invent
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Comprobaciones
-        if (!modelo.UsersAccess.Any() || !modelo.Nombre.Any() || !modelo.Direction.Any())
+        if (!modelo.UsersAccess.Any() || !modelo.Name.Any() || !modelo.Direction.Any())
             return new(Responses.InvalidParam);
 
         // Establecer el creador.
-        modelo.Creador = tokenInfo.ProfileId;
+        modelo.CreatorId = tokenInfo.ProfileId;
 
         // Modelo
         foreach (var access in modelo.UsersAccess)
         {
-            access.Fecha = DateTime.Now;
-            if (modelo.Creador == access.ProfileId)
+            access.Date = DateTime.Now;
+            if (modelo.CreatorId == access.ProfileId)
             {
                 access.Rol = InventoryRoles.Administrator;
                 access.State = InventoryAccessState.Accepted;

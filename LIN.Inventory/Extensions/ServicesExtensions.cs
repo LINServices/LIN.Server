@@ -20,6 +20,10 @@ public static class ServicesExtensions
         services.AddScoped<Profiles, Profiles>();
         services.AddScoped<Statistics, Statistics>();
         services.AddScoped<OutflowsReport, OutflowsReport>();
+        services.AddScoped<HoldsRepository>();
+        services.AddScoped<OpenStoreSettingsRepository>();
+        services.AddScoped<HoldsGroupRepository>();
+        services.AddScoped<OrdersRepository>();
 
         // Hubs.
         services.AddScoped<IHubService, HubService>();

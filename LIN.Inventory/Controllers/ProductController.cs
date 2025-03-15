@@ -42,12 +42,11 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
             };
 
         // Comprobaciones
-        if (modelo.InventoryId <= 0 || modelo.DetailModel!.Quantity < 0 || modelo.DetailModel.PrecioCompra < 0 || modelo.DetailModel.PrecioVenta < 0)
+        if (modelo.InventoryId <= 0 || modelo.DetailModel!.Quantity < 0 || modelo.DetailModel.PurchasePrice < 0 || modelo.DetailModel.SalePrice < 0)
             return new(Responses.InvalidParam)
             {
                 Message = "Uno o varios parámetros son inválidos."
             };
-
 
         // Acceso Iam.
         var iam = await Iam.Validate(new IamRequest()
@@ -56,6 +55,10 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
             Id = modelo.InventoryId,
             Profile = tokenInfo.ProfileId
         });
+
+        // Estados.
+        modelo.Statement = ProductBaseStatements.Normal;
+        modelo.DetailModel.Status = ProductStatements.Normal;
 
         // Roles.
         InventoryRoles[] acceptedRoles = [InventoryRoles.Member, InventoryRoles.Administrator, InventoryRoles.Supervisor];

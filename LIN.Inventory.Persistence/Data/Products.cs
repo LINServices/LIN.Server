@@ -198,7 +198,7 @@ public class Products(Context.Context context, ILogger<Products> logger)
                 // Actualizar el estado anterior.
                 var update = await (from PD in context.ProductoDetalles
                                     where PD.ProductId == id
-                                    select PD).ExecuteUpdateAsync(t => t.SetProperty(t => t.Estado, ProductStatements.Deprecated));
+                                    select PD).ExecuteUpdateAsync(t => t.SetProperty(t => t.Status, ProductStatements.Deprecated));
 
                 // Definir producto.
                 context.Attach(data.Product);

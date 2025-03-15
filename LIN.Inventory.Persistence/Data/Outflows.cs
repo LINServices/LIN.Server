@@ -1,4 +1,5 @@
-﻿using LIN.Types.Inventory.Enumerations;
+﻿using LIN.Inventory.Persistence.Extensions;
+using LIN.Types.Inventory.Enumerations;
 using LIN.Types.Inventory.Models;
 using LIN.Types.Inventory.Transient;
 using LIN.Types.Responses;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LIN.Inventory.Persistence.Data;
 
-public class Outflows(Context.Context context, ILogger<Outflows> logger)
+public class Outflows(Context.Context context, ILogger<Outflows> logger, Inflows inflows)
 {
 
     /// <summary>
@@ -18,7 +19,15 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
     {
 
         data.Id = 0;
-        data.Profile = new() { Id = data.ProfileID };
+        data.InflowRelatedId = null;
+        if (data.ProfileId.HasValue && data.ProfileId > 0)
+            data.Profile = new() { Id = data.ProfileId.Value };
+        else
+        {
+            data.Profile = null;
+            data.ProfileId = null;
+        }
+
 
         // Ejecución (Transacción)
         using (var transaction = context.Database.BeginTransaction())
@@ -30,7 +39,12 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                 data.Details = [];
 
                 context.Attach(data.Inventory);
-                context.Attach(data.Profile);
+
+                if (data.Profile is not null)
+                    context.Attach(data.Profile);
+
+                if (data.InflowRelated is not null)
+                    data.InflowRelated = context.AttachOrUpdate(data.InflowRelated);
 
                 // Entrada base
                 await context.Salidas.AddAsync(data);
@@ -48,14 +62,13 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                     // Agregar los detalles.
                     context.DetallesSalidas.Add(detail);
 
-                    context.Attach(detail.ProductDetail);
+                    detail.ProductDetail = context.AttachOrUpdate(detail.ProductDetail);
 
-                    if (detail.Cantidad <= 0)
+                    if (detail.Quantity <= 0)
                         throw new Exception("Invalid detail quantity");
 
-
                     // Detalle de un producto
-                    var productoDetail = context.ProductoDetalles.Where(T => T.Id == detail.ProductDetailId && T.Estado == ProductStatements.Normal).Select(t => new { t.Quantity }).FirstOrDefault();
+                    var productoDetail = context.ProductoDetalles.Where(T => T.Id == detail.ProductDetailId && T.Status == ProductStatements.Normal).Select(t => new { t.Quantity }).FirstOrDefault();
 
                     // Si no existe el detalle
                     if (productoDetail == null)
@@ -64,10 +77,8 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                         throw new Exception();
                     }
 
-
                     // Nuevos datos
-                    int newStock = productoDetail.Quantity - detail.Cantidad;
-
+                    int newStock = productoDetail.Quantity - detail.Quantity;
 
                     // Si el producto no tiene suficiente stock
                     if (newStock < 0)
@@ -75,12 +86,9 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                         return new(Responses.InvalidParam, -1, $"El producto no tiene stock suficiente");
                     }
 
-
-                    await context.ProductoDetalles.Where(t => t.Id == detail.ProductDetailId).ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity - detail.Cantidad));
-
+                    await context.ProductoDetalles.Where(t => t.Id == detail.ProductDetailId).ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity - detail.Quantity));
 
                 }
-
 
                 // Guarda los detalles
                 await context.SaveChangesAsync();
@@ -128,7 +136,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                                         select new OutflowDetailsDataModel
                                         {
                                             Id = de.Id,
-                                            Cantidad = de.Cantidad,
+                                            Quantity = de.Quantity,
                                             MovementId = de.MovementId,
                                             ProductDetailId = de.ProductDetailId,
                                             ProductDetail = new()
@@ -151,20 +159,20 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
             // Calcular inversion.
             salida.Inversion = await (from de in context.DetallesSalidas
                                       where de.MovementId == id
-                                      select de.ProductDetail.PrecioCompra * de.Cantidad).SumAsync();
+                                      select de.ProductDetail.PurchasePrice * de.Quantity).SumAsync();
 
             // Calcular ganancia / perdida.
             salida.Ganancia = await (from de in context.DetallesSalidas
                                      where de.MovementId == id
-                                     select de.Movement.Type == OutflowsTypes.Venta
-                                     ? de.ProductDetail.PrecioVenta * de.Cantidad
-                                     : -de.ProductDetail.PrecioCompra * de.Cantidad).SumAsync();
+                                     select de.Movement.Type == OutflowsTypes.Purchase
+                                     ? de.ProductDetail.SalePrice * de.Quantity
+                                     : -de.ProductDetail.PurchasePrice * de.Quantity).SumAsync();
 
             // Calcular utilidad.
             salida.Utilidad = await (from de in context.DetallesSalidas
-                                     where de.Movement.Type == OutflowsTypes.Venta
+                                     where de.Movement.Type == OutflowsTypes.Purchase
                                      where de.MovementId == id
-                                     select (de.ProductDetail.PrecioVenta - de.ProductDetail.PrecioCompra) * de.Cantidad).SumAsync();
+                                     select (de.ProductDetail.SalePrice - de.ProductDetail.PurchasePrice) * de.Quantity).SumAsync();
 
             // Retorna
             return new(Responses.Success, salida);
@@ -197,7 +205,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                           Id = S.Id,
                           Date = S.Date,
                           InventoryId = S.InventoryId,
-                          ProfileID = S.ProfileID,
+                          ProfileId = S.ProfileId,
                           Type = S.Type,
                           CountDetails = context.DetallesSalidas.Count(t => t.MovementId == S.Id)
                       };
@@ -276,12 +284,12 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
                         select new OutflowRow
                         {
                             ProductId = P.ProductId,
-                            PrecioCompra = P.PrecioCompra,
-                            PrecioVenta = P.PrecioVenta,
+                            PrecioCompra = P.PurchasePrice,
+                            PrecioVenta = P.SalePrice,
                             Fecha = E.Date,
                             ProductCode = P.Product.Code,
                             ProductName = P.Product.Name,
-                            Cantidad = ED.Cantidad,
+                            Cantidad = ED.Quantity,
                             Type = E.Type
                         };
 
@@ -290,6 +298,62 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger)
 
             // Retorna
             return new(Responses.Success, models);
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new();
+    }
+
+
+    public async Task<ResponseBase> Reverse(int order)
+    {
+
+        // Ejecución
+        try
+        {
+
+            // reversar las ordenes.
+            var qq = await (from ss in context.Salidas
+                            where ss.OrderId == order
+                            select ss).ExecuteUpdateAsync(t => t.SetProperty(a => a.Status, MovementStatus.Reversed));
+
+
+            var outflow = await (from ss in context.Salidas
+                                 where ss.OrderId == order
+                                 select ss).Include(t=>t.Inventory).FirstOrDefaultAsync();
+
+
+            var outflowDetails = await (from ss in context.Salidas
+                                        where ss.OrderId == order
+                                        select ss.Details).FirstOrDefaultAsync();
+
+
+            // Agregar productos al inventario como Entrada Pendiente.
+            var inflow = new InflowDataModel()
+            {
+                Status = MovementStatus.Accepted,
+                Date = DateTime.Now,
+                Type = InflowsTypes.Refund,
+                Inventory = outflow?.Inventory,
+                Profile = null,
+                IsAccepted = false,
+                OutflowRelated = outflow,
+                Details = outflowDetails?.Select(t => new InflowDetailsDataModel()
+                {
+                    ProductDetail = t.ProductDetail,
+                    ProductDetailId = t.ProductDetailId,
+                    Quantity = t.Quantity,
+                })?.ToList() ?? []
+            };
+
+            var res = await inflows.Create(inflow);
+
+
+            // Retorna
+            return new(Responses.Success);
 
         }
         catch (Exception)

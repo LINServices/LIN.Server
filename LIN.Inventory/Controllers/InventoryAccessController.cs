@@ -22,7 +22,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
-            Id = model.Inventario,
+            Id = model.InventoryId,
             Profile = tokenInfo.ProfileId
         });
 
@@ -39,7 +39,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
 
         // Data.
         model.State = InventoryAccessState.OnWait;
-        model.Fecha = DateTime.Now;
+        model.Date = DateTime.Now;
 
         // Crear acceso.
         var result = await inventoryAccess.Create(model);
@@ -250,11 +250,11 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
                  {
                      State = I.Item1.State,
                      AccessId = I.Item1.Id,
-                     InventoryId = I.Item1.Inventario,
-                     Nombre = A.Name,
+                     InventoryId = I.Item1.InventoryId,
+                     Name = A.Name,
                      ProfileId = I.Item2.Id,
                      Rol = I.Item1.Rol,
-                     Usuario = A.Identity.Unique
+                     User = A.Identity.Unique
                  }).ToList();
 
 

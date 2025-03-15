@@ -48,7 +48,7 @@ internal class Iam(Context context) : IIam
 
         // Query.
         var access = await (from P in context.AccesoInventarios
-                            where P.Inventario == inventory && P.ProfileId == profile
+                            where P.InventoryId == inventory && P.ProfileId == profile
                             where P.State == InventoryAccessState.Accepted
                             select new { P.Rol }).FirstOrDefaultAsync();
 
@@ -70,7 +70,7 @@ internal class Iam(Context context) : IIam
         var access = await (from P in context.Productos
                             where P.Id == id
                             join AI in context.AccesoInventarios
-                            on P.InventoryId equals AI.Inventario
+                            on P.InventoryId equals AI.InventoryId
                             where AI.State == InventoryAccessState.Accepted
                             where AI.ProfileId == profile
                             select new { AI.Rol }).FirstOrDefaultAsync();
@@ -93,7 +93,7 @@ internal class Iam(Context context) : IIam
         var access = await (from P in context.Entradas
                             where P.Id == id
                             join AI in context.AccesoInventarios
-                            on P.InventoryId equals AI.Inventario
+                            on P.InventoryId equals AI.InventoryId
                             where AI.State == InventoryAccessState.Accepted
                             where AI.ProfileId == profile
                             select new { AI.Rol }).FirstOrDefaultAsync();
@@ -116,7 +116,7 @@ internal class Iam(Context context) : IIam
         var access = await (from P in context.Salidas
                             where P.Id == id
                             join AI in context.AccesoInventarios
-                            on P.InventoryId equals AI.Inventario
+                            on P.InventoryId equals AI.InventoryId
                             where AI.State == InventoryAccessState.Accepted
                             where AI.ProfileId == profile
                             select new { AI.Rol }).FirstOrDefaultAsync();
@@ -160,7 +160,7 @@ internal class Iam(Context context) : IIam
         // Query.
         var inventory = await (from P in context.AccesoInventarios
                                where P.Id == accessId
-                               select P.Inventario).FirstOrDefaultAsync();
+                               select P.InventoryId).FirstOrDefaultAsync();
 
         // Rol.
         var rol = await OnInventory(inventory, profile);

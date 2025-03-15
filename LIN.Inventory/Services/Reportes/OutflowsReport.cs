@@ -36,40 +36,40 @@ public class OutflowsReport(Outflows outflowData) : BaseReport
 
             switch (row.Type)
             {
-                case OutflowsTypes.Consumo:
+                case OutflowsTypes.Usage:
                     tipo = "Consumo Interno";
-                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
+                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
+                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
                     break;
 
-                case OutflowsTypes.Perdida:
+                case OutflowsTypes.Loss:
                     tipo = "Perdida";
-                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
+                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
+                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
                     break;
 
-                case OutflowsTypes.Caducidad:
+                case OutflowsTypes.Expiry:
                     tipo = "Caducidad";
-                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
+                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
+                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
                     break;
 
-                case OutflowsTypes.Venta:
+                case OutflowsTypes.Purchase:
                     tipo = "Venta";
                     utilidad = (row.PrecioVenta - row.PrecioCompra) * row.Cantidad;
                     ganancia = row.PrecioVenta * row.Cantidad;
                     break;
 
-                case OutflowsTypes.Fraude:
+                case OutflowsTypes.Fraud:
                     tipo = "Fraude";
-                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
+                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
+                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
                     break;
 
-                case OutflowsTypes.Donacion:
+                case OutflowsTypes.Contribution:
                     tipo = "Donación";
-                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
-                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioCompra) * row.Cantidad;
+                    utilidad = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
+                    ganancia = Global.Utilities.Math.ToNegative(row.PrecioVenta) * row.Cantidad;
                     break;
 
                 default:

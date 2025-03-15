@@ -1,4 +1,5 @@
-﻿using LIN.Types.Inventory.Enumerations;
+﻿using LIN.Inventory.Persistence.Extensions;
+using LIN.Types.Inventory.Enumerations;
 using LIN.Types.Inventory.Models;
 using LIN.Types.Inventory.Transient;
 using LIN.Types.Responses;
@@ -19,7 +20,14 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
 
         // Modelo
         data.Id = 0;
-        data.Profile = new() { Id = data.ProfileID };
+        data.OutflowRelatedId = null;
+        if (data.ProfileId.HasValue && data.ProfileId > 0)
+            data.Profile = new() { Id = data.ProfileId.Value };
+        else
+        {
+            data.Profile = null;
+            data.ProfileId = null;
+        }
 
         // Ejecución (Transacción)
         using (var transaction = context.Database.BeginTransaction())
@@ -32,7 +40,12 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                 data.Details = [];
 
                 context.Attach(data.Inventory);
-                context.Attach(data.Profile);
+
+                if (data.Profile is not null)
+                    context.Attach(data.Profile);
+
+                if (data.OutflowRelated is not null)
+                    data.OutflowRelated = context.AttachOrUpdate(data.OutflowRelated);
 
                 // Entrada base
                 await context.Entradas.AddAsync(data);
@@ -53,22 +66,26 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                     context.Attach(detail.ProductDetail);
 
                     // Si la cantidad es invalida
-                    if (detail.Cantidad <= 0 && data.Type != InflowsTypes.Ajuste || detail.Cantidad < 0 && data.Type == InflowsTypes.Ajuste)
+                    if (detail.Quantity <= 0 && data.Type != InflowsTypes.Correction || detail.Quantity < 0 && data.Type == InflowsTypes.Correction)
                         throw new Exception("Invalid detail quantity");
 
                     // Producto
                     var productDetail = from dt in context.ProductoDetalles
                                         where dt.Id == detail.ProductDetailId
-                                        && dt.Estado == ProductStatements.Normal
+                                        && dt.Status == ProductStatements.Normal
                                         select dt;
 
-                    // Ajustar.
-                    if (data.Type == InflowsTypes.Ajuste)
-                        await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => detail.Cantidad));
+                    if (data.IsAccepted)
+                    {
+                        // Ajustar.
+                        if (data.Type == InflowsTypes.Correction)
+                            await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => detail.Quantity));
 
-                    // Sumar.
-                    else
-                        await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity + detail.Cantidad));
+                        // Sumar.
+                        else
+                            await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity + detail.Quantity));
+
+                    }
 
                 }
 
@@ -113,7 +130,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                                                  Type = i.Type,
                                                  InventoryId = i.InventoryId,
                                                  Profile = i.Profile,
-                                                 ProfileID = i.ProfileID
+                                                 ProfileId = i.ProfileId
                                              }).FirstOrDefaultAsync();
 
             // Validar.
@@ -130,7 +147,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                                         select new InflowDetailsDataModel
                                         {
                                             Id = de.Id,
-                                            Cantidad = de.Cantidad,
+                                            Quantity = de.Quantity,
                                             MovementId = de.MovementId,
                                             ProductDetailId = de.ProductDetailId,
                                             ProductDetail = new()
@@ -151,17 +168,17 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
 
             // Calcular inversion.
             inflow.Inversion = await (from de in context.DetallesEntradas
-                                      where de.Movement.Type == InflowsTypes.Compra
+                                      where de.Movement.Type == InflowsTypes.Purchase
                                       where de.MovementId == id
-                                      select de.ProductDetail.PrecioCompra * de.Cantidad).SumAsync();
+                                      select de.ProductDetail.PurchasePrice * de.Quantity).SumAsync();
 
             // Calcular inversion.
             inflow.Prevision = await (from de in context.DetallesEntradas
                                       where de.MovementId == id
                                       select (
-                                      de.Movement.Type == InflowsTypes.Compra
-                                      ? (de.ProductDetail.PrecioVenta - de.ProductDetail.PrecioCompra) * de.Cantidad
-                                      : de.Movement.Type == InflowsTypes.Regalo ? de.ProductDetail.PrecioVenta * de.Cantidad : 0)).SumAsync();
+                                      de.Movement.Type == InflowsTypes.Purchase
+                                      ? (de.ProductDetail.SalePrice - de.ProductDetail.PurchasePrice) * de.Quantity
+                                      : de.Movement.Type == InflowsTypes.Gift ? de.ProductDetail.SalePrice * de.Quantity : 0)).SumAsync();
 
             // Retorna
             return new(Responses.Success, inflow);
@@ -195,7 +212,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                           Id = E.Id,
                           Date = E.Date,
                           InventoryId = E.InventoryId,
-                          ProfileID = E.ProfileID,
+                          ProfileId = E.ProfileId,
                           Type = E.Type,
                           CountDetails = context.DetallesEntradas.Count(t => t.MovementId == E.Id)
                       };
@@ -272,12 +289,12 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                         on ED.ProductDetailId equals P.Id
                         select new InflowRow
                         {
-                            PrecioCompra = P.PrecioCompra,
-                            PrecioVenta = P.PrecioVenta,
+                            PrecioCompra = P.PurchasePrice,
+                            PrecioVenta = P.SalePrice,
                             Fecha = E.Date,
                             ProductCode = P.Product.Code,
                             ProductName = P.Product.Name,
-                            Cantidad = ED.Cantidad,
+                            Cantidad = ED.Quantity,
                             Type = E.Type
                         };
 
@@ -314,9 +331,9 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
             // Selecciona la entrada
             var query = from AI in context.AccesoInventarios
                         where AI.ProfileId == id && AI.State == InventoryAccessState.Accepted
-                        join I in context.Inventarios on AI.Inventario equals I.Id
+                        join I in context.Inventarios on AI.InventoryId equals I.Id
                         join E in context.Entradas on I.Id equals E.InventoryId
-                        where E.ProfileID == id && E.Type == InflowsTypes.Compra && E.Date >= lastDate
+                        where E.ProfileId == id && E.Type == InflowsTypes.Purchase && E.Date >= lastDate
                         join SD in context.DetallesSalidas on E.Id equals SD.MovementId
                         select SD;
 
