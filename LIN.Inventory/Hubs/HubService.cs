@@ -1,5 +1,4 @@
-﻿
-namespace LIN.Inventory.Hubs;
+﻿namespace LIN.Inventory.Hubs;
 
 public class HubService(IHubContext<InventoryHub> hubContext, Persistence.Context.Context context) : IHubService
 {

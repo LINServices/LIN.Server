@@ -117,16 +117,16 @@ internal class OutsiderRepository(Context.Context context) : IOutsiderRepository
         {
 
             var a = await (from x in context.Outsider
-                     where x.Id == model.Id
-                     select x).ExecuteUpdateAsync(t => 
-                                                  t.SetProperty(t => t.Email, t => string.IsNullOrWhiteSpace(t.Email) ? model.Email : t.Email).
-                                                  SetProperty(t => t.Name, t => string.IsNullOrWhiteSpace(t.Name) ? model.Name : t.Name).
-                                                  SetProperty(t => t.Document, t => string.IsNullOrWhiteSpace(t.Document) ? model.Document : t.Document));
+                           where x.Id == model.Id
+                           select x).ExecuteUpdateAsync(t =>
+                                                        t.SetProperty(t => t.Email, t => string.IsNullOrWhiteSpace(t.Email) ? model.Email : t.Email).
+                                                        SetProperty(t => t.Name, t => string.IsNullOrWhiteSpace(t.Name) ? model.Name : t.Name).
+                                                        SetProperty(t => t.Document, t => string.IsNullOrWhiteSpace(t.Document) ? model.Document : t.Document));
 
 
             var ss = await (from x in context.Outsider
-                      where x.Id == model.Id
-                      select x).FirstOrDefaultAsync();
+                            where x.Id == model.Id
+                            select x).FirstOrDefaultAsync();
 
             model.Email = ss.Email;
             model.Document = ss.Document;

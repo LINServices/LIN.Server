@@ -83,7 +83,7 @@ internal class OrdersRepository(Context.Context context) : IOrdersRepository
     }
 
 
-    
+
     public async Task<ReadOneResponse<bool>> HasMovements(int order)
     {
         try

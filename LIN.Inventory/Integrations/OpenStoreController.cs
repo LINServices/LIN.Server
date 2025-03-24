@@ -336,7 +336,7 @@ public class OpenStoreController(IHoldsGroupRepository holdsRepository, ThirdPar
 
 
 
-    async Task CreateMovement(OrderModel order, IEnumerable<HoldModel> holds, PayerRequest? payer, int inventory)
+    private async Task CreateMovement(OrderModel order, IEnumerable<HoldModel> holds, PayerRequest? payer, int inventory)
     {
         // Modelo de salida.
         var outflow = new OutflowDataModel()
