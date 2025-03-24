@@ -18,7 +18,6 @@ builder.Services.AddLINHttp(options: (option) =>
 {
     option.CustomSchemaIds(type => type.FullName);
 });
-builder.Services.AddLocalServices();
 
 // LIN Services.
 builder.Services.AddAuthenticationService(builder.Configuration["services:auth"], builder.Configuration["lin:app"]);

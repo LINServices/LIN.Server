@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class ProductController(IHubService hubService, Persistence.Data.Products productsData, Persistence.Data.Inventories inventoryData, IIam Iam) : ControllerBase
+public class ProductController(IHubService hubService, IProductsRepository productsRepository, IInventoriesRepository inventoryRepository, IIam Iam) : ControllerBase
 {
 
     /// <summary>
@@ -13,7 +13,6 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
     [InventoryToken]
     public async Task<HttpCreateResponse> Create([FromBody] ProductModel modelo, [FromHeader] string token)
     {
-
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
@@ -78,7 +77,7 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
         };
 
         // Crear.
-        var response = await productsData.Create(modelo);
+        var response = await productsRepository.Create(modelo);
 
         // Enviar en tiempo real.
         if (response.Response == Responses.Success)
@@ -126,7 +125,7 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
             };
 
         // Resultado.
-        var result = await productsData.ReadAll(id);
+        var result = await productsRepository.ReadAll(id);
         return result;
 
     }
@@ -169,7 +168,7 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
             };
 
         // Resultado.
-        var result = await productsData.Read(id);
+        var result = await productsRepository.Read(id);
         return result;
 
     }
@@ -192,7 +191,7 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtener el inventario.
-        var inventory = await inventoryData.FindByProductDetail(id);
+        var inventory = await inventoryRepository.FindByProductDetail(id);
 
         // Si hubo un problema.
         if (inventory.Response != Responses.Success)
@@ -223,7 +222,7 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
             };
 
         // Resultado.
-        var result = await productsData.ReadByDetail(id);
+        var result = await productsRepository.ReadByDetail(id);
         return result;
 
     }
@@ -260,10 +259,10 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
             };
 
         // Encontrar el id del inventario.
-        var findInventory = await inventoryData.FindByProduct(modelo.Id);
+        var findInventory = await inventoryRepository.FindByProduct(modelo.Id);
 
         // Actualizar.
-        ResponseBase response = await productsData.Update(modelo);
+        ResponseBase response = await productsRepository.Update(modelo);
 
         // Si fue correcto.
         if (response.Response == Responses.Success && findInventory.Response == Responses.Success)
@@ -292,7 +291,7 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtener el inventario.
-        var inventory = await inventoryData.FindByProduct(id);
+        var inventory = await inventoryRepository.FindByProduct(id);
 
         // Hubo un error.
         if (inventory.Response != Responses.Success)
@@ -322,7 +321,7 @@ public class ProductController(IHubService hubService, Persistence.Data.Products
             };
 
         // Respuesta
-        ResponseBase response = await productsData.Delete(id);
+        ResponseBase response = await productsRepository.Delete(id);
 
         // Si fue correcto.
         if (response.Response == Responses.Success)

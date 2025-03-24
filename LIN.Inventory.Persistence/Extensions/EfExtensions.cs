@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace LIN.Inventory.Persistence.Extensions;
+﻿namespace LIN.Inventory.Persistence.Extensions;
 
 public static class EfExtensions
 {

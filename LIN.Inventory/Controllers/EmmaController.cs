@@ -3,7 +3,7 @@ using LIN.Types.Cloud.OpenAssistant.Api;
 namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
-public class EmmaController(Persistence.Data.Profiles profileData, Persistence.Data.Inventories inventoryData, IConfiguration configuration) : ControllerBase
+public class EmmaController(IProfilesRepository profilesRepository, IInventoriesRepository inventoriesRepository, IConfiguration configuration) : ControllerBase
 {
 
     /// <summary>
@@ -69,7 +69,7 @@ public class EmmaController(Persistence.Data.Profiles profileData, Persistence.D
         }
 
         // 
-        var profile = await profileData.ReadByAccount(response.Model.Id);
+        var profile = await profilesRepository.ReadByAccount(response.Model.Id);
 
 
         if (profile.Response != Responses.Success)
@@ -83,7 +83,7 @@ public class EmmaController(Persistence.Data.Profiles profileData, Persistence.D
 
 
 
-        var inventories = await inventoryData.ReadAll(profile.Model.Id);
+        var inventories = await inventoriesRepository.ReadAll(profile.Model.Id);
 
 
 

@@ -37,7 +37,6 @@ public class InventoryTokenAttribute : ActionFilterAttribute
         // Agrega la información del token.
         context.HttpContext.Items.Add(value.ToString(), tokenInfo);
         await base.OnActionExecutionAsync(context, next);
-
     }
 
 

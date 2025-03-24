@@ -2,7 +2,7 @@
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 5, timeWindowSeconds: 60, blockDurationSeconds: 150)]
-public class StatisticsController(Persistence.Data.Statistics statisticsData) : Controller
+public class StatisticsController(IStatisticsRepository statisticsRepository) : Controller
 {
 
     /// <summary>
@@ -24,16 +24,16 @@ public class StatisticsController(Persistence.Data.Statistics statisticsData) : 
         DateTime now = DateTime.Now;
 
         // Ventas de esta semana.
-        var weekSales = statisticsData.SalesOn(profile, now.AddDays(-7), now);
+        var weekSales = statisticsRepository.SalesOn(profile, now.AddDays(-7), now);
 
         // Ventas de la semana pasada.
-        var lastWeekSales = statisticsData.Sales(profile, now.AddDays(-14), now.AddDays(-7));
+        var lastWeekSales = statisticsRepository.Sales(profile, now.AddDays(-14), now.AddDays(-7));
 
         // Ventas del dia.
-        var daySales = statisticsData.Sales(profile, new DateTime(now.Year, now.Month, now.Day, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day, 23, 59, 59));
+        var daySales = statisticsRepository.Sales(profile, new DateTime(now.Year, now.Month, now.Day, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day, 23, 59, 59));
 
         // Ventas del dia anterior.
-        var lastDaySales = statisticsData.Sales(profile, new DateTime(now.Year, now.Month, now.Day - 1, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day - 1, 23, 59, 59));
+        var lastDaySales = statisticsRepository.Sales(profile, new DateTime(now.Year, now.Month, now.Day - 1, 0, 0, 0), new DateTime(now.Year, now.Month, now.Day - 1, 23, 59, 59));
 
         // Esperar las tareas.
         await Task.WhenAll([weekSales, lastWeekSales, daySales, lastDaySales]);

@@ -1,21 +1,13 @@
-﻿using LIN.Inventory.Persistence.Extensions;
-using LIN.Types.Inventory.Enumerations;
-using LIN.Types.Inventory.Models;
-using LIN.Types.Inventory.Transient;
-using LIN.Types.Responses;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿namespace LIN.Inventory.Persistence.Repositories.EntityFramework;
 
-namespace LIN.Inventory.Persistence.Data;
-
-public class Outflows(Context.Context context, ILogger<Outflows> logger, Inflows inflows)
+internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepository> logger, IInflowsRepository inflows) : IOutflowsRepository
 {
 
     /// <summary>
     /// Crea una salida de inventario.
     /// </summary>
     /// <param name="data">Modelo de la salida.</param>
-    public async Task<CreateResponse> Create(OutflowDataModel data)
+    public async Task<CreateResponse> Create(OutflowDataModel data, bool updateInventory = true)
     {
 
         data.Id = 0;
@@ -38,10 +30,13 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger, Inflows
                 var details = data.Details;
                 data.Details = [];
 
-                context.Attach(data.Inventory);
+                data.Inventory = context.AttachOrUpdate(data.Inventory);
 
                 if (data.Profile is not null)
-                    context.Attach(data.Profile);
+                    data.Profile = context.AttachOrUpdate(data.Profile);
+
+                if (data.Outsider is not null)
+                    data.Outsider = context.AttachOrUpdate(data.Outsider);
 
                 if (data.InflowRelated is not null)
                     data.InflowRelated = context.AttachOrUpdate(data.InflowRelated);
@@ -59,10 +54,10 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger, Inflows
                     detail.Id = 0;
                     detail.Movement = data;
 
+                    detail.ProductDetail = context.AttachOrUpdate(detail.ProductDetail);
+
                     // Agregar los detalles.
                     context.DetallesSalidas.Add(detail);
-
-                    detail.ProductDetail = context.AttachOrUpdate(detail.ProductDetail);
 
                     if (detail.Quantity <= 0)
                         throw new Exception("Invalid detail quantity");
@@ -86,7 +81,9 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger, Inflows
                         return new(Responses.InvalidParam, -1, $"El producto no tiene stock suficiente");
                     }
 
-                    await context.ProductoDetalles.Where(t => t.Id == detail.ProductDetailId).ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity - detail.Quantity));
+                    // Si se debe actualizar el stock del inventario.
+                    if (updateInventory)
+                        await context.ProductoDetalles.Where(t => t.Id == detail.ProductDetailId).ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity - detail.Quantity));
 
                 }
 
@@ -121,7 +118,30 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger, Inflows
         try
         {
             // Selecciona la entrada
-            var salida = context.Salidas.Include(t => t.Profile).FirstOrDefault(T => T.Id == id);
+            var salida = await (from ss in context.Salidas
+                                where ss.Id == id
+                                select new OutflowDataModel
+                                {
+                                    Id = ss.Id,
+                                    Status = ss.Status,
+                                    Date = ss.Date,
+                                    InflowRelatedId = ss.InflowRelatedId,
+                                    InventoryId = ss.InventoryId,
+                                    OrderId = ss.OrderId,
+                                    ProfileId = ss.ProfileId,
+                                    Outsider = ss.Outsider == null ? null : new()
+                                    {
+                                        Document = ss.Outsider.Document,
+                                        Id = ss.Outsider.Id,
+                                        Name = ss.Outsider.Name,
+                                        Type = ss.Outsider.Type
+                                    },
+                                    Profile = ss.Profile != null ? new()
+                                    {
+                                        AccountId = ss.Profile.AccountId
+                                    } : null,
+                                    Type = ss.Type
+                                }).FirstOrDefaultAsync();
 
             if (salida == null)
             {
@@ -207,6 +227,14 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger, Inflows
                           InventoryId = S.InventoryId,
                           ProfileId = S.ProfileId,
                           Type = S.Type,
+                          InflowRelatedId = S.InflowRelatedId,
+                          Status = S.Status,
+                          OrderId = S.OrderId,
+                          Profile = S.Profile != null ? new()
+                          {
+                              Id = S.Profile.Id,
+                              AccountId = S.Profile.AccountId
+                          } : null,
                           CountDetails = context.DetallesSalidas.Count(t => t.MovementId == S.Id)
                       };
 
@@ -310,7 +338,6 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger, Inflows
 
     public async Task<ResponseBase> Reverse(int order)
     {
-
         // Ejecución
         try
         {
@@ -323,7 +350,7 @@ public class Outflows(Context.Context context, ILogger<Outflows> logger, Inflows
 
             var outflow = await (from ss in context.Salidas
                                  where ss.OrderId == order
-                                 select ss).Include(t=>t.Inventory).FirstOrDefaultAsync();
+                                 select ss).Include(t => t.Inventory).FirstOrDefaultAsync();
 
 
             var outflowDetails = await (from ss in context.Salidas

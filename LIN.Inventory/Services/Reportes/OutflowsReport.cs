@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Services.Reportes;
 
-public class OutflowsReport(Outflows outflowData) : BaseReport
+public class OutflowsReport(IOutflowsRepository outflowData) : BaseReport
 {
 
     /// <summary>

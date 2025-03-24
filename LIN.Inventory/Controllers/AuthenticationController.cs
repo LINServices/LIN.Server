@@ -2,7 +2,7 @@
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 10, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class AuthenticationController(Persistence.Data.Profiles profilesData) : ControllerBase
+public class AuthenticationController(IProfilesRepository profilesRepository) : ControllerBase
 {
 
     /// <summary>
@@ -37,7 +37,7 @@ public class AuthenticationController(Persistence.Data.Profiles profilesData) : 
         var contactsLogin = Access.Contacts.Controllers.Profiles.Login(authResponse.Token);
 
         // Obtiene el perfil.
-        var profile = await profilesData.ReadByAccount(authResponse.Model.Id);
+        var profile = await profilesRepository.ReadByAccount(authResponse.Model.Id);
 
         // Segun.
         switch (profile.Response)
@@ -51,7 +51,7 @@ public class AuthenticationController(Persistence.Data.Profiles profilesData) : 
                 {
 
                     // Crear el perfil.
-                    var createResponse = await profilesData.Create(new()
+                    var createResponse = await profilesRepository.Create(new()
                     {
                         Account = authResponse.Model,
                         Profile = new()
@@ -132,7 +132,7 @@ public class AuthenticationController(Persistence.Data.Profiles profilesData) : 
             };
 
         // Obtiene el perfil
-        var profile = await profilesData.ReadByAccount(authResponse.Model.Id);
+        var profile = await profilesRepository.ReadByAccount(authResponse.Model.Id);
 
         // Esperar la respuesta en contactos.
         await contactsLogin;
@@ -150,7 +150,7 @@ public class AuthenticationController(Persistence.Data.Profiles profilesData) : 
                 {
 
                     // Crear el perfil.
-                    var createResponse = await profilesData.Create(new()
+                    var createResponse = await profilesRepository.Create(new()
                     {
                         Account = authResponse.Model,
                         Profile = new()

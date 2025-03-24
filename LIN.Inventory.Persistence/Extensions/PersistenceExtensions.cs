@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
+﻿using LIN.Inventory.Persistence.Repositories;
+using LIN.Inventory.Persistence.Repositories.EntityFramework;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,10 +17,25 @@ public static class PersistenceExtensions
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfigurationManager configuration)
     {
 
-        services.AddDbContextPool<Persistence.Context.Context>(options =>
+        services.AddDbContextPool<Context.Context>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString("Somee"));
         });
+
+        // Servicios de datos.
+        services.AddScoped<IInflowsRepository, InflowsRepository>();
+        services.AddScoped<IOutflowsRepository, OutflowsRepository>();
+        services.AddScoped<IInventoriesRepository, InventoryRepository>();
+        services.AddScoped<IInventoryAccessRepository, InventoryAccessRepository>();
+        services.AddScoped<IProductsRepository, ProductsRepository>();
+        services.AddScoped<IProfilesRepository, ProfilesRepository>();
+        services.AddScoped<IStatisticsRepository, StatisticsRepository>();
+        services.AddScoped<IHoldsRepository, HoldsRepository>();
+        services.AddScoped<IOpenStoreSettingsRepository, OpenStoreSettingsRepository>();
+        services.AddScoped<IHoldsGroupRepository, HoldsGroupRepository>();
+        services.AddScoped<IOrdersRepository, OrdersRepository>();
+        services.AddScoped<IOutsiderRepository, OutsiderRepository>();
+
         return services;
 
     }

@@ -1,12 +1,6 @@
-﻿using LIN.Types.Inventory.Enumerations;
-using LIN.Types.Inventory.Models;
-using LIN.Types.Responses;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿namespace LIN.Inventory.Persistence.Repositories.EntityFramework;
 
-namespace LIN.Inventory.Persistence.Data;
-
-public class Inventories(Context.Context context, ILogger<Inventories> logger)
+internal class InventoryRepository(Context.Context context, ILogger<InventoryRepository> logger) : IInventoriesRepository
 {
 
     /// <summary>
@@ -26,7 +20,7 @@ public class Inventories(Context.Context context, ILogger<Inventories> logger)
             {
 
                 // InventoryId
-                context.Inventarios.Add(data);
+                context.Inventarios.Add((InventoryDataModel)data);
 
                 // Guarda el inventario
                 await context.SaveChangesAsync();
@@ -80,11 +74,9 @@ public class Inventories(Context.Context context, ILogger<Inventories> logger)
                              select new InventoryDataModel
                              {
                                  Id = i.Id,
-                                 OpenStoreSettings = i.OpenStoreSettings,
                                  CreatorId = i.CreatorId,
                                  OpenStoreSettingsId = i.OpenStoreSettingsId,
                                  Direction = i.Direction,
-                                 MyRol = i.MyRol,
                                  Name = i.Name
                              }).FirstOrDefaultAsync();
 
@@ -122,12 +114,10 @@ public class Inventories(Context.Context context, ILogger<Inventories> logger)
                       join I in context.Inventarios on AI.InventoryId equals I.Id
                       select new InventoryDataModel()
                       {
-                          MyRol = AI.Rol,
                           CreatorId = I.CreatorId,
                           Direction = I.Direction,
                           Id = I.Id,
-                          Name = I.Name,
-                          UsersAccess = I.UsersAccess
+                          Name = I.Name
                       };
 
 

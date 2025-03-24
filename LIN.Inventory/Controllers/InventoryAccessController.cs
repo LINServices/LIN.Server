@@ -2,7 +2,7 @@
 
 [Route("Inventory/access")]
 [RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class InventoryAccessController(IHubService hubService, Persistence.Data.InventoryAccess inventoryAccess, IIam Iam) : ControllerBase
+public class InventoryAccessController(IHubService hubService, IInventoryAccessRepository inventoryAccessRepository, IIam Iam) : ControllerBase
 {
 
     /// <summary>
@@ -42,12 +42,12 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
         model.Date = DateTime.Now;
 
         // Crear acceso.
-        var result = await inventoryAccess.Create(model);
+        var result = await inventoryAccessRepository.Create(model);
 
         // Si el recurso ya existe.
         if (result.Response == Responses.ResourceExist)
         {
-            var update = await inventoryAccess.UpdateState(result.LastId, InventoryAccessState.OnWait);
+            var update = await inventoryAccessRepository.UpdateState(result.LastId, InventoryAccessState.OnWait);
             result.Response = update.Response;
         }
 
@@ -84,7 +84,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
 
 
         // Obtiene la lista de Id's de inventarios
-        var result = await inventoryAccess.Read(id);
+        var result = await inventoryAccessRepository.Read(id);
 
         // Retorna el resultado
         return result;
@@ -105,7 +105,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtiene la lista de Id's de inventarios
-        var result = await inventoryAccess.ReadAll(tokenInfo.ProfileId);
+        var result = await inventoryAccessRepository.ReadAll(tokenInfo.ProfileId);
 
         // Retorna el resultado
         return result;
@@ -138,7 +138,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
 
 
         // Obtiene la lista de Id's de inventarios
-        var result = await inventoryAccess.UpdateState(id, estado);
+        var result = await inventoryAccessRepository.UpdateState(id, estado);
 
         // Retorna el resultado
         return result;
@@ -188,7 +188,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
             };
 
         // Actualizar el rol.
-        var result = await inventoryAccess.UpdateRol(id, rol);
+        var result = await inventoryAccessRepository.UpdateRol(id, rol);
 
         // Retorna el resultado
         return result;
@@ -235,7 +235,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
 
 
         // Obtiene la lista de Id's de inventarios
-        var result = await inventoryAccess.ReadMembers(inventario);
+        var result = await inventoryAccessRepository.ReadMembers(inventario);
 
 
         var map = result.Models.Select(T => T.Item2.AccountId).ToList();
@@ -304,7 +304,7 @@ public class InventoryAccessController(IHubService hubService, Persistence.Data.
             };
 
         // Obtiene la lista de Id's de inventarios
-        var result = await inventoryAccess.DeleteSomeOne(inventario, usuario);
+        var result = await inventoryAccessRepository.DeleteSomeOne(inventario, usuario);
 
         return result;
 

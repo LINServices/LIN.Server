@@ -11,7 +11,6 @@ public class Jwt
     /// </summary>
     private static string JwtKey { get; set; } = string.Empty;
 
-
     /// <summary>
     /// Inicia el servicio Jwt
     /// </summary>
@@ -19,7 +18,6 @@ public class Jwt
     {
         JwtKey = key;
     }
-
 
     /// <summary>
     /// Genera un JSON Web Token
@@ -50,7 +48,6 @@ public class Jwt
         // Genera el token
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
 
 
     /// <summary>
@@ -113,6 +110,5 @@ public class Jwt
         };
 
     }
-
 
 }

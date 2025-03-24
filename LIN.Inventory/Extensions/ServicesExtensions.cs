@@ -12,18 +12,9 @@ public static class ServicesExtensions
     {
 
         // Data.
-        services.AddScoped<Inflows, Inflows>();
-        services.AddScoped<Inventories, Inventories>();
-        services.AddScoped<InventoryAccess, InventoryAccess>();
-        services.AddScoped<Outflows, Outflows>();
-        services.AddScoped<Products, Products>();
-        services.AddScoped<Profiles, Profiles>();
-        services.AddScoped<Statistics, Statistics>();
         services.AddScoped<OutflowsReport, OutflowsReport>();
-        services.AddScoped<HoldsRepository>();
-        services.AddScoped<OpenStoreSettingsRepository>();
-        services.AddScoped<HoldsGroupRepository>();
-        services.AddScoped<OrdersRepository>();
+        services.AddScoped<ThirdPartyService, ThirdPartyService>();
+        services.AddScoped<EmailSender, EmailSender>();
 
         // Hubs.
         services.AddScoped<IHubService, HubService>();

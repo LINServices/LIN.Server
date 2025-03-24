@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class InflowController(IHubService hubService, Inflows inflowData, IIam Iam) : ControllerBase
+public class InflowController(IHubService hubService, IInflowsRepository inflowRepository, IIam Iam) : ControllerBase
 {
 
     /// <summary>
@@ -52,7 +52,7 @@ public class InflowController(IHubService hubService, Inflows inflowData, IIam I
         modelo.IsAccepted = true;
 
         // Crea la nueva entrada.
-        var response = await inflowData.Create(modelo);
+        var response = await inflowRepository.Create(modelo);
 
         // Enviar notificación en tiempo real.
         if (response.Response == Responses.Success)
@@ -102,7 +102,7 @@ public class InflowController(IHubService hubService, Inflows inflowData, IIam I
             };
 
         // Obtiene el usuario
-        var result = await inflowData.Read(id, includeDetails);
+        var result = await inflowRepository.Read(id, includeDetails);
 
         // Retorna el resultado
         return result ?? new();
@@ -147,7 +147,7 @@ public class InflowController(IHubService hubService, Inflows inflowData, IIam I
             };
 
         // Obtiene el usuario
-        var result = await inflowData.ReadAll(id);
+        var result = await inflowRepository.ReadAll(id);
 
         // Retorna el resultado
         return result ?? new();
@@ -193,7 +193,7 @@ public class InflowController(IHubService hubService, Inflows inflowData, IIam I
             };
 
         // Obtiene el usuario
-        var result = await inflowData.Update(id, date);
+        var result = await inflowRepository.Update(id, date);
 
         // Retorna el resultado
         return result ?? new();

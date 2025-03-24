@@ -1,7 +1,7 @@
 ﻿namespace LIN.Inventory.Integrations;
 
 [Route("connectors/[controller]")]
-public class OpenStoreController(HoldsGroupRepository holdsRepository, Outflows outflowsRepository, OrdersRepository ordersRepository, OpenStoreSettingsRepository openStoreSettingsRepository, Products productsData, Outflows outflows) : ControllerBase
+public class OpenStoreController(IHoldsGroupRepository holdsRepository, ThirdPartyService thirdPartyService, IOutflowsRepository outflowsRepository, IOrdersRepository ordersRepository, IProductsRepository productsData, IOutflowsRepository outflows, IIam Iam, EmailSender emailSender) : ControllerBase
 {
 
     public class WebhookRequest
@@ -10,6 +10,14 @@ public class OpenStoreController(HoldsGroupRepository holdsRepository, Outflows 
         public string Reference { get; set; }
         public int Status { get; set; }
         public string StatusString { get; set; }
+        public PayerRequest? Payer { get; set; }
+    }
+
+    public class PayerRequest
+    {
+        public string Name { get; set; }
+        public string Document { get; set; }
+        public string Mail { get; set; }
     }
 
     /// <summary>
@@ -22,82 +30,196 @@ public class OpenStoreController(HoldsGroupRepository holdsRepository, Outflows 
         // Buscar la orden
         var associated = await ordersRepository.ReadAll(resultado.Reference);
 
-        foreach (var e in associated.Models)
+        foreach (var order in associated.Models)
         {
             // Encontrar inventario.
-            var inventoryId = await holdsRepository.GetInventory(e.HoldGroupId);
-            var holdItems = await holdsRepository.GetItems(e.HoldGroupId);
+            var inventoryId = await holdsRepository.GetInventory(order.HoldGroupId);
+            var holdItems = await holdsRepository.GetItems(order.HoldGroupId);
 
+            await ordersRepository.Update(order.Id, resultado.StatusString);
 
-            // Actualizar el estado de la orden.
-            List<Task> tasks = [
-                            ordersRepository.Update(e.Id, resultado.StatusString),
-                            holdsRepository.Approve(e.HoldGroupId)
-            ];
-
-            // Crear el movimiento si no existe y el estado es Ok.
-            if (string.IsNullOrEmpty(e.Status) && resultado.StatusString == "Paid")
+            // Si esta pendiente pago, no hacemos nada.
+            if (resultado.StatusString == "PaymentRequired" || resultado.StatusString == "Pending")
             {
-                var salida = new OutflowDataModel()
-                {
-                    Order = e,
-                    Date = DateTime.Now,
-                    Status = MovementStatus.Accepted,
-                    Id = 0,
-                    Type = OutflowsTypes.Purchase,
-                    Inventory = new() { Id = inventoryId.Model },
-                    Profile = null,
-                    ProfileId = 0,
-                    OrderId = e.Id,
-                    Details = []
-                };
-
-                foreach (var item in holdItems.Models)
-                {
-                    salida.Details.Add(new()
-                    {
-                        Quantity = item.Quantity,
-                        Movement = salida,
-                        ProductDetail = item.DetailModel
-                    });
-                }
-
-                var response = await outflowsRepository.Create(salida);
                 continue;
             }
 
-            // Actualizar la información del movimiento si ya existe y el nuevo estado esta pagado.
-            if (!string.IsNullOrEmpty(e.Status) && resultado.StatusString == "Paid")
+            // Crear la información del movimiento si ya existe y el nuevo estado esta pagado.
+            if (resultado.StatusString == "Paid")
             {
+                // Aprobar la reserva.
+                await holdsRepository.Approve(order.HoldGroupId);
 
+                var has = await ordersRepository.HasMovements(order.Id);
+
+                // Validar si hay movimientos en la orden, en caso de no, lo crea.
+                if (!has.Model && has.Response == Responses.Success)
+                {
+                    // Crear el movimiento.
+                    await CreateMovement(order, holdItems.Models, resultado.Payer, inventoryId.Model);
+                }
+            }
+
+            // Si el pago fue rechazado.
+            if (!string.IsNullOrEmpty(order.Status) && (resultado.StatusString == "Rejected"))
+            {
+                // Aprobar la reserva.
+                await holdsRepository.Return(order.HoldGroupId);
+            }
+
+            // Si el tiempo expiro.
+            if (resultado.StatusString == "Expired")
+            {
+                // Aprobar la reserva.
+                await holdsRepository.Return(order.HoldGroupId);
             }
 
             // Actualizar la información del movimiento si ya existe y el nuevo estado esta revertido.
-            if (!string.IsNullOrEmpty(e.Status) && resultado.StatusString == "Reverted")
+            if (!string.IsNullOrEmpty(order.Status) && resultado.StatusString == "Reverted")
             {
-                await outflows.Reverse(e.Id);
+                await outflows.Reverse(order.Id);
             }
-
-            await Task.WhenAll(tasks);
 
         }
 
-
-
-        // Cambiar el estado de la reserva a (Finalizado), evitara que se reintegre al inventario.
-
-
-
-
-        // Registar movimiento de la venta en el inventario. (Devolución, venta...)
-
-        /* Cuando un pago se devuelve, el estado del movimiento se actualiza */
-        /* Cuando un pago se "paga", el estado del movimiento se actualiza a completado */
-
-
-
         return Ok();
     }
+
+
+    /// <summary>
+    /// Reservar stock de productos en un inventario especifico.
+    /// </summary>
+    [HttpPost("hold")]
+    [InventoryToken]
+    public async Task<HttpCreateResponse> Reserve([FromBody] OutflowDataModel modelo, [FromHeader] string token)
+    {
+
+        // Validar parámetros.
+        if (modelo.Details.Count == 0)
+            return new(Responses.InvalidParam);
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Acceso Iam.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inventory,
+            Id = modelo.InventoryId,
+            Profile = tokenInfo.ProfileId
+        });
+
+        // Roles aceptados.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator, InventoryRoles.Supervisor];
+
+        // Si no tiene el rol.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Validar tercero.
+        if (modelo.Outsider is null || string.IsNullOrWhiteSpace(modelo.Outsider.Document) || string.IsNullOrWhiteSpace(modelo.Outsider.Email))
+            return new()
+            {
+                Message = "Para realizar una venta en línea se debe incluir un cliente final.",
+                Response = Responses.InvalidParam
+            };
+
+        // Obtener o crear el cliente.
+        var client = await thirdPartyService.FindOrCreate(modelo.Outsider, modelo.InventoryId);
+
+        // Si todo es ok se establece el modelo.
+        if (client.Response == Responses.Success)
+        {
+            modelo.Outsider = client.Model;
+        }
+        // Retornamos el error.
+        else
+        {
+            return new(Responses.InvalidParam)
+            {
+                Message = $"No se pudo crear u obtener un cliente con el documento '{modelo.Outsider.Document}'"
+            };
+        }
+
+        // Crear la reserva.
+        var items = modelo.Details.Select(t => new { Id = t.ProductDetailId, t.Quantity });
+
+        // Holds.
+        List<HoldModel> holds = [];
+
+        foreach (var item in items)
+        {
+            // Reservar stock (true / false)
+            var holdModel = new HoldModel()
+            {
+                Status = HoldStatus.None,
+                Quantity = item.Quantity,
+                DetailId = item.Id
+            };
+            holds.Add(holdModel);
+        }
+
+        // Modelo.
+        HoldGroupModel group = new()
+        {
+            Id = 0,
+            Expiration = DateTime.Now.AddMinutes(10),
+            Holds = holds,
+        };
+
+        /* La reserva tiene una fecha limite, desde de ello, los productos se reintegraran al inventario */
+        var response = await holdsRepository.Create(group);
+
+#if DEBUG
+        string webhook = "https://sw3dtgpc-7019.use2.devtunnels.ms/connectors/OpenStore";
+#else
+        string webhook = "https://api.inventory.linplatform.com/connectors/OpenStore";
+#endif
+
+        /* Con el Id de la reserva, se dan 10 minutos mas, para el usuario tener tiempo de pagar, despues, se vence la orden y el enlace de pago */
+        var grupo = await holdsRepository.GetItems(response.LastId);
+
+        // Generar enlace de pago con Payments.
+        var result = await LIN.Access.Payments.Controllers.Payments.Generate(webhook, client.Model.Email, client.Model.Document, DateTime.Now.AddMinutes(2), grupo.Models.Select(t => new Access.Payments.Controllers.PaymentItemDataModel()
+        {
+            Id = 0,
+            Name = "Example",
+            Picture = "",
+            Price = t.DetailModel.SalePrice
+        }));
+
+        // Asociar la external Id con la orden local.
+        // Crear la orden local.
+        var order = new OrderModel
+        {
+            Id = 0,
+            ExternalId = result.Models[1] ?? string.Empty,
+            Status = "",
+            HoldGroupId = response.LastId
+        };
+
+        // Crear la orden.
+        var orderRepo = await ordersRepository.Create(order);
+
+        // Enviar correo al cliente.
+        await emailSender.Send(client.Model.Email, "Nueva orden de pago", System.IO.File.ReadAllText("wwwroot/Plantillas/Payment.html"));
+
+        // ------------------------------------
+
+        return new CreateResponse(Responses.Success, orderRepo.LastId)
+        {
+            Alternatives = [result.Models[0]],
+            LastUnique = result.Models[0]
+        };
+    }
+
+
+
+
 
     /// <summary>
     /// Reservar stock de productos en un inventario especifico.
@@ -106,7 +228,7 @@ public class OpenStoreController(HoldsGroupRepository holdsRepository, Outflows 
     public async Task<IActionResult> Reserve([FromBody] HoldGroupModel model)
     {
 
-        List<HoldModel> holds = new();
+        List<HoldModel> holds = [];
 
         foreach (var item in model.Holds)
         {
@@ -156,13 +278,20 @@ public class OpenStoreController(HoldsGroupRepository holdsRepository, Outflows 
     public async Task<IActionResult> Order(int holdGroup)
     {
 
+#if DEBUG
         string webhook = "https://sw3dtgpc-7019.use2.devtunnels.ms/connectors/OpenStore";
+#else
+        string webhook = "https://api.inventory.linplatform.com/connectors/OpenStore";
+#endif
 
         /* Con el Id de la reserva, se dan 10 minutos mas, para el usuario tener tiempo de pagar, despues, se vence la orden y el enlace de pago */
         var grupo = await holdsRepository.GetItems(holdGroup);
 
+        TimeZoneInfo zonaGmtMenos5 = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+        DateTime horaActual = TimeZoneInfo.ConvertTime(DateTime.Now, zonaGmtMenos5);
+
         // Generar enlace de pago con Payments.
-        var result = await LIN.Access.Payments.Controllers.Payments.Generate(webhook, "giraldojhong4@gmail.com", "1021804732", grupo.Models.Select(t => new Access.Payments.Controllers.PaymentItemDataModel()
+        var result = await LIN.Access.Payments.Controllers.Payments.Generate(webhook, "giraldojhong4@gmail.com", "1021804732", horaActual.AddMinutes(1), grupo.Models.Select(t => new Access.Payments.Controllers.PaymentItemDataModel()
         {
             Id = 0,
             Name = "Example",
@@ -203,5 +332,61 @@ public class OpenStoreController(HoldsGroupRepository holdsRepository, Outflows 
 
         return Ok();
     }
+
+
+
+
+    async Task CreateMovement(OrderModel order, IEnumerable<HoldModel> holds, PayerRequest? payer, int inventory)
+    {
+        // Modelo de salida.
+        var outflow = new OutflowDataModel()
+        {
+            Order = order,
+            Date = DateTime.Now,
+            Status = MovementStatus.Accepted,
+            Id = 0,
+            Type = OutflowsTypes.Purchase,
+            Inventory = new() { Id = inventory },
+            Profile = null,
+            ProfileId = 0,
+            OrderId = order.Id,
+            Details = []
+        };
+
+        // Obtener el cliente.
+        if (!string.IsNullOrWhiteSpace(payer?.Document))
+        {
+            // Obtener o crear el tercero.
+            var third = await thirdPartyService.FindOrCreate(new()
+            {
+                Name = payer.Name,
+                Type = OutsiderTypes.Person,
+                Document = payer.Document,
+                Email = payer.Mail
+            }, inventory);
+
+            // Establecer el tercero.
+            outflow.Outsider = (third.Response == Responses.Success) ? third.Model : null;
+        }
+
+        foreach (var item in holds)
+        {
+            outflow.Details.Add(new()
+            {
+                Quantity = item.Quantity,
+                Movement = outflow,
+                ProductDetail = item.DetailModel
+            });
+        }
+
+        // Creamos el movimiento, sin actualizar el inventario.
+        var response = await outflowsRepository.Create(outflow, updateInventory: false);
+
+    }
+
+
+
+
+
 
 }

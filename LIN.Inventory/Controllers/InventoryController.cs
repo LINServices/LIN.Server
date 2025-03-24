@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class InventoryController(IHubService hubService, Persistence.Data.Inventories inventoryData, IIam Iam) : ControllerBase
+public class InventoryController(IHubService hubService, IInventoriesRepository inventoryRepository, IIam Iam) : ControllerBase
 {
 
     /// <summary>
@@ -41,7 +41,7 @@ public class InventoryController(IHubService hubService, Persistence.Data.Invent
         }
 
         // Crea el inventario
-        var response = await inventoryData.Create(modelo);
+        var response = await inventoryRepository.Create(modelo);
 
         // Si no se creo el inventario
         if (response.Response != Responses.Success)
@@ -69,7 +69,7 @@ public class InventoryController(IHubService hubService, Persistence.Data.Invent
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
         // Obtiene la lista de Id's de inventarios
-        var result = await inventoryData.ReadAll(tokenInfo.ProfileId);
+        var result = await inventoryRepository.ReadAll(tokenInfo.ProfileId);
 
         return result;
 
@@ -110,7 +110,7 @@ public class InventoryController(IHubService hubService, Persistence.Data.Invent
 
 
         // Crea el inventario
-        var response = await inventoryData.Read(id);
+        var response = await inventoryRepository.Read(id);
 
         // Si no se creo el inventario
         if (response.Response != Responses.Success)
@@ -154,7 +154,7 @@ public class InventoryController(IHubService hubService, Persistence.Data.Invent
             };
 
         // Actualizar el rol.
-        var response = await inventoryData.Update(id, name, description);
+        var response = await inventoryRepository.Update(id, name, description);
 
         // Retorna
         return response;

@@ -1,7 +1,4 @@
-﻿using LIN.Types.Inventory.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace LIN.Inventory.Persistence.Context;
+﻿namespace LIN.Inventory.Persistence.Context;
 
 /// <summary>
 /// Nuevo contexto a la base de datos
@@ -74,6 +71,8 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     /// </summary>
     public DbSet<HoldGroupModel> HoldGroups { get; set; }
 
+    public DbSet<OutsiderModel> Outsider { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -115,6 +114,22 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
        .HasOne(t => t.Profile)
        .WithMany()
        .HasForeignKey(t => t.ProfileId);
+
+        modelBuilder.Entity<InflowDataModel>()
+     .HasOne(t => t.Outsider)
+     .WithMany()
+     .HasForeignKey(t => t.OutsiderId);
+
+
+        modelBuilder.Entity<OutflowDataModel>()
+   .HasOne(t => t.Outsider)
+   .WithMany()
+   .HasForeignKey(t => t.OutsiderId);
+
+        modelBuilder.Entity<OutsiderModel>()
+   .HasOne(t => t.InventoryDataModel)
+   .WithMany()
+   .HasForeignKey(t => t.InventoryId);
 
         modelBuilder.Entity<OutflowDataModel>()
      .HasOne(t => t.Profile)

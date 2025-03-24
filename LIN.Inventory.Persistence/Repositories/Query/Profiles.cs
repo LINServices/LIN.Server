@@ -1,6 +1,4 @@
-﻿using LIN.Types.Inventory.Models;
-
-namespace LIN.Inventory.Persistence.Data.Query;
+﻿namespace LIN.Inventory.Persistence.Repositories.Query;
 
 public class Profiles
 {

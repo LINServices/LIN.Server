@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 10, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class ProfileController(Persistence.Data.Profiles profileData) : ControllerBase
+public class ProfileController(IProfilesRepository profileRepository) : ControllerBase
 {
 
     /// <summary>
@@ -17,7 +17,7 @@ public class ProfileController(Persistence.Data.Profiles profileData) : Controll
             return new(Responses.InvalidParam);
 
         // Obtiene el usuario
-        var response = await profileData.Read(id);
+        var response = await profileRepository.Read(id);
 
         // Si es erróneo
         if (response.Response != Responses.Success)
@@ -53,7 +53,7 @@ public class ProfileController(Persistence.Data.Profiles profileData) : Controll
         var map = users.Models.Select(T => T.Id).ToList();
 
         // Obtiene el usuario.
-        var response = await profileData.ReadByAccounts(map);
+        var response = await profileRepository.ReadByAccounts(map);
 
         // Unir las respuestas.
         var joins = (from Account in users.Models

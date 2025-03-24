@@ -2,9 +2,8 @@
 
 [InventoryToken]
 [Route("[controller]")]
-public class OpenStoreSettingsController(OpenStoreSettingsRepository storeSettingsRepository, IIam Iam) : ControllerBase
+public class OpenStoreSettingsController(IOpenStoreSettingsRepository storeSettingsRepository, IIam Iam) : ControllerBase
 {
-
 
     [HttpPost]
     public async Task<CreateResponse> Create(OpenStoreSettings model, [FromHeader] string token)

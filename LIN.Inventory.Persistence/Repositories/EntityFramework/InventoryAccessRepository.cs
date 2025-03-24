@@ -1,14 +1,6 @@
-﻿using LIN.Types.Inventory.Enumerations;
-using LIN.Types.Inventory.Models;
-using LIN.Types.Inventory.Transient;
-using LIN.Types.Responses;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿namespace LIN.Inventory.Persistence.Repositories.EntityFramework;
 
-
-namespace LIN.Inventory.Persistence.Data;
-
-public class InventoryAccess(Context.Context context, ILogger<InventoryAccess> logger)
+internal class InventoryAccessRepository(Context.Context context, ILogger<InventoryAccessRepository> logger) : IInventoryAccessRepository
 {
 
     /// <summary>

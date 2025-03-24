@@ -1,9 +1,4 @@
-﻿using LIN.Types.Inventory.Enumerations;
-using LIN.Types.Inventory.Models;
-
-
-namespace LIN.Inventory.Persistence.Data.Query;
-
+﻿namespace LIN.Inventory.Persistence.Repositories.Query;
 
 public static class Products
 {
@@ -92,6 +87,5 @@ public static class Products
 
         return query;
     }
-
 
 }

@@ -1,14 +1,9 @@
 ﻿using LIN.Types.Cloud.Identity.Abstracts;
-using LIN.Types.Inventory.Enumerations;
-using LIN.Types.Inventory.Models;
-using LIN.Types.Responses;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 
-namespace LIN.Inventory.Persistence.Data;
+namespace LIN.Inventory.Persistence.Repositories.EntityFramework;
 
-public class Profiles(Context.Context context, ILogger<Profiles> logger)
+internal class ProfilesRepository(Context.Context context, ILogger<ProfilesRepository> logger) : IProfilesRepository
 {
 
     /// <summary>

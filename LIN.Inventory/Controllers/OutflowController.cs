@@ -4,7 +4,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class OutflowController(IHubService hubService, Persistence.Data.Outflows outflowData, Persistence.Data.Inventories inventoryData, IIam Iam, OutflowsReport outflowReport) : ControllerBase
+public class OutflowController(IHubService hubService, IOutflowsRepository outflowRepository, ThirdPartyService thirdPartyService, IInventoriesRepository inventoryRepository, IIam Iam, OutflowsReport outflowReport) : ControllerBase
 {
 
     /// <summary>
@@ -43,6 +43,32 @@ public class OutflowController(IHubService hubService, Persistence.Data.Outflows
                 Response = Responses.Unauthorized
             };
 
+        // Validar tercero.
+        if (modelo.Outsider is not null)
+        {
+            // Obtener o crear el cliente.
+            var client = await thirdPartyService.FindOrCreate(modelo.Outsider, modelo.InventoryId);
+
+            // Si todo es ok se establece el modelo.
+            if (client.Response == Responses.Success)
+            {
+                modelo.Outsider = client.Model;
+            }
+            // Retornamos el error.
+            else
+            {
+                return new(Responses.InvalidParam)
+                {
+                    Message = $"No se pudo crear u obtener un cliente con el documento '{modelo.Outsider.Document}'"
+                };
+            }
+        }
+        else
+        {
+            modelo.Outsider = null;
+            modelo.OutsiderId = null;
+        }
+
         // Establecer el modelo.
         modelo.Inventory = new()
         {
@@ -51,14 +77,13 @@ public class OutflowController(IHubService hubService, Persistence.Data.Outflows
         modelo.ProfileId = tokenInfo.ProfileId;
 
         // Crea la nueva entrada
-        var response = await outflowData.Create(modelo);
+        var response = await outflowRepository.Create(modelo);
 
         // Enviar notificación en tiempo real.
         if (response.Response == Responses.Success)
             await hubService.SendOutflowMovement(modelo.InventoryId, response.LastId);
 
         return response;
-
     }
 
 
@@ -70,7 +95,7 @@ public class OutflowController(IHubService hubService, Persistence.Data.Outflows
     /// <param name="token">Token de acceso.</param>
     [HttpGet]
     [InventoryToken]
-    public async Task<HttpReadOneResponse<OutflowDataModel>> ReadOne([FromHeader] int id, [FromHeader] string token, [FromHeader] bool includeDetails = false)
+    public async Task<HttpReadOneResponse<OutflowDataModel>> ReadOne([FromHeader] int id, [FromHeader] string token, [FromHeader] bool includeDetails = false, [FromHeader] string identityToken = "")
     {
 
         // Comprobaciones.
@@ -100,7 +125,13 @@ public class OutflowController(IHubService hubService, Persistence.Data.Outflows
             };
 
         // Obtiene el usuario
-        var result = await outflowData.Read(id, includeDetails);
+        var result = await outflowRepository.Read(id, includeDetails);
+
+        if (result.Model.Profile?.AccountId > 0)
+        {
+            var response = await Access.Auth.Controllers.Account.Read(result.Model.Profile.AccountId, identityToken);
+            result.Alternatives.Add(response.Model);
+        }
 
         // Retorna el resultado
         return result ?? new();
@@ -144,7 +175,7 @@ public class OutflowController(IHubService hubService, Persistence.Data.Outflows
             };
 
         // Obtiene el usuario
-        var result = await outflowData.ReadAll(id);
+        var result = await outflowRepository.ReadAll(id);
 
         // Retorna el resultado
         return result ?? new();
@@ -189,7 +220,7 @@ public class OutflowController(IHubService hubService, Persistence.Data.Outflows
             };
 
         // Obtiene el usuario
-        var result = await outflowData.Update(id, date);
+        var result = await outflowRepository.Update(id, date);
 
         // Retorna el resultado
         return result ?? new();

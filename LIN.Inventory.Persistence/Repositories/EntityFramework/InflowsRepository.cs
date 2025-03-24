@@ -1,14 +1,6 @@
-﻿using LIN.Inventory.Persistence.Extensions;
-using LIN.Types.Inventory.Enumerations;
-using LIN.Types.Inventory.Models;
-using LIN.Types.Inventory.Transient;
-using LIN.Types.Responses;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿namespace LIN.Inventory.Persistence.Repositories.EntityFramework;
 
-namespace LIN.Inventory.Persistence.Data;
-
-public class Inflows(Context.Context context, ILogger<Inflows> logger)
+internal class InflowsRepository(Context.Context context, ILogger<InflowsRepository> logger) : IInflowsRepository
 {
 
     /// <summary>
@@ -34,7 +26,6 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
         {
             try
             {
-
                 // Detalles.
                 var details = data.Details;
                 data.Details = [];
@@ -60,10 +51,10 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                     detail.Id = 0;
                     detail.Movement = data;
 
+                    detail.ProductDetail = context.AttachOrUpdate(detail.ProductDetail);
+
                     // Agregar los detalles.
                     context.DetallesEntradas.Add(detail);
-
-                    context.Attach(detail.ProductDetail);
 
                     // Si la cantidad es invalida
                     if (detail.Quantity <= 0 && data.Type != InflowsTypes.Correction || detail.Quantity < 0 && data.Type == InflowsTypes.Correction)
@@ -75,6 +66,7 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                                         && dt.Status == ProductStatements.Normal
                                         select dt;
 
+                    // Si el movimiento es aceptado, actualizamos el stock.
                     if (data.IsAccepted)
                     {
                         // Ajustar.
@@ -130,7 +122,9 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                                                  Type = i.Type,
                                                  InventoryId = i.InventoryId,
                                                  Profile = i.Profile,
-                                                 ProfileId = i.ProfileId
+                                                 ProfileId = i.ProfileId,
+                                                 IsAccepted = i.IsAccepted,
+                                                 OutflowRelatedId = i.OutflowRelatedId,
                                              }).FirstOrDefaultAsync();
 
             // Validar.
@@ -199,7 +193,6 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
     /// <param name="id">Id del inventario.</param>
     public async Task<ReadAllResponse<InflowDataModel>> ReadAll(int id)
     {
-
         // Ejecución
         try
         {
@@ -214,11 +207,17 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
                           InventoryId = E.InventoryId,
                           ProfileId = E.ProfileId,
                           Type = E.Type,
-                          CountDetails = context.DetallesEntradas.Count(t => t.MovementId == E.Id)
+                          CountDetails = context.DetallesEntradas.Count(t => t.MovementId == E.Id),
+                          IsAccepted = E.IsAccepted,
+                          Profile = E.Profile != null ? new()
+                          {
+                              Id = E.Profile.Id,
+                              AccountId = E.Profile.AccountId
+                          } : null,
+                          OutflowRelatedId = E.OutflowRelatedId
                       };
 
             var lista = await res.ToListAsync();
-
 
             // Si no existe el modelo
             if (lista == null)
@@ -351,6 +350,5 @@ public class Inflows(Context.Context context, ILogger<Inflows> logger)
 
         return new();
     }
-
 
 }

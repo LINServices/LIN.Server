@@ -1,7 +1,7 @@
 ﻿global using Http.Attributes;
 global using Http.ResponsesList;
 global using LIN.Inventory.Hubs;
-global using LIN.Inventory.Persistence.Data;
+global using LIN.Inventory.Persistence.Repositories;
 global using LIN.Inventory.Services;
 global using LIN.Inventory.Services.Interfaces;
 global using LIN.Inventory.Services.Model;

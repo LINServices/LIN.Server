@@ -1,13 +1,6 @@
-﻿using LIN.Types.Inventory.Enumerations;
-using LIN.Types.Inventory.Models;
-using LIN.Types.Responses;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿namespace LIN.Inventory.Persistence.Repositories.EntityFramework;
 
-
-namespace LIN.Inventory.Persistence.Data;
-
-public class Products(Context.Context context, ILogger<Products> logger)
+internal class ProductsRepository(Context.Context context, ILogger<ProductsRepository> logger) : IProductsRepository
 {
 
     /// <summary>
@@ -27,7 +20,7 @@ public class Products(Context.Context context, ILogger<Products> logger)
                 context.Attach(data.Inventory);
 
                 // Detalle.
-                data.DetailModel!.Product = data;
+                data.Details.First().Product = data;
 
                 context.Productos.Add(data);
 
@@ -248,8 +241,8 @@ public class Products(Context.Context context, ILogger<Products> logger)
                 }
 
                 // Actualizar detalle.
-                if (data.DetailModel != null)
-                    await UpdateDetail(data.Id, data.DetailModel);
+                if (data.Details.Any())
+                    await UpdateDetail(data.Id, data.Details[0]);
 
 
                 // Guarda los cambios

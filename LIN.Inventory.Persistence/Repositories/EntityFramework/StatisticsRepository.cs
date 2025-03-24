@@ -1,12 +1,6 @@
-﻿using LIN.Types.Inventory.Enumerations;
-using LIN.Types.Inventory.Transient;
-using LIN.Types.Responses;
-using Microsoft.EntityFrameworkCore;
+﻿namespace LIN.Inventory.Persistence.Repositories.EntityFramework;
 
-
-namespace LIN.Inventory.Persistence.Data;
-
-public class Statistics(Context.Context context)
+internal class StatisticsRepository(Context.Context context) : IStatisticsRepository
 {
 
     /// <summary>
@@ -17,10 +11,8 @@ public class Statistics(Context.Context context)
     /// <param name="endDate">Fecha final.</param>
     public async Task<ReadOneResponse<decimal>> Sales(int profile, DateTime initDate, DateTime endDate)
     {
-
         try
         {
-
             // Consulta.
             var query = from AI in context.AccesoInventarios
                         where AI.ProfileId == profile
@@ -64,10 +56,8 @@ public class Statistics(Context.Context context)
     /// <param name="endDate">Fecha final.</param>
     public async Task<ReadAllResponse<SalesModel>> SalesOn(int profile, DateTime initDate, DateTime endDate)
     {
-
         try
         {
-
             // Selecciona la entrada
             var query = await (from AI in context.AccesoInventarios
                                where AI.ProfileId == profile
