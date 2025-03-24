@@ -2,6 +2,10 @@
 
 public class HubService(IHubContext<InventoryHub> hubContext, Persistence.Context.Context context) : IHubService
 {
+
+    /// <summary>
+    /// Nombre de los grupos.
+    /// </summary>
     private const string GroupName = "group.{0}";
 
 

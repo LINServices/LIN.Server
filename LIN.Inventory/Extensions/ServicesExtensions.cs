@@ -10,7 +10,6 @@ public static class ServicesExtensions
     /// </summary>
     public static IServiceCollection AddLocalServices(this IServiceCollection services)
     {
-
         // Data.
         services.AddScoped<OutflowsReport, OutflowsReport>();
         services.AddScoped<ThirdPartyService, ThirdPartyService>();
@@ -23,7 +22,6 @@ public static class ServicesExtensions
         services.AddScoped<IIam, Iam>();
 
         return services;
-
     }
 
 

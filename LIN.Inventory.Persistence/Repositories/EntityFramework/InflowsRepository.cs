@@ -356,4 +356,28 @@ internal class InflowsRepository(Context.Context context, ILogger<InflowsReposit
         return new();
     }
 
+
+    public async Task<ReadOneResponse<int>> GetInventory(int inflow)
+    {
+        // Ejecución
+        try
+        {
+
+            var inventory = await (from a in context.Entradas
+                                   where a.Id == inflow
+                                   select a.InventoryId).FirstOrDefaultAsync();
+            // Retorna
+            return new(Responses.Success)
+            {
+                Model = inventory
+            };
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new();
+    }
+
 }

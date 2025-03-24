@@ -1,7 +1,7 @@
 ﻿namespace LIN.Inventory.Integrations;
 
 [Route("connectors/[controller]")]
-public class OpenStoreController(IHoldsGroupRepository holdsRepository, ThirdPartyService thirdPartyService, IOutflowsRepository outflowsRepository, IOrdersRepository ordersRepository, IProductsRepository productsData, IOutflowsRepository outflows, IIam Iam, EmailSender emailSender) : ControllerBase
+public class OpenStoreController(IHubService hubService, IHoldsGroupRepository holdsRepository, ThirdPartyService thirdPartyService, IOutflowsRepository outflowsRepository, IOrdersRepository ordersRepository, IProductsRepository productsData, IOutflowsRepository outflows, IIam Iam, EmailSender emailSender, IInflowsRepository inflowsRepository) : ControllerBase
 {
 
     public class WebhookRequest
@@ -77,7 +77,15 @@ public class OpenStoreController(IHoldsGroupRepository holdsRepository, ThirdPar
             // Actualizar la información del movimiento si ya existe y el nuevo estado esta revertido.
             if (!string.IsNullOrEmpty(order.Status) && resultado.StatusString == "Reverted")
             {
-                await outflows.Reverse(order.Id);
+                var response = await outflows.Reverse(order.Id);
+
+                // Notificar en tiempo real.
+                if (response.Response == Responses.Success)
+                {
+                    var inventory = await inflowsRepository.GetInventory(response.LastId);
+                    await hubService.SendInflowMovement(inventory.Model, response.LastId);
+                }
+
             }
 
         }
@@ -381,6 +389,10 @@ public class OpenStoreController(IHoldsGroupRepository holdsRepository, ThirdPar
 
         // Creamos el movimiento, sin actualizar el inventario.
         var response = await outflowsRepository.Create(outflow, updateInventory: false);
+
+        // Notificar en tiempo real.
+        if (response.Response == Responses.Success)
+            await hubService.SendInflowMovement(inventory, response.LastId);
 
     }
 

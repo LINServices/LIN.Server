@@ -336,7 +336,7 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
     }
 
 
-    public async Task<ResponseBase> Reverse(int order)
+    public async Task<CreateResponse> Reverse(int order)
     {
         // Ejecución
         try
@@ -387,7 +387,7 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
 
 
             // Retorna
-            return new(Responses.Success);
+            return new(Responses.Success, res.LastId);
 
         }
         catch (Exception)
@@ -397,5 +397,28 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
         return new();
     }
 
+
+    public async Task<ReadOneResponse<int>> GetInventory(int outflow)
+    {
+        // Ejecución
+        try
+        {
+
+            var inventory = await (from a in context.Salidas
+                                   where a.Id == outflow
+                                   select a.InventoryId).FirstOrDefaultAsync();
+            // Retorna
+            return new(Responses.Success)
+            {
+                Model = inventory
+            };
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new();
+    }
 
 }

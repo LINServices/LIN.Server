@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Hubs;
 
-public class InventoryHub(Persistence.Context.Context context, IIam Iam) : Hub
+public class InventoryHub(IIam Iam) : Hub
 {
 
     /// <summary>
