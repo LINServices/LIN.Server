@@ -361,6 +361,7 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
             // Agregar productos al inventario como Entrada Pendiente.
             var inflow = new InflowDataModel()
             {
+
                 Status = MovementStatus.Accepted,
                 Date = DateTime.Now,
                 Type = InflowsTypes.Refund,
@@ -370,6 +371,7 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
                 OutflowRelated = outflow,
                 Details = outflowDetails?.Select(t => new InflowDetailsDataModel()
                 {
+                    Id = t.Id,
                     ProductDetail = t.ProductDetail,
                     ProductDetailId = t.ProductDetailId,
                     Quantity = t.Quantity,

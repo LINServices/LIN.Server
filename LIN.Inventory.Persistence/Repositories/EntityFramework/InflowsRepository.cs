@@ -49,6 +49,11 @@ internal class InflowsRepository(Context.Context context, ILogger<InflowsReposit
                 {
                     // Modelo details
                     detail.Id = 0;
+                    detail.ProductDetail = new()
+                    {
+                        Id = detail.ProductDetailId
+                    };
+                    
                     detail.Movement = data;
 
                     detail.ProductDetail = context.AttachOrUpdate(detail.ProductDetail);
