@@ -3,7 +3,7 @@ using LIN.Inventory.Services.Reportes;
 namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
-[RateLimit(requestLimit: 20, timeWindowSeconds: 60, blockDurationSeconds: 120)]
+[RateLimit(requestLimit: 40, timeWindowSeconds: 60, blockDurationSeconds: 120)]
 public class OutflowController(IHubService hubService, IOutflowsRepository outflowRepository, ThirdPartyService thirdPartyService, IInventoriesRepository inventoryRepository, IIam Iam, OutflowsReport outflowReport) : ControllerBase
 {
 

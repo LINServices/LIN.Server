@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [InventoryToken]
 [Route("[Controller]")]
-[RateLimit(requestLimit: 10, timeWindowSeconds: 60, blockDurationSeconds: 120)]
+[RateLimit(requestLimit: 40, timeWindowSeconds: 60, blockDurationSeconds: 120)]
 public class ClientsController(IIam Iam, IOutsiderRepository outsiderRepository) : ControllerBase
 {
 

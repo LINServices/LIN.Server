@@ -345,7 +345,12 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
             // reversar las ordenes.
             var qq = await (from ss in context.Salidas
                             where ss.OrderId == order
+                            && ss.Status != MovementStatus.Reversed
                             select ss).ExecuteUpdateAsync(t => t.SetProperty(a => a.Status, MovementStatus.Reversed));
+
+            // Ya fue reversado, o esta en proceso.
+            if (qq <= 0)
+                return new();
 
 
             var outflow = await (from ss in context.Salidas
