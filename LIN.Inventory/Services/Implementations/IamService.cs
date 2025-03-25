@@ -1,8 +1,8 @@
 ﻿using LIN.Inventory.Persistence.Context;
 
-namespace LIN.Inventory.Services;
+namespace LIN.Inventory.Services.Implementations;
 
-internal class Iam(Context context) : IIam
+internal class IamService(Context context) : IIamService
 {
 
     /// <summary>
@@ -61,7 +61,7 @@ internal class Iam(Context context) : IIam
 
 
     /// <summary>
-    /// Iam (BY Product)
+    /// IamService (BY Product)
     /// </summary>
     private async Task<InventoryRoles> OnProduct(int id, int profile)
     {
@@ -84,7 +84,7 @@ internal class Iam(Context context) : IIam
 
 
     /// <summary>
-    /// Iam (BY Inflow)
+    /// IamService (BY Inflow)
     /// </summary>
     private async Task<InventoryRoles> OnInflow(int id, int profile)
     {
@@ -107,7 +107,7 @@ internal class Iam(Context context) : IIam
 
 
     /// <summary>
-    /// Iam (BY Outflow)
+    /// IamService (BY Outflow)
     /// </summary>
     private async Task<InventoryRoles> OnOutflow(int id, int profile)
     {
@@ -144,7 +144,7 @@ internal class Iam(Context context) : IIam
                             select new { P.Rol }).FirstOrDefaultAsync();
 
         // Si no hay.
-        return (access != null);
+        return access != null;
 
     }
 

@@ -1,4 +1,5 @@
-﻿using LIN.Inventory.Services.Reportes;
+﻿using LIN.Inventory.Services.Implementations;
+using LIN.Inventory.Services.Reportes;
 
 namespace LIN.Inventory.Extensions;
 
@@ -12,14 +13,14 @@ public static class ServicesExtensions
     {
         // Data.
         services.AddScoped<OutflowsReport, OutflowsReport>();
-        services.AddScoped<ThirdPartyService, ThirdPartyService>();
-        services.AddScoped<EmailSender, EmailSender>();
+        services.AddScoped<IThirdPartyService, ThirdPartyService>();
+        services.AddScoped<IEmailSenderService, EmailSenderService>();
 
         // Hubs.
         services.AddScoped<IHubService, HubService>();
 
-        // Iam.
-        services.AddScoped<IIam, Iam>();
+        // IamService.
+        services.AddScoped<IIamService, IamService>();
 
         return services;
     }

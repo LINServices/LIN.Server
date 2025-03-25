@@ -24,7 +24,7 @@ public class DevicesController : ControllerBase
         return new ReadAllResponse<DeviceModel>()
         {
             Response = Responses.Success,
-            Models = devices
+            Models = devices ?? []
         };
     }
 

@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Hubs;
 
-public class InventoryHub(IIam Iam) : Hub
+public class InventoryHub(IIamService Iam) : Hub
 {
 
     /// <summary>
@@ -75,7 +75,7 @@ public class InventoryHub(IIam Iam) : Hub
         if (!tokenInfo.IsAuthenticated)
             return;
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,

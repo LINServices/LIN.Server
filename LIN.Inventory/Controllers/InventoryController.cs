@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 40, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class InventoryController(IHubService hubService, IInventoriesRepository inventoryRepository, IIam Iam) : ControllerBase
+public class InventoryController(IHubService hubService, IInventoriesRepository inventoryRepository, IIamService Iam) : ControllerBase
 {
 
     /// <summary>
@@ -89,7 +89,7 @@ public class InventoryController(IHubService hubService, IInventoriesRepository 
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -100,7 +100,7 @@ public class InventoryController(IHubService hubService, IInventoriesRepository 
         // Roles admitidos.
         InventoryRoles[] roles = [InventoryRoles.Administrator, InventoryRoles.Member, InventoryRoles.Guest, InventoryRoles.Supervisor, InventoryRoles.Reader];
 
-        // Validar Iam.
+        // Validar IamService.
         if (!roles.Contains(iam))
             return new()
             {
@@ -137,7 +137,7 @@ public class InventoryController(IHubService hubService, IInventoriesRepository 
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -145,7 +145,7 @@ public class InventoryController(IHubService hubService, IInventoriesRepository 
             Profile = tokenInfo.ProfileId
         });
 
-        // Validar Iam.
+        // Validar IamService.
         if (iam != InventoryRoles.Administrator)
             return new()
             {

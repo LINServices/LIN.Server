@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 40, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class InflowController(IHubService hubService, IInflowsRepository inflowRepository, IIam Iam) : ControllerBase
+public class InflowController(IHubService hubService, IInflowsRepository inflowRepository, IIamService Iam) : ControllerBase
 {
 
     /// <summary>
@@ -25,7 +25,7 @@ public class InflowController(IHubService hubService, IInflowsRepository inflowR
         if (modelo.Details.Count == 0 || modelo.Type == InflowsTypes.Undefined)
             return new(Responses.InvalidParam);
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -82,7 +82,7 @@ public class InflowController(IHubService hubService, IInflowsRepository inflowR
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inflow,
@@ -127,7 +127,7 @@ public class InflowController(IHubService hubService, IInflowsRepository inflowR
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -173,7 +173,7 @@ public class InflowController(IHubService hubService, IInflowsRepository inflowR
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inflow,

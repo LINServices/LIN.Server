@@ -1,24 +1,8 @@
 ﻿namespace LIN.Inventory.Integrations;
 
 [Route("connectors/[controller]")]
-public class OpenStoreController(IHubService hubService, IHoldsGroupRepository holdsRepository, ThirdPartyService thirdPartyService, IOutflowsRepository outflowsRepository, IOrdersRepository ordersRepository, IProductsRepository productsData, IOutflowsRepository outflows, IIam Iam, EmailSender emailSender, IInflowsRepository inflowsRepository) : ControllerBase
+public class OpenStoreController(IHubService hubService, IHoldsGroupRepository holdsRepository, IThirdPartyService thirdPartyService, IOutflowsRepository outflowsRepository, IOrdersRepository ordersRepository, IProductsRepository productsData, IOutflowsRepository outflows, IIamService Iam, IEmailSenderService emailSender, IInflowsRepository inflowsRepository) : ControllerBase
 {
-
-    public class WebhookRequest
-    {
-        public int OrderId { get; set; }
-        public string Reference { get; set; }
-        public int Status { get; set; }
-        public string StatusString { get; set; }
-        public PayerRequest? Payer { get; set; }
-    }
-
-    public class PayerRequest
-    {
-        public string Name { get; set; }
-        public string Document { get; set; }
-        public string Mail { get; set; }
-    }
 
     /// <summary>
     /// Webhook para estados de los pagos en línea relacionados con el inventario.
@@ -109,7 +93,7 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -229,6 +213,9 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
 
 
 
+
+
+
     /// <summary>
     /// Reservar stock de productos en un inventario especifico.
     /// </summary>
@@ -272,8 +259,6 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
 
         // Eliminar la Reserva del stock/* Reintegrar los productos al inventario */
         await holdsRepository.Return(holdGroupId);
-
-
 
         return Ok();
     }
@@ -392,13 +377,8 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
 
         // Notificar en tiempo real.
         if (response.Response == Responses.Success)
-            await hubService.SendInflowMovement(inventory, response.LastId);
+            await hubService.SendOutflowMovement(inventory, response.LastId);
 
     }
-
-
-
-
-
 
 }

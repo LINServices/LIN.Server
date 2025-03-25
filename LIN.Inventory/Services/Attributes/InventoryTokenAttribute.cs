@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace LIN.Inventory.Services;
+namespace LIN.Inventory.Services.Attributes;
 
 public class InventoryTokenAttribute : ActionFilterAttribute
 {
@@ -38,6 +38,5 @@ public class InventoryTokenAttribute : ActionFilterAttribute
         context.HttpContext.Items.Add(value.ToString(), tokenInfo);
         await base.OnActionExecutionAsync(context, next);
     }
-
 
 }

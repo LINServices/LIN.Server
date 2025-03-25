@@ -1,4 +1,4 @@
-﻿namespace LIN.Inventory.Hubs;
+﻿namespace LIN.Inventory.Services;
 
 public interface IHubService
 {

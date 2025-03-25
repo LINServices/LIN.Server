@@ -2,7 +2,7 @@
 
 [Route("Inventory/access")]
 [RateLimit(requestLimit: 40, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class InventoryAccessController(IHubService hubService, IInventoryAccessRepository inventoryAccessRepository, IIam Iam) : ControllerBase
+public class InventoryAccessController(IHubService hubService, IInventoryAccessRepository inventoryAccessRepository, IIamService Iam) : ControllerBase
 {
 
     /// <summary>
@@ -18,7 +18,7 @@ public class InventoryAccessController(IHubService hubService, IInventoryAccessR
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -160,7 +160,7 @@ public class InventoryAccessController(IHubService hubService, IInventoryAccessR
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Access,
@@ -214,7 +214,7 @@ public class InventoryAccessController(IHubService hubService, IInventoryAccessR
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -284,7 +284,7 @@ public class InventoryAccessController(IHubService hubService, IInventoryAccessR
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,

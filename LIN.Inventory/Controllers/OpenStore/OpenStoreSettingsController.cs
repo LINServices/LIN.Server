@@ -2,7 +2,7 @@
 
 [InventoryToken]
 [Route("[controller]")]
-public class OpenStoreSettingsController(IOpenStoreSettingsRepository storeSettingsRepository, IIam Iam) : ControllerBase
+public class OpenStoreSettingsController(IOpenStoreSettingsRepository storeSettingsRepository, IIamService Iam) : ControllerBase
 {
 
     [HttpPost]
@@ -12,7 +12,7 @@ public class OpenStoreSettingsController(IOpenStoreSettingsRepository storeSetti
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,

@@ -1,6 +1,6 @@
-﻿namespace LIN.Inventory.Services;
+﻿namespace LIN.Inventory.Services.Implementations;
 
-public class EmailSender
+public class EmailSenderService : IEmailSenderService
 {
 
     /// <summary>

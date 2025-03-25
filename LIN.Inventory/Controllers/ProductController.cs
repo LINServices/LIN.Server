@@ -2,7 +2,7 @@ namespace LIN.Inventory.Controllers;
 
 [Route("[Controller]")]
 [RateLimit(requestLimit: 40, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class ProductController(IHubService hubService, IProductsRepository productsRepository, IInventoriesRepository inventoryRepository, IIam Iam) : ControllerBase
+public class ProductController(IHubService hubService, IProductsRepository productsRepository, IInventoriesRepository inventoryRepository, IIamService Iam) : ControllerBase
 {
 
     /// <summary>
@@ -47,7 +47,7 @@ public class ProductController(IHubService hubService, IProductsRepository produ
                 Message = "Uno o varios parámetros son inválidos."
             };
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -105,7 +105,7 @@ public class ProductController(IHubService hubService, IProductsRepository produ
             return new(Responses.InvalidParam);
 
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -148,7 +148,7 @@ public class ProductController(IHubService hubService, IProductsRepository produ
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Product,
@@ -202,7 +202,7 @@ public class ProductController(IHubService hubService, IProductsRepository produ
             };
 
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Inventory,
@@ -239,7 +239,7 @@ public class ProductController(IHubService hubService, IProductsRepository produ
         // Información del token.
         var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Product,
@@ -301,7 +301,7 @@ public class ProductController(IHubService hubService, IProductsRepository produ
                 Response = Responses.Unauthorized
             };
 
-        // Acceso Iam.
+        // Acceso IamService.
         var iam = await Iam.Validate(new IamRequest()
         {
             IamBy = IamBy.Product,

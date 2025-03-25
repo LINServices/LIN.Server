@@ -94,7 +94,7 @@ internal class OrdersRepository(Context.Context context) : IOrdersRepository
 
             return new(Responses.Success, orders);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
 

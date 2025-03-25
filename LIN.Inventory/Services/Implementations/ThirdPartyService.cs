@@ -1,6 +1,6 @@
-﻿namespace LIN.Inventory.Services;
+﻿namespace LIN.Inventory.Services.Implementations;
 
-public class ThirdPartyService(IOutsiderRepository outsiderRepository)
+public class ThirdPartyService(IOutsiderRepository outsiderRepository) : IThirdPartyService
 {
 
     /// <summary>
@@ -14,7 +14,7 @@ public class ThirdPartyService(IOutsiderRepository outsiderRepository)
         // Intentar encontrar.
         var outsider = await outsiderRepository.FindByDocument(model.Document, inventory);
 
-        // Si todo salió bien.
+        // Si se encontró el tercero.
         if (outsider.Response == Responses.Success)
         {
             model.Id = outsider.Model.Id;
@@ -32,13 +32,12 @@ public class ThirdPartyService(IOutsiderRepository outsiderRepository)
             InventoryDataModel = new() { Id = inventory }
         });
 
-        if (responseCreate.Response == Responses.Success)
-        {
-            model.Id = responseCreate.LastId;
-            return new(Responses.Success, model);
-        }
+        if (responseCreate.Response != Responses.Success)
+            return new(Responses.Undefined);
 
-        return new(Responses.Undefined);
+        // Modelo.
+        model.Id = responseCreate.LastId;
+        return new(Responses.Success, model);
     }
 
 }

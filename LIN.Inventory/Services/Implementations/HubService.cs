@@ -1,4 +1,4 @@
-﻿namespace LIN.Inventory.Hubs;
+﻿namespace LIN.Inventory.Services.Implementations;
 
 public class HubService(IHubContext<InventoryHub> hubContext, Persistence.Context.Context context) : IHubService
 {
@@ -87,7 +87,7 @@ public class HubService(IHubContext<InventoryHub> hubContext, Persistence.Contex
                          select new
                          {
                              Profile = i.ProfileId,
-                             Id = i.Id,
+                             i.Id,
                          }).ToListAsync();
 
 

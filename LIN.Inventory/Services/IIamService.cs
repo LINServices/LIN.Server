@@ -1,6 +1,6 @@
-﻿namespace LIN.Inventory.Services.Interfaces;
+﻿namespace LIN.Inventory.Services;
 
-public interface IIam
+public interface IIamService
 {
     Task<bool> CanAccept(int id, int profile);
     Task<InventoryRoles> Validate(IamRequest request);

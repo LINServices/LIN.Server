@@ -370,7 +370,7 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
                 Status = MovementStatus.Accepted,
                 Date = DateTime.Now,
                 Type = InflowsTypes.Refund,
-                Inventory = outflow?.Inventory,
+                Inventory = outflow?.Inventory!,
                 Profile = null,
                 IsAccepted = false,
                 OutflowRelated = outflow,
