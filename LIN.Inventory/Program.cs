@@ -1,6 +1,7 @@
 using Http.Extensions;
 using LIN.Access.Auth;
 using LIN.Access.Contacts;
+using LIN.Access.Developer;
 using LIN.Access.Payments;
 using LIN.Inventory.Extensions;
 using LIN.Inventory.Persistence.Extensions;
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Logger.
 builder.Services.AddLocalServices();
 builder.Services.AddPaymentsService();
+builder.Services.AddDeveloperService();
 
 // Servicios.
 builder.Services.AddSignalR();

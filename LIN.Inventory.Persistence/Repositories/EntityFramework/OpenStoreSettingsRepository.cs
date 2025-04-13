@@ -30,4 +30,26 @@ internal class OpenStoreSettingsRepository(Context.Context context) : IOpenStore
         return new();
     }
 
+
+
+    public async Task<ReadOneResponse<OpenStoreSettings>> Read(int id)
+    {
+        try
+        {
+            // Guardar ajustes.
+            var z = await (from a in context.OpenStoreSettings
+                           where a.InventoryId == id
+                           select a).FirstOrDefaultAsync();
+
+            if (z is null)
+                return new(Responses.NotRows);
+
+            return new(Responses.Success, z);
+        }
+        catch (Exception)
+        {
+        }
+        return new();
+    }
+
 }

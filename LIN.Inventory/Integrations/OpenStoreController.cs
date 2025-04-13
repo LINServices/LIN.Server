@@ -1,7 +1,7 @@
 ﻿namespace LIN.Inventory.Integrations;
 
 [Route("connectors/[controller]")]
-public class OpenStoreController(IHubService hubService, IHoldsGroupRepository holdsRepository, IThirdPartyService thirdPartyService, IOutflowsRepository outflowsRepository, IOrdersRepository ordersRepository, IProductsRepository productsData, IOutflowsRepository outflows, IIamService Iam, IEmailSenderService emailSender, IInflowsRepository inflowsRepository) : ControllerBase
+public class OpenStoreController(IHubService hubService, IHoldsGroupRepository holdsRepository, IThirdPartyService thirdPartyService, IOutflowsRepository outflowsRepository, IOrdersRepository ordersRepository, IProductsRepository productsData, IOutflowsRepository outflows, IIamService Iam, IEmailSenderService emailSender, IInflowsRepository inflowsRepository, IOpenStoreSettingsRepository openStoreSettingsRepository) : ControllerBase
 {
 
     /// <summary>
@@ -175,8 +175,11 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
         /* Con el Id de la reserva, se dan 10 minutos mas, para el usuario tener tiempo de pagar, despues, se vence la orden y el enlace de pago */
         var grupo = await holdsRepository.GetItems(response.LastId);
 
+        // Obtener información del key.
+        var settings = await openStoreSettingsRepository.Read(modelo.InventoryId);
+
         // Generar enlace de pago con Payments.
-        var result = await LIN.Access.Payments.Controllers.Payments.Generate(webhook, client.Model.Email, client.Model.Document, DateTime.Now.AddMinutes(2), grupo.Models.Select(t => new Access.Payments.Controllers.PaymentItemDataModel()
+        var result = await LIN.Access.Payments.Controllers.Payments.Generate(webhook, client.Model.Email, client.Model.Document, settings.Model.ApiKey, DateTime.Now.AddMinutes(2), grupo.Models.Select(t => new Access.Payments.Controllers.PaymentItemDataModel()
         {
             Id = 0,
             Name = "Example",
@@ -284,7 +287,7 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
         DateTime horaActual = TimeZoneInfo.ConvertTime(DateTime.Now, zonaGmtMenos5);
 
         // Generar enlace de pago con Payments.
-        var result = await LIN.Access.Payments.Controllers.Payments.Generate(webhook, "giraldojhong4@gmail.com", "1021804732", horaActual.AddMinutes(1), grupo.Models.Select(t => new Access.Payments.Controllers.PaymentItemDataModel()
+        var result = await LIN.Access.Payments.Controllers.Payments.Generate(webhook, "giraldojhong4@gmail.com", "1021804732", "", horaActual.AddMinutes(1), grupo.Models.Select(t => new Access.Payments.Controllers.PaymentItemDataModel()
         {
             Id = 0,
             Name = "Example",
