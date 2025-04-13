@@ -184,6 +184,7 @@ internal class HoldsGroupRepository(Context.Context context, IHoldsRepository ho
                                    },
                                    Status = p.Status,
                                    Quantity = p.Quantity,
+                                   GroupId = p.GroupId,
                                    Id = p.Id
                                }).ToListAsync();
 

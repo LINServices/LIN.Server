@@ -72,18 +72,20 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
                         throw new Exception();
                     }
 
-                    // Nuevos datos
-                    int newStock = productoDetail.Quantity - detail.Quantity;
-
-                    // Si el producto no tiene suficiente stock
-                    if (newStock < 0)
-                    {
-                        return new(Responses.InvalidParam, -1, $"El producto no tiene stock suficiente");
-                    }
-
                     // Si se debe actualizar el stock del inventario.
                     if (updateInventory)
+                    {
+                        // Nuevos datos
+                        int newStock = productoDetail.Quantity - detail.Quantity;
+
+                        // Si el producto no tiene suficiente stock
+                        if (newStock < 0)
+                        {
+                            return new(Responses.InvalidParam, -1, $"El producto no tiene stock suficiente");
+                        }
+
                         await context.ProductoDetalles.Where(t => t.Id == detail.ProductDetailId).ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity - detail.Quantity));
+                    }
 
                 }
 

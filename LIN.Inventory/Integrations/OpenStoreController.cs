@@ -47,14 +47,12 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
             // Si el pago fue rechazado.
             if (!string.IsNullOrEmpty(order.Status) && (resultado.StatusString == "Rejected"))
             {
-                // Aprobar la reserva.
                 await holdsRepository.Return(order.HoldGroupId);
             }
 
             // Si el tiempo expiro.
             if (resultado.StatusString == "Expired")
             {
-                // Aprobar la reserva.
                 await holdsRepository.Return(order.HoldGroupId);
             }
 
