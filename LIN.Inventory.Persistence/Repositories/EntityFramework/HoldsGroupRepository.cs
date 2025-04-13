@@ -112,7 +112,12 @@ internal class HoldsGroupRepository(Context.Context context, IHoldsRepository ho
                                    DetailModel = new()
                                    {
                                        Id = p.DetailModel.Id,
-                                       SalePrice = p.DetailModel.SalePrice
+                                       SalePrice = p.DetailModel.SalePrice,
+                                       Product = new()
+                                       {
+                                           Id = p.DetailModel.Product.Id,
+                                           Name = p.DetailModel.Product.Name
+                                       }
                                    },
                                    Status = p.Status,
                                    Quantity = p.Quantity,
@@ -149,6 +154,43 @@ internal class HoldsGroupRepository(Context.Context context, IHoldsRepository ho
         catch (Exception)
         {
 
+        }
+        return new();
+    }
+
+
+    /// <summary>
+    /// Obtener los grupos de reservas asociados a un inventario (holds sin estado)
+    /// </summary>
+    /// <param name="inventory">Id del inventario.</param>
+    public async Task<ReadAllResponse<HoldModel>> GetItemsHolds(int inventory)
+    {
+        try
+        {
+            var holds = await (from p in context.Holds
+                               where p.DetailModel.Product.InventoryId == inventory
+                               && p.Status == HoldStatus.None
+                               select new HoldModel
+                               {
+                                   DetailModel = new()
+                                   {
+                                       Id = p.DetailModel.Id,
+                                       SalePrice = p.DetailModel.SalePrice,
+                                       Product = new()
+                                       {
+                                           Id = p.DetailModel.Product.Id,
+                                           Name = p.DetailModel.Product.Name
+                                       }
+                                   },
+                                   Status = p.Status,
+                                   Quantity = p.Quantity,
+                                   Id = p.Id
+                               }).ToListAsync();
+
+            return new(Responses.Success, holds);
+        }
+        catch (Exception)
+        {
         }
         return new();
     }

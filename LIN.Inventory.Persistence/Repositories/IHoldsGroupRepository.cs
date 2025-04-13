@@ -7,4 +7,5 @@ public interface IHoldsGroupRepository
     Task<ReadOneResponse<int>> GetInventory(int holdGroupId);
     Task<ReadAllResponse<HoldModel>> GetItems(int holdGroupId);
     Task<CreateResponse> Return(int holdGroupId);
+    Task<ReadAllResponse<HoldModel>> GetItemsHolds(int inventory);
 }

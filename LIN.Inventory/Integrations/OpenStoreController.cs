@@ -179,10 +179,10 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
         var settings = await openStoreSettingsRepository.Read(modelo.InventoryId);
 
         // Generar enlace de pago con Payments.
-        var result = await LIN.Access.Payments.Controllers.Preferences.Create(webhook, client.Model.Email, client.Model.Document, settings.Model.ApiKey, DateTime.Now.AddMinutes(2), grupo.Models.Select(t => new LIN.Types.Payments.Models.PaymentItemRequestModel()
+        var result = await Access.Payments.Controllers.Preferences.Create(webhook, client.Model.Email, client.Model.Document, settings.Model.ApiKey, DateTime.Now.AddMinutes(2), grupo.Models.Select(t => new PaymentItemRequestModel()
         {
             Id = 0,
-            Name = "Example",
+            Name = t.DetailModel.Product.Name,
             Picture = "",
             Quantity = t.Quantity,
             Price = t.DetailModel.SalePrice
@@ -205,19 +205,12 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
         await emailSender.Send(client.Model.Email, "Nueva orden de pago", System.IO.File.ReadAllText("wwwroot/Plantillas/Payment.html"));
 
         // ------------------------------------
-
         return new CreateResponse(Responses.Success, orderRepo.LastId)
         {
             Alternatives = [result.Models[0]],
             LastUnique = result.Models[0]
         };
     }
-
-
-
-
-
-
 
 
     /// <summary>
