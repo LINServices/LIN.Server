@@ -1,6 +1,4 @@
-﻿using LIN.Types.Payments.Models;
-
-namespace LIN.Inventory.Controllers.OpenStore;
+﻿namespace LIN.Inventory.Controllers.OpenStore;
 
 [InventoryToken]
 [Route("[controller]")]
@@ -132,7 +130,7 @@ public class OpenStoreSettingsController(IOpenStoreSettingsRepository storeSetti
         // Obtener la información.
         var infor = await storeSettingsRepository.Read(inventory);
 
-        var payments = await LIN.Access.Payments.Controllers.Payments.ReadPayments(infor.Model.ApiKey);
+        var payments = await LIN.Access.Payments.Controllers.Payments.ReadAll(infor.Model.ApiKey);
 
 
         return payments;

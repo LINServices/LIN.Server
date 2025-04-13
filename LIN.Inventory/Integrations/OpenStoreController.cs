@@ -179,11 +179,12 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
         var settings = await openStoreSettingsRepository.Read(modelo.InventoryId);
 
         // Generar enlace de pago con Payments.
-        var result = await LIN.Access.Payments.Controllers.Payments.Generate(webhook, client.Model.Email, client.Model.Document, settings.Model.ApiKey, DateTime.Now.AddMinutes(2), grupo.Models.Select(t => new Access.Payments.Controllers.PaymentItemDataModel()
+        var result = await LIN.Access.Payments.Controllers.Preferences.Create(webhook, client.Model.Email, client.Model.Document, settings.Model.ApiKey, DateTime.Now.AddMinutes(2), grupo.Models.Select(t => new LIN.Types.Payments.Models.PaymentItemRequestModel()
         {
             Id = 0,
             Name = "Example",
             Picture = "",
+            Quantity = t.Quantity,
             Price = t.DetailModel.SalePrice
         }));
 
@@ -266,51 +267,6 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
         return Ok();
     }
 
-
-    /// <summary>
-    /// Generar la orden de pago y enlace de pago para una reserva.
-    /// </summary>
-    [HttpPost("order")]
-    public async Task<IActionResult> Order(int holdGroup)
-    {
-
-#if DEBUG
-        string webhook = "https://sw3dtgpc-7019.use2.devtunnels.ms/connectors/OpenStore";
-#else
-        string webhook = "https://api.inventory.linplatform.com/connectors/OpenStore";
-#endif
-
-        /* Con el Id de la reserva, se dan 10 minutos mas, para el usuario tener tiempo de pagar, despues, se vence la orden y el enlace de pago */
-        var grupo = await holdsRepository.GetItems(holdGroup);
-
-        TimeZoneInfo zonaGmtMenos5 = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
-        DateTime horaActual = TimeZoneInfo.ConvertTime(DateTime.Now, zonaGmtMenos5);
-
-        // Generar enlace de pago con Payments.
-        var result = await LIN.Access.Payments.Controllers.Payments.Generate(webhook, "giraldojhong4@gmail.com", "1021804732", "", horaActual.AddMinutes(1), grupo.Models.Select(t => new Access.Payments.Controllers.PaymentItemDataModel()
-        {
-            Id = 0,
-            Name = "Example",
-            Picture = "",
-            Price = t.DetailModel.SalePrice
-        }));
-
-        // Asociar la external Id con la orden local.
-        // Crear la orden local.
-        var order = new OrderModel
-        {
-            Id = 0,
-            ExternalId = result.Models[1] ?? string.Empty,
-            Status = "",
-            HoldGroupId = holdGroup,
-        };
-
-        // Crear la orden.
-        await ordersRepository.Create(order);
-
-        // Retornar el enlace de pago.
-        return Ok(result.Models[0]);
-    }
 
 
     /// <summary>
