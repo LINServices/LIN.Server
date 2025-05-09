@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Services.Implementations;
 
-public class EmailSenderService : IEmailSenderService
+public class EmailSenderService(IConfiguration configuration) : IEmailSenderService
 {
 
     /// <summary>
@@ -14,7 +14,7 @@ public class EmailSenderService : IEmailSenderService
         try
         {
             // Servicio.
-            Global.Http.Services.Client client = new(Http.Services.Configuration.GetConfiguration("hangfire:mail"))
+            Global.Http.Services.Client client = new(configuration["hangfire:mail"])
             {
                 TimeOut = 10
             };

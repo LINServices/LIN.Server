@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="LIN.Access.Auth" Version="4.0.1" />
+		<PackageReference Include="LIN.Access.Auth" Version="4.1.0" />
 		<PackageReference Include="LIN.Access.Contacts" Version="4.0.0" />
 		<PackageReference Include="LIN.Types.Inventory" Version="2.5.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
