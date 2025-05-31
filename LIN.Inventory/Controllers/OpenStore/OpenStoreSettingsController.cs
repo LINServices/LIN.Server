@@ -38,7 +38,7 @@ public class OpenStoreSettingsController(IOpenStoreSettingsRepository storeSetti
             return new();
 
         // Crear proyecto en LIN Cloud Orchestrator.
-        var response = await LIN.Access.Developer.Controllers.Project.Create(new()
+        var response = await LIN.Access.Developer.Controllers.Resources.Create(new()
         {
             Name = "Recurso de pagos en Inventario",
             Status = Types.Developer.Enumerations.ProjectStatus.Normal,
