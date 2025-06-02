@@ -158,6 +158,31 @@ internal class HoldsGroupRepository(Context.Context context, IHoldsRepository ho
         return new();
     }
 
+    /// <summary>
+    /// Obtener el inventario al que se asocia un grupo.
+    /// </summary>
+    /// <param name="holdGroupId">Id del grupo.</param>
+    public async Task<ReadOneResponse<HoldGroupModel>> Read(int holdGroupId)
+    {
+        try
+        {
+
+            var hold = await (from p in context.HoldGroups
+                              where p.Id == holdGroupId
+                              select p).FirstOrDefaultAsync();
+
+            if (hold is null)
+                return new(Responses.NotRows);
+
+            return new(Responses.Success, hold);
+        }
+        catch (Exception)
+        {
+
+        }
+        return new();
+    }
+
 
     /// <summary>
     /// Obtener los grupos de reservas asociados a un inventario (holds sin estado)

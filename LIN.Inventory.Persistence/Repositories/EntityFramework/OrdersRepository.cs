@@ -83,6 +83,28 @@ internal class OrdersRepository(Context.Context context) : IOrdersRepository
     }
 
 
+    public async Task<ReadOneResponse<OrderModel>> ReadByHold(int holdGroupId)
+    {
+
+        try
+        {
+            var orders = await (from o in context.Orders
+                                where o.HoldGroupId == holdGroupId
+                                select o).FirstOrDefaultAsync();
+
+            if (orders == null)
+                return new(Responses.NotRows);
+
+            return new(Responses.Success, orders);
+        }
+        catch (Exception)
+        {
+        }
+
+        return new();
+    }
+
+
 
     public async Task<ReadOneResponse<bool>> HasMovements(int order)
     {

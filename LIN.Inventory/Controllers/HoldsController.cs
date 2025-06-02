@@ -3,7 +3,7 @@ namespace LIN.Inventory.Controllers;
 [InventoryToken]
 [Route("[Controller]")]
 [RateLimit(requestLimit: 40, timeWindowSeconds: 60, blockDurationSeconds: 120)]
-public class HoldsController(IHoldsGroupRepository holdsGroupRepository, IIamService Iam) : ControllerBase
+public class HoldsController(IHoldsGroupRepository holdsGroupRepository, IOrdersRepository ordersRepository, IIamService Iam) : ControllerBase
 {
 
     /// <summary>
@@ -91,6 +91,44 @@ public class HoldsController(IHoldsGroupRepository holdsGroupRepository, IIamSer
             {
                 Message = "No tienes privilegios en este inventario.",
                 Response = Responses.Unauthorized
+            };
+
+        // Validar que no tenga una transacción pendiente.
+        var hold = await holdsGroupRepository.Read(id);
+
+        if (hold.Response != Responses.Success)
+            return new()
+            {
+                Message = "No se encontró el hold.",
+                Response = Responses.NotRows,
+                Errors = [new() { Description = "No hay una reserva asociada." }]
+            };
+
+        if (hold.Model.Expiration > DateTime.Now)
+            return new()
+            {
+                Message = "El hold no ha expirado.",
+                Response = Responses.Unauthorized,
+                Errors = [new() { Description = "La reserva aun no ha expirado." }]
+            };
+
+        // Validar el estado de la orden.
+        var order = await ordersRepository.ReadByHold(id);
+
+        if (order.Response != Responses.Success)
+            return new()
+            {
+                Message = "No se encontró la orden asociada al hold.",
+                Response = Responses.NotRows,
+                Errors = [new() { Description = "No hay una orden asociada a la reserva, por favor comuníquese con soporte." }]
+            };
+
+        if (string.IsNullOrWhiteSpace(order.Model.Status) || order.Model.Status == "PaymentRequired" || order.Model.Status == "Pending")
+            return new()
+            {
+                Message = "La orden aun esta pendiente de pago en Mercado Pago.",
+                Response = Responses.Unauthorized,
+                Errors = [new() { Description = "El pago del cliente aun no se ha realizado o autorizado, debe esperar a finalizar el proceso." }]
             };
 
         // Realizar la devolución de la reserva.
