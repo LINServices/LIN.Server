@@ -37,7 +37,6 @@ public static class PersistenceExtensions
         services.AddScoped<IOutsiderRepository, OutsiderRepository>();
 
         return services;
-
     }
 
 
@@ -49,7 +48,7 @@ public static class PersistenceExtensions
         try
         {
             var scope = app.ApplicationServices.CreateScope();
-            var context = scope.ServiceProvider.GetService<Persistence.Context.Context>();
+            var context = scope.ServiceProvider.GetService<Context.Context>();
             bool? created = context?.Database.EnsureCreated();
         }
         catch (Exception)

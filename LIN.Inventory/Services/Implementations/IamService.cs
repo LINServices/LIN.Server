@@ -11,7 +11,6 @@ internal class IamService(Context context) : IIamService
     /// <param name="request">Solicitud.</param>
     public async Task<InventoryRoles> Validate(IamRequest request)
     {
-
         switch (request.IamBy)
         {
             case IamBy.Inventory:
@@ -34,7 +33,6 @@ internal class IamService(Context context) : IIamService
         }
 
         return InventoryRoles.Undefined;
-
     }
 
 
@@ -145,7 +143,6 @@ internal class IamService(Context context) : IIamService
 
         // Si no hay.
         return access != null;
-
     }
 
 

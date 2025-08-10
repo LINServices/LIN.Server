@@ -8,6 +8,11 @@ using LIN.Inventory.Persistence.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddLINHttp(options: (option) =>
+{
+    option.CustomSchemaIds(type => type.FullName);
+});
+
 // Logger.
 builder.Services.AddLocalServices();
 builder.Services.AddPaymentsService();
@@ -16,10 +21,6 @@ builder.Services.AddDeveloperService();
 // Servicios.
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddLINHttp(options: (option) =>
-{
-    option.CustomSchemaIds(type => type.FullName);
-});
 
 // LIN Services.
 builder.Services.AddAuthenticationService(builder.Configuration["services:auth"], builder.Configuration["lin:app"]);
@@ -36,7 +37,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseLINHttp();
+app.UseLINHttp(useGateway: true);
 
 // Rutas de servicios de tiempo real
 app.MapHub<InventoryHub>("/Realtime/inventory");

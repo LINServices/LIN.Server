@@ -10,7 +10,6 @@ public class ThirdPartyService(IOutsiderRepository outsiderRepository) : IThirdP
     /// <param name="inventory">Id del inventario.</param>
     public async Task<ReadOneResponse<OutsiderModel>> FindOrCreate(OutsiderModel model, int inventory)
     {
-
         // Intentar encontrar.
         var outsider = await outsiderRepository.FindByDocument(model.Document, inventory);
 
