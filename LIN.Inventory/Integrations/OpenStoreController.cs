@@ -167,7 +167,7 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
 #if DEBUG
         string webhook = "https://sw3dtgpc-7019.use2.devtunnels.ms/connectors/OpenStore";
 #else
-        string webhook = "https://api.inventory.linplatform.com/connectors/OpenStore";
+        string webhook = "https://api.linplatform.com/inventory/connectors/OpenStore";
 #endif
 
         /* Con el Id de la reserva, se dan 10 minutos mas, para el usuario tener tiempo de pagar, despues, se vence la orden y el enlace de pago */
@@ -185,6 +185,17 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
             Quantity = t.Quantity,
             Price = t.DetailModel.SalePrice
         }));
+
+        // Si no se crea el enlace.
+        if (result.Response != Responses.Success)
+        {
+            // Eliminar la reserva.
+            await holdsRepository.Return(response.LastId);
+            return new(Responses.InvalidParam)
+            {
+                Message = "No se pudo generar el enlace de pago, intente nuevamente."
+            };
+        }
 
         // Asociar la external Id con la orden local.
         // Crear la orden local.

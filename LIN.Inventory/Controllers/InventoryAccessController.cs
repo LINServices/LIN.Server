@@ -1,6 +1,6 @@
 ﻿namespace LIN.Inventory.Controllers;
 
-[Route("Inventory/access")]
+[Route("api/Inventory/access")]
 [RateLimit(requestLimit: 40, timeWindowSeconds: 60, blockDurationSeconds: 120)]
 public class InventoryAccessController(IHubService hubService, IInventoryAccessRepository inventoryAccessRepository, IIamService Iam) : ControllerBase
 {

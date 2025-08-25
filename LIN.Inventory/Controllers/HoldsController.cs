@@ -1,3 +1,5 @@
+using LIN.Types.Payments.Enums;
+
 namespace LIN.Inventory.Controllers;
 
 [InventoryToken]
@@ -123,12 +125,25 @@ public class HoldsController(IHoldsGroupRepository holdsGroupRepository, IOrders
                 Errors = [new() { Description = "No hay una orden asociada a la reserva, por favor comuníquese con soporte." }]
             };
 
-        if (string.IsNullOrWhiteSpace(order.Model.Status) || order.Model.Status == "PaymentRequired" || order.Model.Status == "Pending")
+        // Buscar estado real en LIN Payments.
+        var orders = await Access.Payments.Controllers.Payments.ReadOrders(order.Model.ExternalId);
+
+       var status = orders.Models.Select(t => t.Status);
+
+        if (status.Contains(OrderStatusEnum.PartiallyPaid))
+            return new()
+            {
+                Message = "La orden aun esta pendiente de pago parcial en Mercado Pago.",
+                Response = Responses.Unauthorized,
+                Errors = [new() { Description = "El cliente realizo un pago parcial sobre la orden, debe esperar a que cancele todo completo o se reverse el pago para finalizar el proceso." }]
+            };
+
+        if (status.Contains(OrderStatusEnum.PaymentRequired) || status.Contains(OrderStatusEnum.Pending))
             return new()
             {
                 Message = "La orden aun esta pendiente de pago en Mercado Pago.",
                 Response = Responses.Unauthorized,
-                Errors = [new() { Description = "El pago del cliente aun no se ha realizado o autorizado, debe esperar a finalizar el proceso." }]
+                Errors = [new() { Description = "El pago del cliente aun no se ha terminado o autorizado, debe esperar a finalizar el proceso." }]
             };
 
         // Realizar la devolución de la reserva.
