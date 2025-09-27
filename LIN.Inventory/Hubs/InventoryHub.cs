@@ -131,10 +131,8 @@ public class InventoryHub(IIamService Iam) : Hub
     /// <param name="command">Comando a ejecutar.</param>
     public async Task SendToDevice(string device, CommandModel command)
     {
-
         // Envía el comando.
         await Clients.Client(device).SendAsync("#command", command);
-
     }
 
 
