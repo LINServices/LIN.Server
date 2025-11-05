@@ -111,5 +111,4 @@ public class OutflowsReport(IOutflowsRepository outflowData) : BaseReport
 
     }
 
-
 }

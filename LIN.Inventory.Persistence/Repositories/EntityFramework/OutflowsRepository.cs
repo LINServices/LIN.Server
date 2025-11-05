@@ -168,6 +168,7 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
                                                     Name = de.ProductDetail.Product.Name,
                                                     Category = de.ProductDetail.Product.Category,
                                                     Code = de.ProductDetail.Product.Code,
+                                                    Image = de.ProductDetail.Product.Image
                                                 }
                                             }
                                         }).ToListAsync();

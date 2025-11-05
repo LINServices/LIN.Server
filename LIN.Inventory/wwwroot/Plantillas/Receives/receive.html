@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Factura / Recibo</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex min-h-screen items-center justify-center bg-slate-100 p-6 antialiased print:bg-white">
+    <main class="w-full max-w-md space-y-4 print:max-w-[720px]">
+
+        <!-- Tarjeta principal de la factura -->
+        <section class="relative overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-slate-200">
+            <!-- Cinta estado -->
+            <div class="absolute left-0 top-0">
+                <span class="rounded-br-2xl bg-blue-600 px-3 py-1 text-xs font-semibold tracking-wide text-white">OFFLINE</span>
+            </div>
+
+            <!-- Encabezado con logo y total -->
+            <div class="flex flex-col items-center pb-2 pt-8">
+                <!-- Logo (reemplaza el SVG o usa <img src="logo.png" .../>) -->
+                <div class="relative -mt-10 mb-1">
+                    <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-black shadow-lg">
+                        <span class="font-black text-sm tracking-widest text-white">NIKE</span>
+                    </div>
+                </div>
+                <div class="text-3xl font-bold text-slate-900">$181.94</div>
+                <div class="mt-1 text-sm text-slate-500">24 de septiembre, 7:32 pm</div>
+            </div>
+
+            <div class="px-5">
+                <div class="my-4 h-px bg-slate-100"></div>
+
+                <!-- Lista de ítems -->
+                <ul class="space-y-3">
+                    <!-- Ítem 1 -->
+                    <li class="flex items-center gap-3">
+                        <!-- Imagen del producto -->
+                        <div class="h-12 w-12 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
+                            <!-- Reemplaza por tu imagen -->
+                            <img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=300&auto=format&fit=crop" alt="Nike DBreak SP">
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs text-slate-400">Zapatilla hombre</p>
+                            <p class="font-medium text-slate-800">Nike DBreak SP</p>
+                        </div>
+                        <div class="text-sm font-semibold tabular-nums text-slate-900">$110.27</div>
+                    </li>
+
+                    <!-- Ítem 2 -->
+                    <li class="flex items-center gap-3">
+                        <div class="h-12 w-12 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
+                            <img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=300&auto=format&fit=crop" alt="Nike Blazer Low">
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs text-slate-400">Zapatilla hombre</p>
+                            <p class="font-medium text-slate-800">Nike Blazer Low</p>
+                        </div>
+                        <div class="text-sm font-semibold tabular-nums text-slate-900">$75.38</div>
+                    </li>
+                </ul>
+
+                <!-- Totales -->
+                <div class="my-4 h-px bg-slate-100"></div>
+                <dl class="space-y-1 text-sm">
+                    <div class="flex items-center justify-between">
+                        <dt class="text-slate-500">Subtotal</dt>
+                        <dd class="font-semibold tabular-nums text-slate-900">$185.65</dd>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <dt class="flex items-center gap-2 text-slate-500">
+                            Descuento
+                            <span class="rounded bg-slate-100 px-1.5 py-0.5 font-semibold text-[10px] text-slate-600 ring-1 ring-slate-200">2%</span>
+                        </dt>
+                        <dd class="font-semibold tabular-nums text-emerald-600">−$3.71</dd>
+                    </div>
+                </dl>
+
+                <div class="mb-2 mt-4 h-px bg-slate-200"></div>
+
+                <div class="mb-4 flex items-center justify-between">
+                    <p class="text-sm font-semibold text-slate-700">Total</p>
+                    <p class="text-xl font-bold tabular-nums text-slate-900">$181.94</p>
+                </div>
+            </div>
+
+            <!-- Pie de la tarjeta: tienda -->
+            <div class="border-t border-slate-100 px-5 py-4">
+                <p class="text-sm font-medium text-slate-800">Nike Flagship Store</p>
+                <p class="text-xs text-slate-500">Maritime Square, Tierra Verde</p>
+            </div>
+        </section>
+
+        <!-- Línea de tiempo / seguimiento -->
+        <section class="rounded-3xl bg-white p-5 shadow-lg ring-1 ring-slate-200">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-700">Timeline</h2>
+
+            <ol class="mt-4 space-y-5">
+                <li class="relative pl-6">
+                    <span class="absolute left-0 top-1.5 h-2 w-2 rounded-full bg-slate-400"></span>
+                    <div class="text-xs text-slate-400">26 de septiembre</div>
+                    <div class="text-sm text-slate-700">
+                        Confirmar recepción del producto; <span class="font-medium">$181.94</span> será incluido en la factura de este mes.
+                    </div>
+                </li>
+                <li class="relative pl-6">
+                    <span class="absolute left-0 top-1.5 h-2 w-2 rounded-full bg-slate-400"></span>
+                    <div class="text-sm text-slate-700">
+                        Contacto: <a href="mailto:lyh4852@icloud.com" class="font-medium text-blue-600 hover:underline">lyh4852@icloud.com</a>
+                    </div>
+                </li>
+            </ol>
+
+            <div class="mt-5 border-t border-slate-100 pt-4">
+                <p class="text-center text-xs text-slate-500">
+                    ¿Tienes un problema con esta factura?
+                    <a href="#" class="font-medium text-blue-600 hover:underline">Atención al cliente</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Pie para impresión -->
+        <p class="text-center text-[11px] text-slate-400">
+            Presiona <span class="font-medium text-slate-600">Ctrl/Cmd + P</span> para imprimir o guardar en PDF.
+        </p>
+    </main>
+</body>
+</html>

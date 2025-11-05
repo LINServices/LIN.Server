@@ -156,6 +156,7 @@ internal class InflowsRepository(Context.Context context, ILogger<InflowsReposit
                                                     Name = de.ProductDetail.Product.Name,
                                                     Category = de.ProductDetail.Product.Category,
                                                     Code = de.ProductDetail.Product.Code,
+                                                    Image = de.ProductDetail.Product.Image
                                                 }
                                             }
                                         }).ToListAsync();
