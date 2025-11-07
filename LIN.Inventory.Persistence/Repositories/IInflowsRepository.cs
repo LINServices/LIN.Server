@@ -8,5 +8,6 @@ public interface IInflowsRepository
     Task<ReadOneResponse<InflowDataModel>> Read(int id, bool includeDetails);
     Task<ReadAllResponse<InflowDataModel>> ReadAll(int id);
     Task<ResponseBase> Update(int id, DateTime date);
+    Task<ResponseBase> Comfirm(int id);
     Task<ReadOneResponse<int>> GetInventory(int id);
 }

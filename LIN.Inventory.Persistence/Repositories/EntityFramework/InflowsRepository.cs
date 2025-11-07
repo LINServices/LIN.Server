@@ -72,7 +72,7 @@ internal class InflowsRepository(Context.Context context, ILogger<InflowsReposit
                                         select dt;
 
                     // Si el movimiento es aceptado, actualizamos el stock.
-                    if (data.IsAccepted)
+                    if (data.Status == MovementStatus.Approved)
                     {
                         // Ajustar.
                         if (data.Type == InflowsTypes.Correction)
@@ -128,7 +128,6 @@ internal class InflowsRepository(Context.Context context, ILogger<InflowsReposit
                                                  InventoryId = i.InventoryId,
                                                  Profile = i.Profile,
                                                  ProfileId = i.ProfileId,
-                                                 IsAccepted = i.IsAccepted,
                                                  OutflowRelatedId = i.OutflowRelatedId,
                                              }).FirstOrDefaultAsync();
 
@@ -214,7 +213,6 @@ internal class InflowsRepository(Context.Context context, ILogger<InflowsReposit
                           ProfileId = E.ProfileId,
                           Type = E.Type,
                           CountDetails = context.DetallesEntradas.Count(t => t.MovementId == E.Id),
-                          IsAccepted = E.IsAccepted,
                           Profile = E.Profile != null ? new()
                           {
                               Id = E.Profile.Id,
@@ -259,6 +257,58 @@ internal class InflowsRepository(Context.Context context, ILogger<InflowsReposit
             // Si no existe el modelo
             if (update <= 0)
                 return new(Responses.NotRows);
+
+            return new(Responses.Success);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Error");
+        }
+        return new();
+    }
+
+
+
+    public async Task<ResponseBase> Comfirm(int id)
+    {
+
+        // Ejecución
+        try
+        {
+            // Update.
+            var update = await (from inflow in context.Entradas
+                                where inflow.Id == id
+                                select inflow).ExecuteUpdateAsync(t => t.SetProperty(t => t.Status, MovementStatus.Approved));
+
+
+            var data = await (from inflow in context.Entradas
+                              where inflow.Id == id
+                              select inflow).FirstOrDefaultAsync();
+
+            // Obtener los detalles.
+            var details = await (from detail in context.DetallesEntradas
+                                 where detail.MovementId == id
+                                 select detail).ToListAsync();
+
+            // Detalles
+            foreach (var detail in details)
+            {
+                // Producto
+                var productDetail = from dt in context.ProductoDetalles
+                                    where dt.Id == detail.ProductDetailId
+                                    && dt.Status == ProductStatements.Normal
+                                    select dt;
+
+                // Ajustar.
+                if (data.Type == InflowsTypes.Correction)
+                    await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => detail.Quantity));
+
+                // Sumar.
+                else
+                    await productDetail.ExecuteUpdateAsync(s => s.SetProperty(e => e.Quantity, e => e.Quantity + detail.Quantity));
+
+
+            }
 
             return new(Responses.Success);
         }

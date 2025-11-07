@@ -10,7 +10,6 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
     [HttpPost]
     public async Task<IActionResult> Webhook([FromBody] WebhookRequest resultado)
     {
-
         // Buscar la orden
         var associated = await ordersRepository.ReadAll(resultado.Reference);
 
@@ -297,7 +296,7 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
         {
             Order = order,
             Date = DateTime.Now,
-            Status = MovementStatus.Accepted,
+            Status = MovementStatus.Approved,
             Id = 0,
             Type = OutflowsTypes.Purchase,
             Inventory = new() { Id = inventory },
@@ -333,7 +332,7 @@ public class OpenStoreController(IHubService hubService, IHoldsGroupRepository h
             });
         }
 
-        // Creamos el movimiento, sin actualizar el inventario.
+        // Creamos el movimiento, sin actualizar el inventario (Porque la reserva ya los tiene).
         var response = await outflowsRepository.Create(outflow, updateInventory: false);
 
         // Notificar en tiempo real.

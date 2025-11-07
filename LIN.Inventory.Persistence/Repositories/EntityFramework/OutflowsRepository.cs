@@ -9,7 +9,6 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
     /// <param name="data">Modelo de la salida.</param>
     public async Task<CreateResponse> Create(OutflowDataModel data, bool updateInventory = true)
     {
-
         data.Id = 0;
         data.InflowRelatedId = null;
         if (data.ProfileId.HasValue && data.ProfileId > 0)
@@ -339,12 +338,64 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
     }
 
 
-    public async Task<CreateResponse> Reverse(int order)
+    public async Task<CreateResponse> ReverseOutflow(int outflowId)
     {
-        // Ejecución
         try
         {
+            // reversar las ordenes.
+            var qq = await (from ss in context.Salidas
+                            where ss.Id == outflowId
+                            && ss.Status != MovementStatus.Reversed
+                            select ss).ExecuteUpdateAsync(t => t.SetProperty(a => a.Status, MovementStatus.Reversed));
 
+            // Ya fue reversado, o esta en proceso.
+            if (qq <= 0)
+                return new();
+
+
+            var outflow = await (from ss in context.Salidas
+                                 where ss.Id == outflowId
+                                 select ss).Include(t => t.Inventory).FirstOrDefaultAsync();
+
+
+            var outflowDetails = await (from ss in context.Salidas
+                                        where ss.Id == outflowId
+                                        select ss.Details).FirstOrDefaultAsync();
+
+            // Agregar productos al inventario como Entrada Pendiente.
+            var inflow = new InflowDataModel()
+            {
+                Status = MovementStatus.Pending,
+                Date = DateTime.Now,
+                Type = InflowsTypes.Refund,
+                Inventory = outflow?.Inventory!,
+                Profile = null,
+                OutflowRelated = outflow,
+                Details = outflowDetails?.Select(t => new InflowDetailsDataModel()
+                {
+                    Id = t.Id,
+                    ProductDetail = t.ProductDetail,
+                    ProductDetailId = t.ProductDetailId,
+                    Quantity = t.Quantity,
+                })?.ToList() ?? []
+            };
+
+            var res = await inflows.Create(inflow);
+
+            // Retorna
+            return new(Responses.Success, res.LastId);
+        }
+        catch (Exception)
+        {
+        }
+
+        return new();
+    }
+
+    public async Task<CreateResponse> Reverse(int order)
+    {
+        try
+        {
             // reversar las ordenes.
             var qq = await (from ss in context.Salidas
                             where ss.OrderId == order
@@ -370,12 +421,11 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
             var inflow = new InflowDataModel()
             {
 
-                Status = MovementStatus.Accepted,
+                Status = MovementStatus.Pending,
                 Date = DateTime.Now,
                 Type = InflowsTypes.Refund,
                 Inventory = outflow?.Inventory!,
                 Profile = null,
-                IsAccepted = false,
                 OutflowRelated = outflow,
                 Details = outflowDetails?.Select(t => new InflowDetailsDataModel()
                 {
@@ -387,7 +437,6 @@ internal class OutflowsRepository(Context.Context context, ILogger<OutflowsRepos
             };
 
             var res = await inflows.Create(inflow);
-
 
             // Retorna
             return new(Responses.Success, res.LastId);

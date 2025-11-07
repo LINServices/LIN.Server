@@ -8,5 +8,6 @@ public interface IOutflowsRepository
     Task<ReadAllResponse<OutflowDataModel>> ReadAll(int id);
     Task<CreateResponse> Reverse(int order);
     Task<ResponseBase> Update(int id, DateTime date);
+    Task<CreateResponse> ReverseOutflow(int outflowId);
     Task<ReadOneResponse<int>> GetInventory(int id);
 }

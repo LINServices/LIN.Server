@@ -49,7 +49,6 @@ public class InflowController(IHubService hubService, IInflowsRepository inflowR
         {
             Id = modelo.InventoryId
         };
-        modelo.IsAccepted = true;
 
         // Crea la nueva entrada.
         var response = await inflowRepository.Create(modelo);
@@ -198,6 +197,49 @@ public class InflowController(IHubService hubService, IInflowsRepository inflowR
         // Retorna el resultado
         return result ?? new();
 
+    }
+
+
+    /// <summary>
+    /// Confirmar un movimiento de entrada.
+    /// </summary>
+    /// <param name="id">Id del movimiento.</param>
+    /// <param name="token">Token de acceso.</param>
+    [HttpPatch("comfirm")]
+    [InventoryToken]
+    public async Task<HttpResponseBase> Comfirm([FromHeader] int id, [FromHeader] string token)
+    {
+        // Validar parámetros.
+        if (id <= 0)
+            return new(Responses.InvalidParam);
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Acceso IamService.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Inflow,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+
+        // Si no cumple con los roles.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Obtiene el usuario
+        var result = await inflowRepository.Comfirm(id);
+
+        // Retorna el resultado
+        return result ?? new();
     }
 
 }

@@ -228,6 +228,47 @@ public class OutflowController(IHubService hubService, IOutflowsRepository outfl
     }
 
 
+    
+    [HttpPatch("Reverse")]
+    [InventoryToken]
+    public async Task<HttpResponseBase> Reverse([FromHeader] int id, [FromHeader] string token)
+    {
+
+        // Validar parámetros.
+        if (id <= 0)
+            return new(Responses.InvalidParam);
+
+        // Información del token.
+        var tokenInfo = HttpContext.Items[token] as JwtInformation ?? new();
+
+        // Acceso IamService.
+        var iam = await Iam.Validate(new IamRequest()
+        {
+            IamBy = IamBy.Outflow,
+            Id = id,
+            Profile = tokenInfo.ProfileId
+        });
+
+        // Roles.
+        InventoryRoles[] acceptedRoles = [InventoryRoles.Administrator];
+
+        // Si no cumple con los roles.
+        if (!acceptedRoles.Contains(iam))
+            return new()
+            {
+                Message = "No tienes privilegios en este inventario.",
+                Response = Responses.Unauthorized
+            };
+
+        // Obtiene el usuario
+        var result = await outflowRepository.ReverseOutflow(id);
+
+        // Retorna el resultado
+        return result ?? new();
+
+    }
+
+
     /// <summary>
     /// Informe mensual de Salidas
     /// </summary>
